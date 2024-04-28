@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "build": "nx build",
-    "build:web:prod": "nx build web --prod",
+    "build:web:prod": "npx nx build web --prod",
     "start": "npx nx run api:serve --configuration=development --watch=true ",
     "lint": "nx lint",
     "test": "nx test",

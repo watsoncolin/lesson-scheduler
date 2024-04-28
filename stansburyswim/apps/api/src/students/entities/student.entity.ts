@@ -1,29 +1,29 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { Types, Document } from 'mongoose'
 
 @Schema({
   collection: 'students',
   timestamps: true,
 })
 export class StudentEntity extends Document {
-  _id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
+  _id: Types.ObjectId
+  createdAt: Date
+  updatedAt: Date
 
   @Prop({ required: true })
-  userId: Types.ObjectId;
+  userId: Types.ObjectId
 
   @Prop({ required: true })
-  name: string;
+  name: string
 
   @Prop({ required: true })
-  birthday: Date;
+  birthday: Date
 
   @Prop({ required: true })
-  ability: string;
+  ability: string
 
   @Prop({ required: true })
-  notes: string;
+  notes: string
 }
 
-export const StudentSchema = SchemaFactory.createForClass(StudentEntity);
+export const StudentSchema = SchemaFactory.createForClass(StudentEntity)

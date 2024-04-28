@@ -4,9 +4,19 @@ import { BcryptService } from './hashing/bcrypt.service'
 import { AuthenticationController } from './authentication/authentication.controller'
 import { AuthenticationService } from './authentication/authentication.service'
 import { UsersModule } from '../users/users.module'
+import jwtConfig from './config/jwt.config'
+
+import { JwtModule } from '@nestjs/jwt'
+import { ConfigModule } from '@nestjs/config'
+import { APP_GUARD } from '@nestjs/core'
+import { AccessTokenGuard } from './authentication/guards/access-token.guard'
+import { AuthenticationGuard } from './authentication/guards/authentication.guard'
+import { RolesGuard } from './authentication/guards/roles.guard'
+import { GoogleAuthenticationService } from './authentication/social/google-authentication.service';
+import { GoogleAuthenticationController } from './authentication/social/google-authentication.controller';
 
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, JwtModule.registerAsync(jwtConfig.asProvider()), ConfigModule.forFeature(jwtConfig)],
   providers: [
     BcryptService,
     {
@@ -14,7 +24,17 @@ import { UsersModule } from '../users/users.module'
       useClass: BcryptService,
     },
     AuthenticationService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    AccessTokenGuard,
+    GoogleAuthenticationService,
   ],
-  controllers: [AuthenticationController],
+  controllers: [AuthenticationController, GoogleAuthenticationController],
 })
 export class IamModule {}

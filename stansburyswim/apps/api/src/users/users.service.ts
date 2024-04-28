@@ -22,6 +22,7 @@ const mapper = (entity: UserEntity): User => {
     zip: entity.zip,
     phone: entity.phone,
     privateRegistration: entity.privateRegistration,
+    role: entity.role,
   }
 }
 @Injectable()
@@ -50,7 +51,10 @@ export class UsersService {
     return mapper(entity)
   }
   async signUp(signUpDto: SignUpDto) {
-    throw new Error('Method not implemented.')
+    await this.model.create({
+      email: signUpDto.email,
+      password: signUpDto.password,
+    })
   }
 
   async findAll(): Promise<User[]> {
@@ -63,17 +67,33 @@ export class UsersService {
   }
 
   async findOneForAuth(email: string): Promise<UserForAuth> {
-    const entity = await this.model.findOne({ email })
+    const entity = await this.model.findOne(
+      { email },
+      {
+        _id: 1,
+        email: 1,
+        password: 1,
+        firstName: 1,
+        lastName: 1,
+        address1: 1,
+        address2: 1,
+        city: 1,
+        state: 1,
+        zip: 1,
+        phone: 1,
+        privateRegistration: 1,
+      },
+    )
+    const user = mapper(entity)
     return {
-      id: entity._id.toString(),
-      email: entity.email,
+      ...user,
       password: entity.password,
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(updateUserDto: UpdateUserDto): Promise<User> {
     await this.model.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(updateUserDto.id) },
       {
         $set: {
           email: updateUserDto.email,
@@ -89,11 +109,29 @@ export class UsersService {
         },
       },
     )
-    const entity = await this.model.findById(new ObjectId(id))
+    const entity = await this.model.findById(new ObjectId(updateUserDto.id))
     return mapper(entity)
   }
 
   async remove(id: string): Promise<void> {
     this.model.deleteOne({ _id: new ObjectId(id) })
+  }
+
+  async findOneByGoogleId({ googleId }: { googleId: string }) {
+    const entity = await this.model.findOne({ googleId })
+    return entity && mapper(entity)
+  }
+
+  async saveGoogleId(email: string, googleId: string, given_name: string, family_name: string): Promise<User> {
+    const _id = new ObjectId()
+    await this.model.create({
+      _id,
+      email,
+      googleId,
+      firstName: given_name,
+      lastName: family_name,
+    })
+    const entity = await this.model.findById(_id)
+    return mapper(entity)
   }
 }

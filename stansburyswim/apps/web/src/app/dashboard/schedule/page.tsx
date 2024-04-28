@@ -95,7 +95,7 @@ const meetings = [
   // More meetings...
 ]
 
-function classNames(...classes) {
+function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ')
 }
 
@@ -169,7 +169,7 @@ export default function Schedule() {
                     'mx-auto flex h-8 w-8 items-center justify-center rounded-full',
                   )}
                 >
-                  <time dateTime={day.date}>{day.date.split('-').pop().replace(/^0/, '')}</time>
+                  {/* <time dateTime={day.date}>{day.date.split('-').pop().replace(/^0/, '')}</time> */}
                 </button>
               </div>
             ))}

@@ -1,3 +1,5 @@
+import { Role } from './enums/role.enum'
+
 export class User {
   id: string
   firstName: string
@@ -10,4 +12,5 @@ export class User {
   zip: string
   phone: string
   privateRegistration: boolean
+  role: Role
 }

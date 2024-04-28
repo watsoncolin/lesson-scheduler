@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
+import { Role } from '../enums/role.enum'
 
 @Schema({
   collection: 'users',
@@ -11,11 +12,13 @@ export class UserEntity {
   updatedAt: Date
   @Prop({ type: String, required: false, select: false })
   password?: string
-  @Prop({ required: true })
+  @Prop({ required: false })
+  googleId?: string
+  @Prop({ required: false })
   firstName: string
-  @Prop({ required: true })
+  @Prop({ required: false })
   lastName: string
-  @Prop({ required: true })
+  @Prop({ required: false })
   email: string
   @Prop({ required: false })
   address1: string
@@ -31,6 +34,9 @@ export class UserEntity {
   phone: string
   @Prop({ required: true, default: false })
   privateRegistration: boolean
+
+  @Prop({ required: true, type: String, enum: Role, default: Role.User })
+  role: Role
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserEntity)

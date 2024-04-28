@@ -31,6 +31,7 @@ jobs:
           app_location: "/stansburyswim" # App source code path
           output_location: "/apps/web/dist" # Built app content directory - optional
           app_build_command: "npm run build:web:prod" # Build command for app
+          skip_api_build: true # Skip building api app
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:

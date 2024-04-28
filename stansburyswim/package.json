@@ -2,6 +2,9 @@
   "name": "@stansburyswim/source",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "node": ">=v18.17.0"
+  },
   "scripts": {
     "build": "nx build",
     "build:web:prod": "npx nx build web --prod --skip-nx-cache=true ",

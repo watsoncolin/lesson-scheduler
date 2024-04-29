@@ -219,19 +219,19 @@ export default function Filter() {
                                 {days.map((day, dayIdx) => (
                                   <div
                                     key={day.date}
-                                    className={classNames(dayIdx > 6 && 'border-t border-gray-200', 'py-2')}
+                                    className={classNames(dayIdx > 6 ? 'border-t border-gray-200' : '', 'py-2')}
                                   >
                                     <button
                                       type="button"
                                       className={classNames(
-                                        day.isSelected && 'text-white',
-                                        !day.isSelected && day.isToday && 'text-indigo-600',
-                                        !day.isSelected && !day.isToday && day.isCurrentMonth && 'text-gray-900',
-                                        !day.isSelected && !day.isToday && !day.isCurrentMonth && 'text-gray-400',
-                                        day.isSelected && day.isToday && 'bg-indigo-600',
-                                        day.isSelected && !day.isToday && 'bg-gray-900',
-                                        !day.isSelected && 'hover:bg-gray-200',
-                                        (day.isSelected || day.isToday) && 'font-semibold',
+                                        // day.isSelected && 'text-white',
+                                        // !day.isSelected && day.isToday && 'text-indigo-600',
+                                        // !day.isSelected && !day.isToday && day.isCurrentMonth && 'text-gray-900',
+                                        // !day.isSelected && !day.isToday && !day.isCurrentMonth && 'text-gray-400',
+                                        // day.isSelected && day.isToday && 'bg-indigo-600',
+                                        // day.isSelected && !day.isToday && 'bg-gray-900',
+                                        // !day.isSelected && 'hover:bg-gray-200',
+                                        // (day.isSelected || day.isToday) && 'font-semibold',
                                         'mx-auto flex h-8 w-8 items-center justify-center rounded-full',
                                       )}
                                     >
@@ -381,19 +381,19 @@ export default function Filter() {
                           {days.map((day, dayIdx) => (
                             <div
                               key={day.date}
-                              className={classNames(dayIdx > 6 && 'border-t border-gray-200', 'py-2')}
+                              className={classNames(dayIdx > 6 ? 'border-t border-gray-200' : '', 'py-2')}
                             >
                               <button
                                 type="button"
                                 className={classNames(
-                                  day.isSelected && 'text-white',
-                                  !day.isSelected && day.isToday && 'text-indigo-600',
-                                  !day.isSelected && !day.isToday && day.isCurrentMonth && 'text-gray-900',
-                                  !day.isSelected && !day.isToday && !day.isCurrentMonth && 'text-gray-400',
-                                  day.isSelected && day.isToday && 'bg-indigo-600',
-                                  day.isSelected && !day.isToday && 'bg-gray-900',
-                                  !day.isSelected && 'hover:bg-gray-200',
-                                  (day.isSelected || day.isToday) && 'font-semibold',
+                                  // day.isSelected && 'text-white',
+                                  // !day.isSelected && day.isToday && 'text-indigo-600',
+                                  // !day.isSelected && !day.isToday && day.isCurrentMonth && 'text-gray-900',
+                                  // !day.isSelected && !day.isToday && !day.isCurrentMonth && 'text-gray-400',
+                                  // day.isSelected && day.isToday && 'bg-indigo-600',
+                                  // day.isSelected && !day.isToday && 'bg-gray-900',
+                                  // !day.isSelected && 'hover:bg-gray-200',
+                                  // (day.isSelected || day.isToday) && 'font-semibold',
                                   'mx-auto flex h-8 w-8 items-center justify-center rounded-full',
                                 )}
                               >

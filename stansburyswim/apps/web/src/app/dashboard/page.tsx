@@ -8,7 +8,6 @@ export default function Index() {
   return (
     <div className={styles.page}>
       <Credits />
-
       <UpcomingLessons />
     </div>
   )

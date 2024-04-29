@@ -6,8 +6,8 @@ import image3 from '../images/image3.png'
 import image4 from '../images/image1.png'
 import image5 from '../images/image2.png'
 
-export function Photos() {
-  let rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
+export default function Photos() {
+  const rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
 
   return (
     <div className="mt-16 sm:mt-20">

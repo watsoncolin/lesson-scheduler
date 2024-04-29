@@ -11,7 +11,7 @@ const navigation = [
   { name: 'Pools', href: '#pools' },
 ]
 
-export default function Header() {
+export default function Nav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (

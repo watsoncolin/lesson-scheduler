@@ -13,6 +13,7 @@ const nextConfig = {
     svgr: false,
   },
   distDir: 'dist',
+  // output: 'export',
 }
 
 const plugins = [

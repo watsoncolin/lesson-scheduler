@@ -14,7 +14,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html className="h-full bg-white">
         <body className="h-full">
           <div className="bg-white">
-            <Nav />
             {children}
             <Footer />
           </div>

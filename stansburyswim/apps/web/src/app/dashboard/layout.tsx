@@ -12,10 +12,10 @@ const user = {
 const navigation = [
   { name: 'Home', href: '/dashboard', current: true },
   { name: 'Schedule', href: '/dashboard/schedule', current: false },
-  { name: 'My Students', href: '#', current: false },
+  { name: 'My Students', href: '/dashboard/students', current: false },
   { name: 'History', href: '/dashboard/history', current: false },
-  { name: 'Instructors', href: '#', current: false },
-  { name: 'Pools', href: '#', current: false },
+  { name: 'Instructors', href: '/dashboard/instructors', current: false },
+  { name: 'Pools', href: '/dashboard/pools', current: false },
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
@@ -31,7 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="min-h-full">
-        <Disclosure as="nav" className="border-b border-gray-200 bg-white">
+        <Disclosure as="nav" className="border-b border-gray-200">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -40,13 +40,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <div className="flex flex-shrink-0 items-center">
                       <img
                         className="block h-8 w-auto lg:hidden"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                        alt="Your Company"
+                        src="https://www.stansburyswim.com/img/logo.png"
+                        alt="Stansbury Swim"
                       />
                       <img
                         className="hidden h-8 w-auto lg:block"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                        alt="Your Company"
+                        src="https://www.stansburyswim.com/img/logo.png"
+                        alt="Stansbury Swim"
                       />
                     </div>
                     <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
@@ -61,6 +61,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                           )}
                           aria-current={item.current ? 'page' : undefined}
+                          style={{ color: 'rgb(66,139,202)' }}
                         >
                           {item.name}
                         </a>
@@ -184,17 +185,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </>
           )}
         </Disclosure>
-
-        <div className="py-10">
-          <header>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">Dashboard</h1>
-            </div>
-          </header>
-          <main>
-            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">{children}</div>
-          </main>
-        </div>
+        <main className="mx-6">{children}</main>
       </div>
     </>
   )

@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res } from '@nestjs/common'
 import { AuthenticationService } from './authentication.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
@@ -6,11 +6,15 @@ import { Response } from 'express'
 import { Auth } from './decorators/auth.decorator'
 import { AuthType } from './enums/auth-type.enum'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
+import { ConfigService } from '@nestjs/config'
 
 @Controller('auth')
 @Auth(AuthType.None)
 export class AuthenticationController {
-  constructor(private readonly authService: AuthenticationService) {}
+  constructor(
+    private readonly authService: AuthenticationService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post('register')
   signUp(@Body() signUpDto: SignUpDto) {
@@ -32,5 +36,15 @@ export class AuthenticationController {
   @Post('refresh-tokens')
   refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshTokens(refreshTokenDto)
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() { email }: { email: string }): Promise<void> {
+    return this.authService.forgotPassword(email)
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() { token, password }: { token: string; password: string }): Promise<void> {
+    return this.authService.resetPassword(token, password)
   }
 }

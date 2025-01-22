@@ -37,6 +37,9 @@ export class UserEntity {
 
   @Prop({ required: true, type: String, enum: Role, default: Role.User })
   role: Role
+
+  @Prop({ required: false })
+  resetToken: string
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserEntity)

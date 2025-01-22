@@ -46,3 +46,5 @@ out
 
 # nx
 .nx/workspace-data
+
+.env

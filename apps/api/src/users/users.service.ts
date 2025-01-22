@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { InjectModel } from '@nestjs/mongoose'
@@ -84,10 +84,14 @@ export class UsersService {
         privateRegistration: 1,
       },
     )
+    if (!entity) {
+      throw new NotFoundException()
+    }
     const user = mapper(entity)
     return {
       ...user,
       password: entity.password,
+      resetToken: entity.resetToken,
     }
   }
 
@@ -133,5 +137,28 @@ export class UsersService {
     })
     const entity = await this.model.findById(_id)
     return mapper(entity)
+  }
+
+  public async updateResetToken(user: UserForAuth, token: string) {
+    return await this.model.updateOne(
+      { _id: new ObjectId(user.id) },
+      {
+        $set: {
+          resetToken: token,
+        },
+      },
+    )
+  }
+
+  public async updatePassword(user: UserForAuth, password: string) {
+    await this.model.updateOne(
+      { _id: new ObjectId(user.id) },
+      {
+        $set: {
+          password,
+          resetToken: null,
+        },
+      },
+    )
   }
 }

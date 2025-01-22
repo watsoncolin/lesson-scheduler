@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
-import { StudentEntity } from './entities/student.entity';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { Student } from './student';
-import { ObjectId } from 'mongodb';
+import { Injectable } from '@nestjs/common'
+import { CreateStudentDto } from './dto/create-student.dto'
+import { UpdateStudentDto } from './dto/update-student.dto'
+import { StudentEntity } from './entities/student.entity'
+import { Model } from 'mongoose'
+import { InjectModel } from '@nestjs/mongoose'
+import { Student } from './student'
+import { ObjectId } from 'mongodb'
 
 const mapper = (entity: StudentEntity): Student => {
   return {
@@ -15,60 +15,79 @@ const mapper = (entity: StudentEntity): Student => {
     birthday: entity.birthday,
     ability: entity.ability,
     notes: entity.notes,
-  };
-};
+  }
+}
 
 @Injectable()
 export class StudentsService {
   constructor(
     @InjectModel(StudentEntity.name)
-    private readonly model: Model<StudentEntity>
+    private readonly model: Model<StudentEntity>,
   ) {}
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
-    const _id = new ObjectId();
-    this.model.create({
+    const _id = new ObjectId()
+    const result = await this.model.create({
       _id,
       userId: new ObjectId(createStudentDto.userId),
       name: createStudentDto.name,
-      birthday: createStudentDto.birthday,
+      birthday: new Date(createStudentDto.birthday),
       ability: createStudentDto.ability,
       notes: createStudentDto.notes,
-    });
-    const entity = await this.model.findById(_id);
-    return mapper(entity);
+    })
+    const entity = await this.model.findById(result._id)
+    if (!entity) {
+      throw new Error('Student not found')
+    }
+    return mapper(entity)
   }
 
   async findAll(): Promise<Student[]> {
-    return (await this.model.find()).map(mapper);
+    return (await this.model.find()).map(mapper)
   }
 
   async findAllByUserId(userId: string): Promise<Student[]> {
-    return (await this.model.find({ userId: new ObjectId(userId) })).map(
-      mapper
-    );
+    return (await this.model.find({ userId: new ObjectId(userId) })).map(mapper)
   }
 
   async findOne(id: string): Promise<Student> {
-    return mapper(await this.model.findById(new ObjectId(id)));
+    const entity = await this.model.findById(new ObjectId(id))
+    if (!entity) {
+      throw new Error('Student not found')
+    }
+    return mapper(entity)
   }
 
   async update(updateStudentDto: UpdateStudentDto): Promise<Student> {
+    const updates = {}
+    if (updateStudentDto.name) {
+      updates['name'] = updateStudentDto.name
+    }
+    if (updateStudentDto.birthday) {
+      updates['birthday'] = new Date(updateStudentDto.birthday)
+    }
+    if (updateStudentDto.ability) {
+      updates['ability'] = updateStudentDto.ability
+    }
+    if (updateStudentDto.notes) {
+      updates['notes'] = updateStudentDto.notes
+    }
+
     await this.model.updateOne(
       { _id: new ObjectId(updateStudentDto.id) },
       {
         $set: {
-          name: updateStudentDto.name,
-          birthday: updateStudentDto.birthday,
-          ability: updateStudentDto.ability,
-          notes: updateStudentDto.notes,
+          ...updates,
         },
-      }
-    );
-    const entity = await this.model.findById(new ObjectId(updateStudentDto.id));
-    return mapper(entity);
+      },
+    )
+    const entity = await this.model.findById(new ObjectId(updateStudentDto.id))
+    if (!entity) {
+      throw new Error('Student not found')
+    }
+    return mapper(entity)
   }
 
   async remove(id: string): Promise<void> {
-    this.model.deleteOne({ _id: new ObjectId(id) });
+    await this.model.deleteOne({ _id: new ObjectId(id) })
   }
 }

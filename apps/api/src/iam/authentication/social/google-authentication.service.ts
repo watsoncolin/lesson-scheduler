@@ -1,8 +1,8 @@
-import { ConflictException, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common'
+import { Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { OAuth2Client } from 'google-auth-library'
 import { AuthenticationService } from '../authentication.service'
-import { UsersService } from 'apps/api/src/users/users.service'
+import { UsersService } from 'src/users/users.service'
 
 @Injectable()
 export class GoogleAuthenticationService implements OnModuleInit {
@@ -25,11 +25,21 @@ export class GoogleAuthenticationService implements OnModuleInit {
       const loginTicket = await this.oauthClient.verifyIdToken({
         idToken: token,
       })
-      const { email, sub: googleId, given_name, family_name } = loginTicket.getPayload()
+      if (!loginTicket) {
+        throw new UnauthorizedException()
+      }
+      const payload = loginTicket.getPayload()
+      if (!payload) {
+        throw new UnauthorizedException()
+      }
+      const { email, sub: googleId, given_name, family_name } = payload
       const user = await this.userService.findOneByGoogleId({ googleId })
       if (user) {
         return this.authService.generateTokens(user)
       } else {
+        if (!email) {
+          throw new UnauthorizedException()
+        }
         const newUser = await this.userService.saveGoogleId(email, googleId, given_name, family_name)
         return this.authService.generateTokens(newUser)
       }

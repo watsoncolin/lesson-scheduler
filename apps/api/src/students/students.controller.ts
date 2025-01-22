@@ -3,6 +3,7 @@ import { StudentsService } from './students.service'
 import { CreateStudentDto } from './dto/create-student.dto'
 import { UpdateStudentDto } from './dto/update-student.dto'
 
+// TODO add role guard
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
@@ -12,9 +13,10 @@ export class StudentsController {
     return this.studentsService.create(createStudentDto)
   }
 
+  // TODO add pagination
   @Get()
   findAll() {
-    // return this.studentsService.findAllByUserId(request.user.id);
+    return this.studentsService.findAll()
   }
 
   @Get(':id')

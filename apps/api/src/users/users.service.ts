@@ -48,6 +48,9 @@ export class UsersService {
       privateRegistration: createUserDto.privateRegistration,
     })
     const entity = await this.model.findById(_id)
+    if (!entity) {
+      throw new Error('User not found')
+    }
     return mapper(entity)
   }
   async signUp(signUpDto: SignUpDto) {
@@ -63,6 +66,9 @@ export class UsersService {
 
   async findOne(id: string): Promise<User> {
     const entity = await this.model.findById(new ObjectId(id))
+    if (!entity) {
+      throw new NotFoundException()
+    }
     return mapper(entity)
   }
 
@@ -88,6 +94,7 @@ export class UsersService {
       throw new NotFoundException()
     }
     const user = mapper(entity)
+
     return {
       ...user,
       password: entity.password,
@@ -114,6 +121,9 @@ export class UsersService {
       },
     )
     const entity = await this.model.findById(new ObjectId(updateUserDto.id))
+    if (!entity) {
+      throw new Error('User not found')
+    }
     return mapper(entity)
   }
 
@@ -126,7 +136,12 @@ export class UsersService {
     return entity && mapper(entity)
   }
 
-  async saveGoogleId(email: string, googleId: string, given_name: string, family_name: string): Promise<User> {
+  async saveGoogleId(
+    email: string,
+    googleId: string,
+    given_name: string | undefined,
+    family_name: string | undefined,
+  ): Promise<User> {
     const _id = new ObjectId()
     await this.model.create({
       _id,
@@ -136,6 +151,9 @@ export class UsersService {
       lastName: family_name,
     })
     const entity = await this.model.findById(_id)
+    if (!entity) {
+      throw new Error('User not found')
+    }
     return mapper(entity)
   }
 

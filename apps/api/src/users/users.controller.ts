@@ -9,28 +9,31 @@ import { ActiveUserData } from '../iam/authentication/interfaces/active-user-dat
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  // TODO add role guard
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto)
   }
 
+  // TODO add role guard
   @Get()
   findAll(@ActiveUser() user) {
-    console.log(user)
     return this.usersService.findAll()
   }
 
+  // TODO add role guard
   @Get(':id')
   findOne(@Param('id') id: string, @ActiveUser() user: ActiveUserData) {
-    console.log(user)
     return this.usersService.findOne(id)
   }
 
+  // TODO add role guard
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(updateUserDto)
   }
 
+  // TODO add role guard
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id)

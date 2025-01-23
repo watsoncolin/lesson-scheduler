@@ -1,0 +1,53 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException } from '@nestjs/common'
+import { ProductService } from './product.service'
+import { CreateProductDto } from './dto/create-product.dto'
+import { UpdateProductDto } from './dto/update-product.dto'
+
+@Controller('products')
+export class ProductController {
+  constructor(private readonly productService: ProductService) {}
+
+  @Get('')
+  async findAll() {
+    const products = await this.productService.findAll()
+    return products
+  }
+
+  // TODO add role guard
+  @Post()
+  create(@Body() createProductDto: CreateProductDto) {
+    return this.productService.create(createProductDto)
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const product = await this.productService.findOne(id)
+    if (!product) {
+      throw new NotFoundException()
+    }
+    return product
+  }
+
+  // TODO add role guard
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+    const product = await this.productService.findOne(id)
+    if (!product) {
+      throw new NotFoundException()
+    }
+    return this.productService.update({
+      ...updateProductDto,
+      id,
+    })
+  }
+
+  // TODO add role guard
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    const product = await this.productService.findOne(id)
+    if (!product) {
+      throw new NotFoundException()
+    }
+    return this.productService.remove(id)
+  }
+}

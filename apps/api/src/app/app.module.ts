@@ -2,19 +2,37 @@ import { Module } from '@nestjs/common'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { MongooseModule } from '@nestjs/mongoose'
+import { MongooseModule, MongooseModuleFactoryOptions } from '@nestjs/mongoose'
 import { IamModule } from '../iam/iam.module'
-import { UsersModule } from '../users/users.module'
-import { StudentsModule } from '../students/students.module'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { InstructorModule } from 'instructor/instructor.module'
+import { StudentModule } from 'student/student.module'
+import { UserModule } from 'user/user.module'
+import { ConfigEnum } from 'shared/config.enum'
+import { PoolModule } from 'pool/pool.module'
+import { ProductModule } from 'product/product.module'
+import { ScheduleModule } from 'schedule/schedule.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://admin:secret@localhost:27019/stansburyswim?authSource=admin'),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService): MongooseModuleFactoryOptions => {
+        return {
+          uri: configService.get(ConfigEnum.MongoUri),
+          autoIndex: true,
+        }
+      },
+    }),
     IamModule,
-    StudentsModule,
-    UsersModule,
+    StudentModule,
+    UserModule,
+    InstructorModule,
+    PoolModule,
+    ProductModule,
+    ScheduleModule
   ],
   controllers: [AppController],
   providers: [AppService],

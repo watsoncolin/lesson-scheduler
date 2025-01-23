@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { OAuth2Client } from 'google-auth-library'
 import { AuthenticationService } from '../authentication.service'
-import { UsersService } from 'src/users/users.service'
+import { UserService } from 'user/user.service'
 
 @Injectable()
 export class GoogleAuthenticationService implements OnModuleInit {
@@ -11,7 +11,7 @@ export class GoogleAuthenticationService implements OnModuleInit {
   constructor(
     private readonly configService: ConfigService,
     private readonly authService: AuthenticationService,
-    private readonly userService: UsersService,
+    private readonly userService: UserService,
   ) {}
 
   onModuleInit() {

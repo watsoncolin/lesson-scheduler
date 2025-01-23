@@ -1,17 +1,17 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException } from '@nestjs/common'
-import { StudentsService } from './students.service'
+import { StudentService } from './student.service'
 import { CreateStudentDto } from './dto/create-student.dto'
 import { UpdateStudentDto } from './dto/update-student.dto'
 import { ActiveUser } from '../iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from '../iam/authentication/interfaces/active-user-data.interface'
 
 @Controller('users/me/students')
-export class MyStudentsController {
-  constructor(private readonly studentsService: StudentsService) {}
+export class MyStudentController {
+  constructor(private readonly studentService: StudentService) {}
 
   @Post()
   create(@ActiveUser() user: ActiveUserData, @Body() createStudentDto: CreateStudentDto) {
-    return this.studentsService.create({
+    return this.studentService.create({
       ...createStudentDto,
       userId: user.sub,
     })
@@ -19,12 +19,12 @@ export class MyStudentsController {
 
   @Get()
   findMyStudents(@ActiveUser() user: ActiveUserData) {
-    return this.studentsService.findAllByUserId(user.sub)
+    return this.studentService.findAllByUserId(user.sub)
   }
 
   @Get(':id')
   async findOne(@ActiveUser() user: ActiveUserData, @Param('id') id: string) {
-    const students = await this.studentsService.findAllByUserId(user.sub)
+    const students = await this.studentService.findAllByUserId(user.sub)
     const student = students.find(student => student.id === id)
     if (!student) {
       throw new NotFoundException()
@@ -38,12 +38,12 @@ export class MyStudentsController {
     @Param('id') id: string,
     @Body() updateStudentDto: UpdateStudentDto,
   ) {
-    const students = await this.studentsService.findAllByUserId(user.sub)
+    const students = await this.studentService.findAllByUserId(user.sub)
     const student = students.find(student => student.id === id)
     if (!student) {
       throw new NotFoundException()
     }
-    return this.studentsService.update({
+    return this.studentService.update({
       ...updateStudentDto,
       id,
     })
@@ -51,11 +51,11 @@ export class MyStudentsController {
 
   @Delete(':id')
   async remove(@ActiveUser() user: ActiveUserData, @Param('id') id: string) {
-    const students = await this.studentsService.findAllByUserId(user.sub)
+    const students = await this.studentService.findAllByUserId(user.sub)
     const student = students.find(student => student.id === id)
     if (!student) {
       throw new NotFoundException()
     }
-    return this.studentsService.remove(id)
+    return this.studentService.remove(id)
   }
 }

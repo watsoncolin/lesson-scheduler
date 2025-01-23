@@ -1,36 +1,36 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common'
-import { StudentsService } from './students.service'
+import { StudentService } from './student.service'
 import { CreateStudentDto } from './dto/create-student.dto'
 import { UpdateStudentDto } from './dto/update-student.dto'
 
 // TODO add role guard
 @Controller('students')
-export class StudentsController {
-  constructor(private readonly studentsService: StudentsService) {}
+export class StudentController {
+  constructor(private readonly studentService: StudentService) {}
 
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {
-    return this.studentsService.create(createStudentDto)
+    return this.studentService.create(createStudentDto)
   }
 
   // TODO add pagination
   @Get()
   findAll() {
-    return this.studentsService.findAll()
+    return this.studentService.findAll()
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.studentsService.findOne(id)
+    return this.studentService.findOne(id)
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
-    return this.studentsService.update(updateStudentDto)
+    return this.studentService.update(updateStudentDto)
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.studentsService.remove(id)
+    return this.studentService.remove(id)
   }
 }

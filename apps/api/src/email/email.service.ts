@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { UsersService } from '../users/users.service'
+import { UserService } from '../user/user.service'
 
 import sgMail from '@sendgrid/mail'
 
@@ -12,7 +12,7 @@ export class EmailService {
   constructor(
     public readonly jwtService: JwtService,
     public readonly configService: ConfigService,
-    public readonly usersService: UsersService,
+    public readonly userService: UserService,
     public readonly logger: Logger,
   ) {}
 
@@ -27,8 +27,8 @@ export class EmailService {
       expiresIn,
     })
 
-    const user = await this.usersService.findOneForAuth(email)
-    await this.usersService.updateResetToken(user, token)
+    const user = await this.userService.findOneForAuth(email)
+    await this.userService.updateResetToken(user, token)
 
     const url = `${this.configService.get(ConfigEnum.EmailResetPasswordUrl)}?token=${token}`
 

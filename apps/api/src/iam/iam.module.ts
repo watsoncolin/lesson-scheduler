@@ -3,7 +3,7 @@ import { HashingService } from './hashing/hashing.service'
 import { BcryptService } from './hashing/bcrypt.service'
 import { AuthenticationController } from './authentication/authentication.controller'
 import { AuthenticationService } from './authentication/authentication.service'
-import { UsersModule } from '../users/users.module'
+import { UserModule } from '../user/user.module'
 import jwtConfig from './config/jwt.config'
 
 import { JwtModule } from '@nestjs/jwt'
@@ -19,7 +19,7 @@ import { ConfigEnum } from '../shared/config.enum'
 
 @Module({
   imports: [
-    UsersModule,
+    UserModule,
     EmailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

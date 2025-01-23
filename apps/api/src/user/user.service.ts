@@ -26,7 +26,7 @@ const mapper = (entity: UserEntity): User => {
   }
 }
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectModel(UserEntity.name)
     private readonly model: Model<UserEntity>,

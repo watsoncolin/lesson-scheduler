@@ -2,19 +2,19 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { HashingService } from '../hashing/hashing.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
-import { UsersService } from '../../users/users.service'
+import { UserService } from '../../user/user.service'
 import { JwtService } from '@nestjs/jwt'
 import { ActiveUserData } from './interfaces/active-user-data.interface'
-import { User } from '../../users/user'
+import { User } from '../../user/user'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
-import { Role } from '../../users/enums/role.enum'
+import { Role } from '../../user/enums/role.enum'
 import { EmailService } from '../../email/email.service'
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     // private readonly logger: Logger,
-    private readonly userService: UsersService,
+    private readonly userService: UserService,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,

@@ -19,7 +19,7 @@ const mapper = (entity: StudentEntity): Student => {
 }
 
 @Injectable()
-export class StudentsService {
+export class StudentService {
   constructor(
     @InjectModel(StudentEntity.name)
     private readonly model: Model<StudentEntity>,

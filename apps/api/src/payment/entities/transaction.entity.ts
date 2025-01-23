@@ -13,10 +13,10 @@ export class TransactionEntity extends Document {
   updatedAt: Date
 
   @Prop({ required: true })
-  userId: string
+  userId: Types.ObjectId
 
   @Prop({ required: true })
-  productId: string
+  productId: Types.ObjectId
 
   @Prop({ required: true, type: String, enum: TransactionTypesEnum })
   transactionType: TransactionTypesEnum

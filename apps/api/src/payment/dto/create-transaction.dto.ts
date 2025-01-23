@@ -8,4 +8,5 @@ export class CreateTransactionDto {
   creditType: CreditTypesEnum
   amount: number
   credits: number
+  paymentId?: string
 }

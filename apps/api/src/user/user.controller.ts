@@ -4,10 +4,15 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ActiveUser } from '../iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from '../iam/authentication/interfaces/active-user-data.interface'
+import { TransactionService } from 'payment/transaction.service'
+import { CreditBalanceResponseDto } from './dto/credit-balance-response.dto'
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly transactionService: TransactionService,
+  ) {}
 
   // TODO add role guard
   @Post()
@@ -37,5 +42,17 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id)
+  }
+
+  // TODO add role guard
+  @Get(':id/credit-balance')
+  async getCreditBalance(@Param('id') id: string): Promise<CreditBalanceResponseDto> {
+    const balances = await this.transactionService.readCreditBalances(id)
+    return {
+      balances: balances.map(balance => ({
+        creditType: balance.creditType,
+        balance: balance.balance,
+      })),
+    }
   }
 }

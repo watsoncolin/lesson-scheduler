@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { TransactionEntity } from './entities/transaction.entity'
 import { Transaction } from './transaction'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
+import { CreditBalanceDto } from './dto/credit-balance.dto'
 
 const mapper = (entity: TransactionEntity): Transaction => {
   return {
@@ -30,12 +31,13 @@ export class TransactionService {
     const _id = new ObjectId()
     const result = await this.model.create({
       _id,
-      userId: createTransactionDto.userId,
-      productId: createTransactionDto.productId,
+      userId: new ObjectId(createTransactionDto.userId),
+      productId: new ObjectId(createTransactionDto.productId),
       amount: createTransactionDto.amount,
       credits: createTransactionDto.credits,
       creditType: createTransactionDto.creditType,
       transactionType: createTransactionDto.transactionType,
+      paymentId: createTransactionDto.paymentId ? new ObjectId(createTransactionDto.paymentId) : undefined,
     })
     const entity = await this.model.findById(result._id)
     if (!entity) {
@@ -55,5 +57,28 @@ export class TransactionService {
       throw new Error('Transaction not found')
     }
     return mapper(entity)
+  }
+
+  async readCreditBalances(userId: string): Promise<CreditBalanceDto[]> {
+    const creditBalances = await this.model.aggregate([
+      {
+        $match: {
+          userId: new ObjectId(userId),
+        },
+      },
+      {
+        $group: {
+          _id: '$creditType',
+          balance: { $sum: '$credits' },
+        },
+      },
+    ])
+
+    return creditBalances.map(creditBalance => {
+      return {
+        creditType: creditBalance._id,
+        balance: creditBalance.balance,
+      }
+    })
   }
 }

@@ -5,10 +5,10 @@ import { TransactionEntity, TransactionSchema } from './entities/transaction.ent
 import { TransactionService } from './transaction.service'
 import { PaymentService } from './payment.service'
 import { PaymentController } from './payment.controller'
-import { CreateTransactionHandler } from './commands/create-transaction/create-transaction.handler'
 import { PaymentSaga } from './payment.saga'
 import { CqrsModule } from '@nestjs/cqrs'
 import { ProductModule } from 'product/product.module'
+import { CreateTransactionFromPaymentHandler } from './commands/create-transaction-from-payment/create-transaction-from-payment.handler'
 
 @Module({
   imports: [
@@ -20,6 +20,7 @@ import { ProductModule } from 'product/product.module'
     ]),
   ],
   controllers: [PaymentController],
-  providers: [PaymentService, TransactionService, CreateTransactionHandler, PaymentSaga],
+  providers: [PaymentService, TransactionService, CreateTransactionFromPaymentHandler, PaymentSaga],
+  exports: [TransactionService],
 })
 export class PaymentModule {}

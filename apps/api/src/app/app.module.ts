@@ -12,6 +12,7 @@ import { ConfigEnum } from 'shared/config.enum'
 import { PoolModule } from 'pool/pool.module'
 import { ProductModule } from 'product/product.module'
 import { ScheduleModule } from 'schedule/schedule.module'
+import { PaymentModule } from 'payment/payment.module'
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { ScheduleModule } from 'schedule/schedule.module'
     InstructorModule,
     PoolModule,
     ProductModule,
-    ScheduleModule
+    ScheduleModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

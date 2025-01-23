@@ -5,9 +5,10 @@ import { ScheduleController } from './schedule.controller'
 import { ScheduleService } from './schedule.service'
 import { RegistrationController } from './registration.controller'
 import { RegistrationService } from './registration.service'
+import { PaymentModule } from 'payment/payment.module'
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: ScheduleEntity.name, schema: ScheduleSchema }])],
+  imports: [PaymentModule, MongooseModule.forFeature([{ name: ScheduleEntity.name, schema: ScheduleSchema }])],
   controllers: [ScheduleController, RegistrationController],
   providers: [ScheduleService, RegistrationService],
 })

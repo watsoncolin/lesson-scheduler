@@ -6,7 +6,7 @@ export class CreateTransactionDto {
   productId: string
   transactionType: TransactionTypesEnum
   creditType: CreditTypesEnum
-  amount: number
   credits: number
+  amount?: number
   paymentId?: string
 }

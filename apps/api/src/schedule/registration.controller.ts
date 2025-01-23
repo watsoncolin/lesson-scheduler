@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Param, Delete, NotFoundException } from '@nestjs/common'
 
 import { ScheduleService } from './schedule.service'
 import { CreateRegistrationDto } from './dto/create-registration.dto'
@@ -13,8 +13,7 @@ export class RegistrationController {
 
   @Post(':id/registrations')
   create(@Param('id') id: string, @Body() createRegistrationDto: CreateRegistrationDto) {
-    // todo add transactionId
-    return this.registrationService.create(id, '', createRegistrationDto)
+    return this.registrationService.create(id, createRegistrationDto)
   }
 
   @Get(':id/registrations')

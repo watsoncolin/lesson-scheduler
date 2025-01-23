@@ -27,14 +27,14 @@ export class TransactionEntity extends Document {
   @Prop({ required: true })
   credits: number
 
-  @Prop({ required: true })
-  amount: number
+  @Prop({ required: false })
+  amount?: number
 
   @Prop({ required: false })
   scheduleId: Types.ObjectId
 
   @Prop({ required: false })
-  paymentId: Types.ObjectId
+  paymentId?: Types.ObjectId
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(TransactionEntity)

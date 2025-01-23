@@ -8,7 +8,7 @@ export class Transaction {
   productId: string
   transactionType: TransactionTypesEnum
   creditType: CreditTypesEnum
-  amount: number
+  amount?: number | undefined
   credits: number
   createdAt: Date
   updatedAt: Date

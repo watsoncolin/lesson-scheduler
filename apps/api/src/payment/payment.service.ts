@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { Model } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
 import { ObjectId } from 'mongodb'
@@ -6,12 +6,13 @@ import { PaymentEntity } from './entities/payment.entity'
 import { Payment } from './payment'
 import { CreatePaymentDto } from './dto/create-payment.dto'
 import { UpdatePaymentDto } from './dto/update-payment.dto'
-import { TransactionEntity } from './entities/transaction.entity'
 import { ProductService } from 'product/product.service'
 import { EventBus } from '@nestjs/cqrs'
 import { PaymentCreatedEvent } from './events/payment-created.event'
 import { PaymentUpdatedEvent } from './events/payment-updated.event'
 import { PaymentStatusTypesEnum } from 'shared/payment-status-types.enum'
+import { SiteConfigService } from 'site-config/site-config.service'
+import { WaitlistService } from 'waitlist/waitlist.service'
 
 const mapper = (entity: PaymentEntity): Payment => {
   return {
@@ -34,8 +35,24 @@ export class PaymentService {
     private readonly model: Model<PaymentEntity>,
     private readonly eventBus: EventBus,
     private readonly productService: ProductService,
+    private readonly siteConfigService: SiteConfigService,
+    private readonly waitlistService: WaitlistService,
   ) {}
   async create(createPaymentDto: CreatePaymentDto): Promise<Payment> {
+    const siteConfig = await this.siteConfigService.findOne()
+    if (!siteConfig) {
+      throw new Error('Site config not found')
+    }
+    if (siteConfig.waitlistEnabled) {
+      try {
+        const waitlist = await this.waitlistService.findByUserId(createPaymentDto.userId)
+        if (!waitlist || !waitlist.allowed) {
+          throw new BadRequestException('User not on waitlist or not allowed to purchase')
+        }
+      } catch (e) {
+        throw new BadRequestException('User not on waitlist or not allowed to purchase')
+      }
+    }
     const product = await this.productService.findOne(createPaymentDto.productId)
     const _id = new ObjectId()
     const result = await this.model.create({

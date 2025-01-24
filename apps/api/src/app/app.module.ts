@@ -13,6 +13,8 @@ import { PoolModule } from 'pool/pool.module'
 import { ProductModule } from 'product/product.module'
 import { ScheduleModule } from 'schedule/schedule.module'
 import { PaymentModule } from 'payment/payment.module'
+import { SiteConfigModule } from 'site-config/site-config.module'
+import { WaitlistModule } from 'waitlist/waitlist.module'
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { PaymentModule } from 'payment/payment.module'
     ProductModule,
     ScheduleModule,
     PaymentModule,
+    SiteConfigModule,
+    WaitlistModule,
   ],
   controllers: [AppController],
   providers: [AppService],

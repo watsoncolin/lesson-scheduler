@@ -28,6 +28,7 @@ export class RegistrationController {
   // TODO add role guard
   @Delete(':id/registrations/:studentId')
   async remove(@Param('id') id: string, @Param('studentId') studentId: string) {
+    // TODO make sure the student belongs to the user or the user is an admin
     const schedule = await this.scheduleService.findOne(id)
     if (!schedule) {
       throw new NotFoundException()

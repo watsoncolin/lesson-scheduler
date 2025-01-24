@@ -9,10 +9,14 @@ import { PaymentSaga } from './payment.saga'
 import { CqrsModule } from '@nestjs/cqrs'
 import { ProductModule } from 'product/product.module'
 import { CreateTransactionFromPaymentHandler } from './commands/create-transaction-from-payment/create-transaction-from-payment.handler'
+import { SiteConfigModule } from 'site-config/site-config.module'
+import { WaitlistModule } from 'waitlist/waitlist.module'
 
 @Module({
   imports: [
     ProductModule,
+    SiteConfigModule,
+    WaitlistModule,
     CqrsModule,
     MongooseModule.forFeature([
       { name: PaymentEntity.name, schema: PaymentSchema },

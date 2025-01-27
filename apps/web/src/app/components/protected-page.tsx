@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { getCookie } from '../utils/cookies'
 
 import { ReactNode } from 'react'
+import Nav from '../dashboard/components/nav'
 
 const ProtectedPage = ({ children, redirectTo = '/sign-in' }: { children: ReactNode; redirectTo?: string }) => {
   const router = useRouter()
@@ -19,7 +20,11 @@ const ProtectedPage = ({ children, redirectTo = '/sign-in' }: { children: ReactN
   }, [router, redirectTo])
 
   if (loading) {
-    return <div>Loading...</div> // Optional: Replace with a custom loading spinner
+    return (
+      <div>
+        <Nav />
+      </div>
+    )
   }
 
   return <>{children}</>

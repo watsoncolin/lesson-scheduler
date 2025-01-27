@@ -77,8 +77,8 @@ export default function Index() {
             <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">History</h1>
           </div>
         </header>
-        <main className="px-6 py-12">
-          <div className="flow-root">
+        <main className="px-6">
+          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             <ul role="list" className="-mb-8">
               {timeline.map((event, eventIdx) => (
                 <li key={event.id}>

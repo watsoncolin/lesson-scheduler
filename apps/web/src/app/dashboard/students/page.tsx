@@ -79,7 +79,7 @@ export default function Students() {
         </header>
         <main className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
-            <div className="px-4 sm:px-6 lg:px-8">
+            <div>
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                   <h1 className="text-base font-semibold leading-6 text-gray-900">Students</h1>

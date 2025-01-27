@@ -24,20 +24,15 @@ export default function Header() {
           </div>
         </div>
         <div className="text-center">
-          <img
-            className="text-center"
-            src="https://www.stansburyswim.com/img/logo.png"
-            alt="Stansbury Swim"
-            style={{ margin: 'auto' }}
-          />
+          <img className="text-center" src="/images/logo.png" alt="Stansbury Swim" style={{ margin: 'auto' }} />
           {/* <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Stansbury swim</h1> */}
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <div className="mt-6 text-lg leading-8 text-gray-600">
             <ul className="list-none">
               <li>Private One-On-One Instruction</li>
               <li>Flexible Scheduling</li>
               <li>Warm 90 Degree Pool</li>
             </ul>
-          </p>
+          </div>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <a
               href="#"

@@ -1,6 +1,5 @@
 'use client'
 import styles from './page.module.css'
-import { useState } from 'react'
 import Header from './components/header'
 import Instructors from './components/instructors'
 import Pricing from './components/pricing'

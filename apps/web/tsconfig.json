@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "preserve",
+    "types": ["react", "react-dom"],
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -15,10 +16,6 @@
       {
         "name": "next"
       }
-    ],
-    "types": [
-      "jest",
-      "node"
     ]
   },
   "include": [
@@ -30,12 +27,8 @@
     "../../dist/apps/web/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "dist/types/**/*.ts"
+    "dist/types/**/*.ts",
+    "next-env.d.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "jest.config.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts"
-  ]
+  "exclude": ["node_modules", "jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
 }

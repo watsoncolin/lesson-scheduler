@@ -20,9 +20,9 @@ const features = [
     icon: ArrowPathIcon,
   },
   {
-    name: 'Flexible Cancelation Policy',
+    name: 'Flexible Cancellation Policy',
     description:
-      'We have a flexible cancelation policy. If you need to cancel your lesson, you can do so up to 24 hours before your lesson time.',
+      'We have a flexible cancellation policy. If you need to cancel your lesson, you can do so up to 24 hours before your lesson time.',
     icon: FingerPrintIcon,
   },
 ]

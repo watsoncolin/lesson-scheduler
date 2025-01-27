@@ -1,12 +1,74 @@
+'use client'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
+import { useState, useEffect } from 'react'
+import { del, get, patch, post } from '../../utils/api'
+import StudentModal from './components/student-modal'
+import { Student } from '../../lib/student'
 
-const people = [
-  { name: 'Arche', title: 'Doggy paddle', email: 'He loves chasing ducks.', role: '12' },
-  { name: 'Bailey', title: 'Doggy paddle', email: 'He gets distracted very easily.', role: '5' },
-  // More people...
-]
+function calculateAge(birthday: string | Date): number {
+  const birthDate = new Date(birthday) // Convert the birthday to a Date object
+  const ageDifMs = Date.now() - birthDate.getTime() // Difference in milliseconds
+  const ageDate = new Date(ageDifMs) // Convert to Date object
+  return Math.abs(ageDate.getUTCFullYear() - 1970) // Calculate the year difference
+}
 
 export default function Students() {
+  const [students, setStudents] = useState([] as Student[])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null)
+
+  const handleSave = async (student: Student) => {
+    if (student.id) {
+      // Edit existing student
+      await patch(`/users/me/students/${student.id}`, student)
+      setStudents(prev => prev.map(s => (s.id === student.id ? student : s)))
+    } else {
+      // Add new student
+      await post(`/users/me/students`, student)
+      setStudents(prev => [...prev, { ...student }])
+    }
+    setIsModalOpen(false)
+    fetchStudents()
+  }
+
+  const handleEdit = (student: Student) => {
+    setEditingStudent(student)
+    setIsModalOpen(true)
+    fetchStudents()
+  }
+
+  const handleCreate = () => {
+    setEditingStudent(null)
+    setIsModalOpen(true)
+    fetchStudents()
+  }
+
+  const handleDelete = async (student: Student) => {
+    console.log('Deleting student:', student)
+    if (student.id) {
+      await del(`/users/me/students/${student.id}`)
+      setStudents(prev => prev.filter(s => s.id !== student.id))
+    }
+    setIsModalOpen(false)
+    fetchStudents()
+  }
+  const fetchStudents = async () => {
+    try {
+      const students = await get('/users/me/students')
+      setStudents(students)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchStudents()
+  }, [])
+
   return (
     <>
       <div className="py-10">
@@ -27,6 +89,7 @@ export default function Students() {
                   <button
                     type="button"
                     className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    onClick={handleCreate}
                   >
                     Add student
                   </button>
@@ -35,49 +98,48 @@ export default function Students() {
               <div className="mt-8 flow-root">
                 <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                   <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <ul role="list" className="divide-y divide-gray-100">
-                      {people.map(person => (
-                        <li key={person.email} className="relative flex justify-between gap-x-6 py-5">
-                          <div className="flex min-w-0 gap-x-4">
-                            {/* <img className="h-12 w-12 flex-none rounded-full bg-gray-50" src={person.imageUrl} alt="" /> */}
-                            <div className="min-w-0 flex-auto">
-                              <p className="text-sm font-semibold leading-6 text-gray-900">
-                                <a href="#">
-                                  <span className="absolute inset-x-0 -top-px bottom-0" />
-                                  {person.name}
-                                </a>
-                              </p>
-                              <p className="mt-1 flex text-xs leading-5 text-gray-500">
-                                <a href={`mailto:${person.email}`} className="relative truncate hover:underline">
-                                  {person.email}
-                                </a>
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex shrink-0 items-center gap-x-4">
-                            <div className="hidden sm:flex sm:flex-col sm:items-end">
-                              <p className="text-sm leading-6 text-gray-900">Age {person.role}</p>
-                              <p className="mt-1 text-xs leading-5 text-gray-500">
-                                Skill level: <span>{person.title}</span>
-                              </p>
-                              {/* {person.lastSeen ? (
-                                <p className="mt-1 text-xs leading-5 text-gray-500">
-                                  Last seen <time dateTime={person.lastSeenDateTime}>{person.lastSeen}</time>
+                    {loading ? (
+                      <p className="text-center text-sm text-gray-500">Loading students...</p>
+                    ) : error ? (
+                      <p className="text-center text-sm text-red-500">Error: {error}</p>
+                    ) : students.length > 0 ? (
+                      <ul role="list" className="divide-y divide-gray-100">
+                        {students.map(student => (
+                          <li
+                            key={student.name}
+                            className="relative flex justify-between gap-x-6 py-5"
+                            onClick={() => handleEdit(student)}
+                          >
+                            <div className="flex min-w-0 gap-x-4">
+                              <div className="min-w-0 flex-auto">
+                                <p className="text-sm font-semibold leading-6 text-gray-900">
+                                  <a href="#">
+                                    <span className="absolute inset-x-0 -top-px bottom-0" />
+                                    {student.name}
+                                  </a>
                                 </p>
-                              ) : (
-                                <div className="mt-1 flex items-center gap-x-1.5">
-                                  <div className="flex-none rounded-full bg-emerald-500/20 p-1">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                                  </div>
-                                  <p className="text-xs leading-5 text-gray-500">Online</p>
-                                </div>
-                              )} */}
+                                <p className="mt-1 flex text-xs leading-5 text-gray-500">
+                                  <a href={`mailto:${student.notes}`} className="relative truncate hover:underline">
+                                    {student.notes}
+                                  </a>
+                                </p>
+                              </div>
                             </div>
-                            <ChevronRightIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
+                            <div className="flex shrink-0 items-center gap-x-4">
+                              <div className="hidden sm:flex sm:flex-col sm:items-end">
+                                <p className="text-sm leading-6 text-gray-900">Age {calculateAge(student.birthday)}</p>
+                                <p className="mt-1 text-xs leading-5 text-gray-500">
+                                  Ability: <span>{student.ability}</span>
+                                </p>
+                              </div>
+                              <ChevronRightIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-center text-sm text-gray-500">No students found.</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -85,6 +147,14 @@ export default function Students() {
           </div>
         </main>
       </div>
+      {isModalOpen && (
+        <StudentModal
+          student={editingStudent}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSave}
+          onDelete={handleDelete}
+        />
+      )}
     </>
   )
 }

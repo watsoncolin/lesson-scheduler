@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { getCookie } from '../utils/cookies'
 import { get } from '../utils/api'
+import { ReactNode } from 'react'
 
 export interface User {
   id: string
@@ -23,8 +24,6 @@ export interface UserContextType {
 }
 
 const UserContext = createContext<UserContextType | null>(null)
-
-import { ReactNode } from 'react'
 
 interface UserProviderProps {
   children: ReactNode
@@ -58,5 +57,4 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>
 }
 
-// Custom hook to access user context
 export const useUser = () => useContext(UserContext)

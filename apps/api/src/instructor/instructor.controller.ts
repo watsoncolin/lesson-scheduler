@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException, HttpCode } from '@nestjs/common'
 
 import { InstructorService } from './instructor.service'
 import { CreateInstructorDto } from './dto/create-instructor.dto'
 import { UpdateInstructorDto } from './dto/update-instructor.dto'
+import { ApiResponse } from '@nestjs/swagger'
 
 @Controller('instructors')
 export class InstructorController {
@@ -44,6 +45,7 @@ export class InstructorController {
 
   // TODO add role guard
   @Delete(':id')
+  @HttpCode(204)
   async remove(@Param('id') id: string) {
     const instructor = await this.instructorService.findOne(id)
     if (!instructor) {

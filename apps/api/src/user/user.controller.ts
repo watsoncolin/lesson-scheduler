@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, HttpCode } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -40,6 +40,7 @@ export class UserController {
 
   // TODO add role guard
   @Delete(':id')
+  @HttpCode(204)
   remove(@Param('id') id: string) {
     return this.userService.remove(id)
   }

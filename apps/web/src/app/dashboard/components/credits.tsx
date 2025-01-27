@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useUser, UserContextType, User } from '../../components/user-context'
 import { get } from '../../utils/api'
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 const stats_test = [
-  { name: 'Private lesson balance', stat: '30' },
+  { name: 'Private lesson balance', stat: '0' },
   { name: 'Group lesson balance', stat: '0' },
   { name: 'Lessons scheduled', stat: '20' },
   { name: 'Available credits', stat: '10' },
@@ -18,7 +17,6 @@ export default function Credits() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   useEffect(() => {
-    // Replace with your API endpoint
     const fetchStats = async () => {
       try {
         const response = await get('/users/me/credit-balance', {})

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, HttpCode } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ActiveUser } from '../iam/authentication/decorators/active-user.decorator'
@@ -27,6 +27,7 @@ export class MeController {
   }
 
   @Delete()
+  @HttpCode(204)
   remove(@ActiveUser() user: ActiveUserData) {
     return this.userService.remove(user.sub)
   }

@@ -24,6 +24,9 @@ export class StudentEntity extends Document {
 
   @Prop({ required: true })
   notes: string
+
+  @Prop({ required: false })
+  deletedAt?: Date
 }
 
 export const StudentSchema = SchemaFactory.createForClass(StudentEntity)

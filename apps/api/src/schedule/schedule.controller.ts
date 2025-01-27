@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException, HttpCode } from '@nestjs/common'
 
 import { ScheduleService } from './schedule.service'
 import { CreateScheduleDto } from './dto/create-schedule.dto'
@@ -48,6 +48,7 @@ export class ScheduleController {
 
   // TODO add role guard
   @Delete(':id')
+  @HttpCode(204)
   async remove(@Param('id') id: string) {
     const schedule = await this.scheduleService.findOne(id)
     if (!schedule) {

@@ -24,6 +24,7 @@ export class StudentService {
     @InjectModel(StudentEntity.name)
     private readonly model: Model<StudentEntity>,
   ) {}
+
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
     const _id = new ObjectId()
     const result = await this.model.create({
@@ -46,7 +47,7 @@ export class StudentService {
   }
 
   async findAllByUserId(userId: string): Promise<Student[]> {
-    return (await this.model.find({ userId: new ObjectId(userId) })).map(mapper)
+    return (await this.model.find({ userId: new ObjectId(userId), deletedAt: { $exists: false } })).map(mapper)
   }
 
   async findOne(id: string): Promise<Student> {
@@ -88,6 +89,6 @@ export class StudentService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.model.deleteOne({ _id: new ObjectId(id) })
+    await this.model.updateOne({ _id: new ObjectId(id) }, { $set: { deletedAt: new Date() } })
   }
 }

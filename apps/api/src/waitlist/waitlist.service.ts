@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { Model } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
 import { ObjectId } from 'mongodb'
@@ -29,7 +29,7 @@ export class WaitlistService {
     })
     const entity = await this.model.findById(result._id)
     if (!entity) {
-      throw new Error('Waitlist not found')
+      throw new BadRequestException('Waitlist not found')
     }
     return mapper(entity)
   }
@@ -58,7 +58,7 @@ export class WaitlistService {
     )
     const entity = await this.model.findOne({ userId: new ObjectId(userId) })
     if (!entity) {
-      throw new Error('Waitlist not found')
+      throw new BadRequestException('User is not allowed to purchase. While on waitlist.')
     }
     return mapper(entity)
   }

@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException, HttpCode } from '@nestjs/common'
 
 import { CreatePoolDto } from './dto/create-pool.dto'
 import { UpdatePoolDto } from './dto/update-pool.dto'
 import { PoolService } from './pool.service'
+import { ApiResponse } from '@nestjs/swagger'
 
 @Controller('pools')
 export class PoolController {
@@ -44,6 +45,7 @@ export class PoolController {
 
   // TODO add role guard
   @Delete(':id')
+  @HttpCode(204)
   async remove(@Param('id') id: string) {
     const pool = await this.poolService.findOne(id)
     if (!pool) {

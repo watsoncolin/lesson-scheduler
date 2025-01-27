@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException, HttpCode } from '@nestjs/common'
 import { ProductService } from './product.service'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
@@ -43,6 +43,7 @@ export class ProductController {
 
   // TODO add role guard
   @Delete(':id')
+  @HttpCode(204)
   async remove(@Param('id') id: string) {
     const product = await this.productService.findOne(id)
     if (!product) {

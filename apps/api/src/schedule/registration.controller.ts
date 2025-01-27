@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, NotFoundException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Param, Delete, NotFoundException, HttpCode } from '@nestjs/common'
 
 import { ScheduleService } from './schedule.service'
 import { CreateRegistrationDto } from './dto/create-registration.dto'
@@ -27,6 +27,7 @@ export class RegistrationController {
 
   // TODO add role guard
   @Delete(':id/registrations/:studentId')
+  @HttpCode(204)
   async remove(@Param('id') id: string, @Param('studentId') studentId: string) {
     // TODO make sure the student belongs to the user or the user is an admin
     const schedule = await this.scheduleService.findOne(id)

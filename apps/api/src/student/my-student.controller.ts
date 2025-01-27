@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException, HttpCode } from '@nestjs/common'
 import { StudentService } from './student.service'
 import { CreateStudentDto } from './dto/create-student.dto'
 import { UpdateStudentDto } from './dto/update-student.dto'
@@ -50,6 +50,7 @@ export class MyStudentController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   async remove(@ActiveUser() user: ActiveUserData, @Param('id') id: string) {
     const students = await this.studentService.findAllByUserId(user.sub)
     const student = students.find(student => student.id === id)

@@ -12,7 +12,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   const globalPrefix = 'api'
   app.setGlobalPrefix(globalPrefix)
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // Automatically transforms plain objects into class instances
+      whitelist: true, // Strips properties that do not belong to the DTO class
+      forbidNonWhitelisted: false, // Throws an error if non-whitelisted properties are found
+    }),
+  )
   app.enableCors()
   const port = process.env.PORT || 3001
   await app.listen(port)

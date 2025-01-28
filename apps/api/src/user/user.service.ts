@@ -102,9 +102,9 @@ export class UserService {
     }
   }
 
-  async update(updateUserDto: UpdateUserDto): Promise<User> {
+  async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
     await this.model.updateOne(
-      { _id: new ObjectId(updateUserDto.id) },
+      { _id: new ObjectId(userId) },
       {
         $set: {
           email: updateUserDto.email,
@@ -120,7 +120,7 @@ export class UserService {
         },
       },
     )
-    const entity = await this.model.findById(new ObjectId(updateUserDto.id))
+    const entity = await this.model.findById(new ObjectId(userId))
     if (!entity) {
       throw new Error('User not found')
     }

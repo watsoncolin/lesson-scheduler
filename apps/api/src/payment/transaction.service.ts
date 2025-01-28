@@ -6,6 +6,7 @@ import { TransactionEntity } from './entities/transaction.entity'
 import { Transaction } from './transaction'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
 import { CreditBalanceDto } from './dto/credit-balance.dto'
+import { CreditTypesEnum } from 'shared/credit-types.enum'
 
 const mapper = (entity: TransactionEntity): Transaction => {
   return {
@@ -13,7 +14,8 @@ const mapper = (entity: TransactionEntity): Transaction => {
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
     userId: entity.userId.toString(),
-    productId: entity.productId.toString(),
+    productId: entity.productId ? entity.productId.toString() : undefined,
+    scheduleId: entity.scheduleId ? entity.scheduleId.toString() : undefined,
     amount: entity.amount,
     credits: entity.credits,
     creditType: entity.creditType,
@@ -32,7 +34,8 @@ export class TransactionService {
     const result = await this.model.create({
       _id,
       userId: new ObjectId(createTransactionDto.userId),
-      productId: new ObjectId(createTransactionDto.productId),
+      productId: createTransactionDto.productId ? new ObjectId(createTransactionDto.productId) : undefined,
+      scheduleId: createTransactionDto.scheduleId ? new ObjectId(createTransactionDto.scheduleId) : undefined,
       amount: createTransactionDto.amount,
       credits: createTransactionDto.credits,
       creditType: createTransactionDto.creditType,
@@ -74,11 +77,16 @@ export class TransactionService {
       },
     ])
 
-    return creditBalances.map(creditBalance => {
-      return {
-        creditType: creditBalance._id,
-        balance: creditBalance.balance,
-      }
-    })
+    return (
+      creditBalances
+        // Filter out group credit type since these aren't tracked and are immediately consumed
+        .filter(creditBalance => creditBalance._id != CreditTypesEnum.GROUP)
+        .map(creditBalance => {
+          return {
+            creditType: creditBalance._id,
+            balance: creditBalance.balance,
+          }
+        })
+    )
   }
 }

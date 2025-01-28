@@ -35,7 +35,7 @@ export class UserController {
   // TODO add role guard
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(updateUserDto)
+    return this.userService.update(id, updateUserDto)
   }
 
   // TODO add role guard

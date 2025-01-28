@@ -63,10 +63,10 @@ export class RegistrationService {
     // Create registration transaction
     const transaction = await this.transactionService.create({
       userId: createRegistrationDto.userId,
-      productId: schedule.poolId,
       credits: -1,
       creditType: schedule.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
       transactionType: TransactionTypesEnum.Register,
+      scheduleId,
     })
 
     // Push registration on model
@@ -133,7 +133,6 @@ export class RegistrationService {
     // Create the counter transaction
     await this.transactionService.create({
       userId,
-      productId: schedule.poolId,
       credits: 1,
       creditType: schedule.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
       transactionType: TransactionTypesEnum.CancelRegistration,

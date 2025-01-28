@@ -5,7 +5,8 @@ import { TransactionTypesEnum } from 'shared/transaction-types.enum'
 export class Transaction {
   id: string
   userId: string
-  productId: string
+  productId?: string
+  scheduleId?: string
   transactionType: TransactionTypesEnum
   creditType: CreditTypesEnum
   amount?: number | undefined

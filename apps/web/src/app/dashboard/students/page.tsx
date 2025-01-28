@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { del, get, patch, post } from '../../utils/api'
 import StudentModal from './components/student-modal'
 import { Student } from '../../lib/student'
+import React from 'react'
 
 function calculateAge(birthday: string | Date): number {
   const birthDate = new Date(birthday) // Convert the birthday to a Date object
@@ -46,7 +47,6 @@ export default function Students() {
   }
 
   const handleDelete = async (student: Student) => {
-    console.log('Deleting student:', student)
     if (student.id) {
       await del(`/users/me/students/${student.id}`)
       setStudents(prev => prev.filter(s => s.id !== student.id))
@@ -56,7 +56,7 @@ export default function Students() {
   }
   const fetchStudents = async () => {
     try {
-      const students = await get('/users/me/students')
+      const students = await get<Student[]>('/users/me/students')
       setStudents(students)
     } catch (err: any) {
       setError(err.message)

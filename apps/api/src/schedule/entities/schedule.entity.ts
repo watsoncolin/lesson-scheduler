@@ -1,3 +1,4 @@
+import { Type } from '@nestjs/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types, Document } from 'mongoose'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
@@ -27,9 +28,9 @@ export class ScheduleEntity extends Document {
   createdAt: Date
   updatedAt: Date
   @Prop({ required: true })
-  poolId: string
+  poolId: Types.ObjectId
   @Prop({ required: true })
-  instructorId: string
+  instructorId: Types.ObjectId
   @Prop({ required: true })
   classSize: number
   @Prop({ type: String, required: true, enum: LessonTypesEnum })

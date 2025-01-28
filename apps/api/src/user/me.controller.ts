@@ -20,10 +20,7 @@ export class MeController {
 
   @Patch()
   update(@ActiveUser() user: ActiveUserData, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update({
-      ...updateUserDto,
-      id: user.sub,
-    })
+    return this.userService.update(user.sub, updateUserDto)
   }
 
   @Delete()

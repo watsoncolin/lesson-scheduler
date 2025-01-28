@@ -1,189 +1,188 @@
 'use client'
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
+import { CalendarIcon, EllipsisHorizontalIcon, MapPinIcon } from '@heroicons/react/20/solid'
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
+import { del, get } from '../../utils/api'
+import { Student, User, Pool, Instructor, Schedule } from '../../lib'
 import {
-  CalendarIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  EllipsisHorizontalIcon,
-  MapPinIcon,
-} from '@heroicons/react/20/solid'
-import { Menu, Transition } from '@headlessui/react'
-
-const meetings = [
-  {
-    id: 1,
-    date: 'January 10th, 2022',
-    time: '2:00 PM',
-    datetime: '2022-01-10T17:00',
-    name: 'Abagail with Ryan',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    location: '101 Lakeview',
-  },
-  {
-    id: 2,
-    date: 'January 10th, 2022',
-    time: '2:00 PM',
-    datetime: '2022-01-10T17:00',
-    name: 'Abagail with Ryan',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    location: '101 Lakeview',
-  },
-  {
-    id: 3,
-    date: 'January 10th, 2022',
-    time: '2:00 PM',
-    datetime: '2022-01-10T17:00',
-    name: 'Abagail with Ryan',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    location: '101 Lakeview',
-  },
-  {
-    id: 4,
-    date: 'January 10th, 2022',
-    time: '2:00 PM',
-    datetime: '2022-01-10T17:00',
-    name: 'Abagail with Ryan',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    location: '101 Lakeview',
-  },
-  // More meetings...
-]
-const days = [
-  { date: '2021-12-27' },
-  { date: '2021-12-28' },
-  { date: '2021-12-29' },
-  { date: '2021-12-30' },
-  { date: '2021-12-31' },
-  { date: '2022-01-01', isCurrentMonth: true },
-  { date: '2022-01-02', isCurrentMonth: true },
-  { date: '2022-01-03', isCurrentMonth: true },
-  { date: '2022-01-04', isCurrentMonth: true },
-  { date: '2022-01-05', isCurrentMonth: true },
-  { date: '2022-01-06', isCurrentMonth: true },
-  { date: '2022-01-07', isCurrentMonth: true },
-  { date: '2022-01-08', isCurrentMonth: true },
-  { date: '2022-01-09', isCurrentMonth: true },
-  { date: '2022-01-10', isCurrentMonth: true },
-  { date: '2022-01-11', isCurrentMonth: true },
-  { date: '2022-01-12', isCurrentMonth: true, isToday: true },
-  { date: '2022-01-13', isCurrentMonth: true },
-  { date: '2022-01-14', isCurrentMonth: true },
-  { date: '2022-01-15', isCurrentMonth: true },
-  { date: '2022-01-16', isCurrentMonth: true },
-  { date: '2022-01-17', isCurrentMonth: true },
-  { date: '2022-01-18', isCurrentMonth: true },
-  { date: '2022-01-19', isCurrentMonth: true },
-  { date: '2022-01-20', isCurrentMonth: true },
-  { date: '2022-01-21', isCurrentMonth: true },
-  { date: '2022-01-22', isCurrentMonth: true, isSelected: true },
-  { date: '2022-01-23', isCurrentMonth: true },
-  { date: '2022-01-24', isCurrentMonth: true },
-  { date: '2022-01-25', isCurrentMonth: true },
-  { date: '2022-01-26', isCurrentMonth: true },
-  { date: '2022-01-27', isCurrentMonth: true },
-  { date: '2022-01-28', isCurrentMonth: true },
-  { date: '2022-01-29', isCurrentMonth: true },
-  { date: '2022-01-30', isCurrentMonth: true },
-  { date: '2022-01-31', isCurrentMonth: true },
-  { date: '2022-02-01' },
-  { date: '2022-02-02' },
-  { date: '2022-02-03' },
-  { date: '2022-02-04' },
-  { date: '2022-02-05' },
-  { date: '2022-02-06' },
-]
+  useUser,
+  UserContextType,
+  usePools,
+  PoolContextType,
+  useInstructors,
+  InstructorsContextType,
+  useCredits,
+} from '../../contexts'
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function UpcomingLessons() {
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [students, setStudents] = useState([] as Student[])
+  const [schedules, setSchedules] = useState([] as Schedule[])
+  const { user } = useUser()
+  const { refreshCredits } = useCredits()
+
+  const poolsContext = usePools() as PoolContextType
+  const pools = poolsContext?.pools || ([] as Pool[])
+
+  const instructorsContext = useInstructors() as InstructorsContextType
+  const instructors = instructorsContext?.instructors || ([] as Instructor[])
+
+  const fetchStudents = async () => {
+    try {
+      const students = await get<Student[]>('/users/me/students')
+      setStudents(students)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchSchedules = async () => {
+    try {
+      const schedules = await get<Schedule[]>('/schedules/me')
+      setSchedules(schedules)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCancel = async (e: React.MouseEvent, schedule: Schedule, student: Student) => {
+    e.preventDefault()
+    try {
+      await del(`/schedules/${schedule.id}/registrations/${student.id}`)
+      fetchSchedules()
+      refreshCredits()
+    } catch (err: any) {
+      setError(err.message)
+    }
+  }
+
+  useEffect(() => {
+    fetchSchedules()
+    fetchStudents()
+  }, [])
+
   return (
     <div className="py-5">
       <h3 className="text-base font-semibold leading-6 text-gray-900">Upcoming lessons</h3>
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-16">
         <ol className="mt-4 divide-y divide-gray-100 text-sm leading-6 lg:col-span-7 xl:col-span-8">
-          {meetings.map(meeting => (
-            <li key={meeting.id} className="relative flex space-x-6 py-6 xl:static">
-              <img src={meeting.imageUrl} alt="" className="h-14 w-14 flex-none rounded-full" />
-              <div className="flex-auto">
-                <h3 className="pr-10 font-semibold text-gray-900 xl:pr-0">{meeting.name}</h3>
-                <dl className="mt-2 flex flex-col text-gray-500 xl:flex-row">
-                  <div className="flex items-start space-x-3">
-                    <dt className="mt-0.5">
-                      <span className="sr-only">Date</span>
-                      <CalendarIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                    </dt>
-                    <dd>
-                      <time dateTime={meeting.datetime}>
-                        {meeting.date} at {meeting.time}
-                      </time>
-                    </dd>
-                  </div>
-                  <div className="mt-2 flex items-start space-x-3 xl:ml-3.5 xl:mt-0 xl:border-l xl:border-gray-400 xl:border-opacity-50 xl:pl-3.5">
-                    <dt className="mt-0.5">
-                      <span className="sr-only">Location</span>
-                      <MapPinIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                    </dt>
-                    <dd>{meeting.location}</dd>
-                  </div>
-                </dl>
-              </div>
-              <Menu as="div" className="absolute right-0 top-6 xl:relative xl:right-auto xl:top-auto xl:self-center">
-                <div>
-                  <Menu.Button className="-m-2 flex items-center rounded-full p-2 text-gray-500 hover:text-gray-600">
-                    <span className="sr-only">Open options</span>
-                    <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
-                  </Menu.Button>
-                </div>
+          {schedules.length > 0 ? (
+            schedules.map(schedule => {
+              const instructor = instructors.find(i => i.id === schedule.instructorId)
+              const pool = pools.find(p => p.id === schedule.poolId)
+              const student = students.find(
+                s => s.id === schedule.registrations.find(r => r.studentId === s.id)?.studentId,
+              )
+              if (!instructor || !pool || !student) return null
 
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="py-1">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                              'block px-4 py-2 text-sm',
-                            )}
-                          >
-                            Edit
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                              'block px-4 py-2 text-sm',
-                            )}
-                          >
-                            Cancel
-                          </a>
-                        )}
-                      </Menu.Item>
+              // format time to local time
+              const time = new Date(schedule.startDateTime)
+              const timeOfDay = time.toLocaleTimeString().split(':').slice(0, 2).join(':')
+              const day = time.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+              // subtract start and end times
+              const start = new Date(schedule.startDateTime)
+              const end = new Date(schedule.endDateTime)
+              // duration in minutes
+              const duration = Math.round((end.getTime() - start.getTime()) / 1000 / 60)
+
+              return (
+                <li key={schedule.id} className="relative flex space-x-6 py-6 xl:static">
+                  <img src={instructor.imageUrl} alt="" className="h-14 w-14 flex-none rounded-full" />
+                  <div className="flex-auto">
+                    <h3 className="pr-10 font-semibold text-gray-900 xl:pr-0">
+                      {student.name} with {instructor.name}
+                    </h3>
+                    <dl className="mt-2 flex flex-col text-gray-500 xl:flex-row">
+                      <div className="flex items-start space-x-3">
+                        <dt className="mt-0.5">
+                          <span className="sr-only">Date</span>
+                          <CalendarIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </dt>
+                        <dd>
+                          <time dateTime={schedule.startDateTime}>
+                            {day} at {timeOfDay} for {duration} minutes
+                          </time>
+                        </dd>
+                      </div>
+                      <div className="mt-2 flex items-start space-x-3 xl:ml-3.5 xl:mt-0 xl:border-l xl:border-gray-400 xl:border-opacity-50 xl:pl-3.5">
+                        <dt className="mt-0.5">
+                          <span className="sr-only">Location</span>
+                          <MapPinIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </dt>
+                        <dd>{pool.name}</dd>
+                      </div>
+                    </dl>
+                  </div>
+                  <Menu
+                    as="div"
+                    className="absolute right-0 top-6 xl:relative xl:right-auto xl:top-auto xl:self-center"
+                  >
+                    <div>
+                      <MenuButton className="-m-2 flex items-center rounded-full p-2 text-gray-500 hover:text-gray-600">
+                        <span className="sr-only">Open options</span>
+                        <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
+                      </MenuButton>
                     </div>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
-            </li>
-          ))}
+
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <MenuItems className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="py-1">
+                          {/* <MenuItem>
+                            {({ active }) => (
+                              <a
+                                href="#"
+                                className={classNames(
+                                  active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                  'block px-4 py-2 text-sm',
+                                )}
+                              >
+                                Edit
+                              </a>
+                            )}
+                          </MenuItem> */}
+                          <MenuItem>
+                            {({ active }) => (
+                              <button
+                                className={classNames(
+                                  active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                  'block px-4 py-2 text-sm',
+                                  'w-full text-left',
+                                )}
+                                onClick={e => handleCancel(e, schedule, student)}
+                              >
+                                Cancel
+                              </button>
+                            )}
+                          </MenuItem>
+                        </div>
+                      </MenuItems>
+                    </Transition>
+                  </Menu>
+                </li>
+              )
+            })
+          ) : (
+            <p>
+              No upcoming lessons. <a href="/dashboard/schedule">Schedule one now</a>
+            </p>
+          )}
         </ol>
       </div>
     </div>

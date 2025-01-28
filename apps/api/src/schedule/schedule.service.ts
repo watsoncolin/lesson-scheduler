@@ -35,8 +35,8 @@ export class ScheduleService {
     const _id = new ObjectId()
     const result = await this.model.create({
       _id,
-      poolId: createScheduleDto.poolId,
-      instructorId: createScheduleDto.instructorId,
+      poolId: new ObjectId(createScheduleDto.poolId),
+      instructorId: new ObjectId(createScheduleDto.instructorId),
       classSize: createScheduleDto.classSize,
       lessonType: createScheduleDto.lessonType,
       startDateTime: createScheduleDto.startDateTime,
@@ -53,6 +53,65 @@ export class ScheduleService {
     return (await this.model.find()).map(mapper)
   }
 
+  async findAllByUserId(userId: string): Promise<Schedule[]> {
+    return (
+      await this.model.find({
+        'registrations.userId': new ObjectId(userId),
+      })
+    ).map(mapper)
+  }
+
+  async search(
+    poolIds?: string[],
+    instructorIds?: string[],
+    daysOfWeek?: number[],
+    date?: string,
+  ): Promise<Schedule[]> {
+    const filter: {
+      startDateTime: any
+      $and?: any[]
+      $or: any[]
+    } = {
+      startDateTime: { $gte: new Date() },
+      $or: [],
+    }
+    if (poolIds) {
+      filter.$or.push({ poolId: { $in: poolIds.map(id => new ObjectId(id)) } })
+    }
+    if (instructorIds) {
+      filter.$or.push({ instructorId: { $in: instructorIds.map(id => new ObjectId(id)) } })
+    }
+    if (daysOfWeek) {
+      filter.$and = [
+        {
+          $or: daysOfWeek.map(dayOfWeek => ({ $expr: { $eq: [{ $dayOfWeek: '$startDateTime' }, dayOfWeek] } })),
+        },
+      ]
+    }
+    if (date) {
+      filter.$and = filter.$and || []
+      filter.$and.push({
+        $expr: {
+          $eq: [
+            {
+              $dateToString: {
+                format: '%Y-%m-%d',
+                date: '$startDateTime',
+              },
+            },
+            date,
+          ],
+        },
+      })
+    }
+
+    const entities = await this.model.find(filter)
+
+    const results = entities.map(mapper)
+
+    return results.filter(schedule => schedule.registrations.length < schedule.classSize)
+  }
+
   async findOne(id: string): Promise<Schedule> {
     const entity = await this.model.findById(new ObjectId(id))
     if (!entity) {
@@ -65,11 +124,11 @@ export class ScheduleService {
     const updates = {}
 
     if (updateScheduleDto.poolId) {
-      updates['poolId'] = updateScheduleDto.poolId
+      updates['poolId'] = new ObjectId(updateScheduleDto.poolId)
     }
 
     if (updateScheduleDto.instructorId) {
-      updates['instructorId'] = updateScheduleDto.instructorId
+      updates['instructorId'] = new ObjectId(updateScheduleDto.instructorId)
     }
 
     if (updateScheduleDto.classSize) {

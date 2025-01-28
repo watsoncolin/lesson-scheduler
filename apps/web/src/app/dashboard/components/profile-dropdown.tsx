@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import SignOutButton from './sign-out-button'
 import { AvatarComponent } from 'avatar-initials'
-import { useUser, UserContextType, User } from '../../components/user-context'
+import { useUser } from '../../contexts'
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
@@ -13,8 +13,7 @@ const userNavigation = [
 ]
 
 export default function ProfileDropdown() {
-  const context = useUser() as UserContextType
-  const user = context?.user || ({} as User)
+  const { user } = useUser()
 
   return (
     <Menu as="div" className="relative ml-3">

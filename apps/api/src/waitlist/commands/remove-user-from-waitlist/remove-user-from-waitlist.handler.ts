@@ -8,6 +8,14 @@ export class RemoveUserFromWaitlistHandler implements ICommandHandler<RemoveUser
   constructor(private readonly waitlistService: WaitlistService) {}
 
   async execute(command: RemoveUserFromWaitlistCommand): Promise<void> {
+    try {
+      await this.handleCommand(command)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async handleCommand(command: RemoveUserFromWaitlistCommand): Promise<void> {
     if (command.payment.status === PaymentStatusTypesEnum.FAILED) {
       return
     }

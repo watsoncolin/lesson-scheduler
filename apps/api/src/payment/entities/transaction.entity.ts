@@ -15,7 +15,7 @@ export class TransactionEntity extends Document {
   @Prop({ required: true })
   userId: Types.ObjectId
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   productId: Types.ObjectId
 
   @Prop({ required: true, type: String, enum: TransactionTypesEnum })
@@ -31,7 +31,7 @@ export class TransactionEntity extends Document {
   amount?: number
 
   @Prop({ required: false })
-  scheduleId: Types.ObjectId
+  scheduleId?: Types.ObjectId
 
   @Prop({ required: false })
   paymentId?: Types.ObjectId

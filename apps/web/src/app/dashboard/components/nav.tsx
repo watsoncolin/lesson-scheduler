@@ -3,13 +3,10 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import ProfileDropdown from './profile-dropdown'
 import SignOutButton from './sign-out-button'
-import ProtectedPage from '../../components/protected-page'
-import { User, UserContextType, UserProvider, useUser } from '../../components/user-context'
 import { AvatarComponent } from 'avatar-initials'
-import { InstructorsProvider } from '../../components/instructor-context'
-import { PoolsProvider } from '../../components/pools-context'
 import { usePathname } from 'next/navigation'
 import React from 'react'
+import { useUser } from '../../contexts'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard' },
@@ -30,8 +27,7 @@ function classNames(...classes: string[]) {
 }
 
 export default function Nav() {
-  const context = useUser() as UserContextType
-  const user = context?.user || ({} as User)
+  const { user } = useUser()
   const pathname = usePathname()
 
   return (
@@ -134,7 +130,7 @@ export default function Nav() {
                   />
                 </div>
                 <div className="ml-3">
-                  <div className="text-base font-medium text-gray-800">{user.firstName}</div>
+                  <div className="text-base font-medium text-gray-800">{user?.firstName}</div>
                 </div>
                 <button
                   type="button"

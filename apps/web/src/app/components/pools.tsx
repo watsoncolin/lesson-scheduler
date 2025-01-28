@@ -1,9 +1,9 @@
 'use client'
-import { Pool, PoolContextType, usePools } from './pools-context'
+import React from 'react'
+import { usePools } from '../contexts'
 
 export default function Pools() {
-  const poolsContext = usePools() as PoolContextType
-  const pools = poolsContext?.pools || ([] as Pool[])
+  const { pools } = usePools()
 
   return (
     <div id="pools" className="bg-white py-12 md:py-10 lg:py-10">

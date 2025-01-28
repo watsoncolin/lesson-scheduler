@@ -1,23 +1,27 @@
 'use client'
 import ProtectedPage from '../components/protected-page'
-import { UserProvider } from '../components/user-context'
-import { InstructorsProvider } from '../components/instructor-context'
-import { PoolsProvider } from '../components/pools-context'
 import Nav from './components/nav'
+import React from 'react'
+import { CreditsProvider, InstructorsProvider, PoolsProvider, UserProvider } from '../contexts'
+import { AppProvider } from '../app-provider'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <ProtectedPage>
-      <UserProvider>
-        <InstructorsProvider>
-          <PoolsProvider>
-            <div className="min-h-full">
-              <Nav />
-              <main className="mx-6">{children}</main>
-            </div>
-          </PoolsProvider>
-        </InstructorsProvider>
-      </UserProvider>
-    </ProtectedPage>
+    <UserProvider>
+      <ProtectedPage>
+        <AppProvider>
+          <InstructorsProvider>
+            <PoolsProvider>
+              <CreditsProvider>
+                <div className="min-h-full">
+                  <Nav />
+                  <main className="mx-6">{children}</main>
+                </div>
+              </CreditsProvider>
+            </PoolsProvider>
+          </InstructorsProvider>
+        </AppProvider>
+      </ProtectedPage>
+    </UserProvider>
   )
 }

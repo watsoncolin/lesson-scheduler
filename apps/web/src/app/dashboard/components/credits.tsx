@@ -1,39 +1,31 @@
 import { useEffect, useState } from 'react'
-import { useUser, UserContextType, User } from '../../components/user-context'
 import { get } from '../../utils/api'
-
-const stats_test = [
-  { name: 'Private lesson balance', stat: '0' },
-  { name: 'Group lesson balance', stat: '0' },
-  { name: 'Lessons scheduled', stat: '20' },
-  { name: 'Available credits', stat: '10' },
-]
+import { Schedule } from '../../lib'
+import { useUser, useCredits } from '../../contexts'
 
 export default function Credits() {
-  const context = useUser() as UserContextType
-  const user = context?.user || ({} as User)
+  const { user } = useUser()
 
-  const [stats, setStats] = useState(stats_test)
+  const { credits, refreshCredits } = useCredits()
+
+  const [stats, setStats] = useState([] as { name: string; stat: number }[])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    refreshCredits()
+  }, [])
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await get('/users/me/credit-balance', {})
-
-        if (!response) {
-          throw new Error('Failed to fetch stats')
-        }
+        const schedulesResponse = await get<Schedule[]>('/schedules/me')
         const stats = [
           {
-            name: 'Private lesson credits',
-            stat: response.balances.find((b: any) => b.creditType == 'private')?.balance ?? 0,
+            name: 'Available lesson credits',
+            stat: credits,
           },
-          {
-            name: 'Group lesson credits',
-            stat: response.balances.find((b: any) => b.creditType == 'group')?.balance ?? 0,
-          },
-          { name: 'Lessons scheduled', stat: 20 },
+          { name: 'Lessons scheduled', stat: schedulesResponse.length },
         ]
         setStats(stats)
       } catch (err) {
@@ -44,12 +36,12 @@ export default function Credits() {
       }
     }
 
-    if (user.id) {
+    if (user?.id) {
       fetchStats()
     } else {
       setLoading(false)
     }
-  }, [user.id])
+  }, [user?.id, credits])
 
   if (loading) {
     return <p>Loading...</p>
@@ -61,7 +53,7 @@ export default function Credits() {
 
   return (
     <div className="py-5">
-      <h3 className="text-base font-semibold leading-6 text-gray-900">Credit balances</h3>
+      {/* <h3 className="text-base font-semibold leading-6 text-gray-900">Credit balances</h3> */}
       <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
         {stats.map(item => (
           <div key={item.name} className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">

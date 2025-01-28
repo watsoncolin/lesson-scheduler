@@ -1,11 +1,9 @@
 'use client'
 import React from 'react'
-import { Instructor, InstructorsContextType, useInstructors } from './instructor-context'
+import { useInstructors } from '../contexts'
 
 export default function Instructors() {
-  const instructorsContext = useInstructors() as InstructorsContextType
-  const instructors = instructorsContext?.instructors || ([] as Instructor[])
-
+  const { instructors } = useInstructors()
   return (
     <div id="team" className="bg-white py-12 md:py-10 lg:py-10">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3">

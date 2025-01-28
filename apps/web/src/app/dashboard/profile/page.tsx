@@ -1,23 +1,24 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useUser, UserContextType, User } from '../../components/user-context'
 import { patch } from '../../utils/api'
+import { useUser } from '../../contexts'
+import { CheckCircleIcon } from '@heroicons/react/20/solid'
 
 export default function Profile() {
-  const context = useUser() as UserContextType
-  const user = context?.user || ({} as User)
+  const { user, refreshUser } = useUser()
 
   const [error, setError] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false)
 
-  const [firstName, setFirstName] = useState(user.firstName || '')
-  const [lastName, setLastName] = useState(user.lastName || '')
-  const [email, setEmail] = useState(user.email || '')
-  const [address1, setStreetAddress] = useState(user.address1 || '')
-  const [address2, setStreetAddress2] = useState(user.address2 || '')
-  const [city, setCity] = useState(user.city || '')
-  const [state, setState] = useState(user.state || '')
-  const [zip, setPostalCode] = useState(user.zip || '')
-  const [phone, setPhone] = useState(user.phone || '')
+  const [firstName, setFirstName] = useState(user?.firstName || '')
+  const [lastName, setLastName] = useState(user?.lastName || '')
+  const [email, setEmail] = useState(user?.email || '')
+  const [address1, setStreetAddress] = useState(user?.address1 || '')
+  const [address2, setStreetAddress2] = useState(user?.address2 || '')
+  const [city, setCity] = useState(user?.city || '')
+  const [state, setState] = useState(user?.state || '')
+  const [zip, setPostalCode] = useState(user?.zip || '')
+  const [phone, setPhone] = useState(user?.phone || '')
 
   // Synchronize form state with user context
   useEffect(() => {
@@ -50,13 +51,26 @@ export default function Profile() {
     }
 
     try {
-      const response = await patch('/users/me', updatedUser)
-
-      context.setUser(response)
+      await patch('/users/me', updatedUser)
+      refreshUser()
+      setShowSuccess(true)
     } catch (err) {
       console.error(err)
       setError('Failed to update profile')
     }
+  }
+
+  const handleCancel = () => {
+    setShowSuccess(false)
+    setFirstName(user?.firstName || '')
+    setLastName(user?.lastName || '')
+    setEmail(user?.email || '')
+    setStreetAddress(user?.address1 || '')
+    setStreetAddress2(user?.address2 || '')
+    setCity(user?.city || '')
+    setState(user?.state || '')
+    setPostalCode(user?.zip || '')
+    setPhone(user?.phone || '')
   }
 
   return (
@@ -70,14 +84,19 @@ export default function Profile() {
         <main className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             <div className="px-4 sm:px-6 lg:px-8">
-              <form onSubmit={handleSubmit}>
+              <form
+                onSubmit={e => {
+                  handleSubmit(e)
+                  setShowSuccess(false)
+                }}
+              >
                 <div className="space-y-12">
                   <div className="border-b border-gray-900/10 pb-12">
                     <h2 className="text-base/7 font-semibold text-gray-900">Personal Information</h2>
                     <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                       <div className="sm:col-span-3">
                         <label htmlFor="first-name" className="block text-sm/6 font-medium text-gray-900">
-                          First name {user.firstName}
+                          First name
                         </label>
                         <div className="mt-2">
                           <input
@@ -341,7 +360,7 @@ export default function Profile() {
                 </div>
 
                 <div className="mt-6 flex items-center justify-end gap-x-6">
-                  <button type="button" className="text-sm/6 font-semibold text-gray-900">
+                  <button type="button" className="text-sm/6 font-semibold text-gray-900" onClick={handleCancel}>
                     Cancel
                   </button>
                   <button
@@ -352,6 +371,18 @@ export default function Profile() {
                   </button>
                 </div>
               </form>
+              {showSuccess && (
+                <div className="mt-10 rounded-md bg-green-50 p-4">
+                  <div className="flex">
+                    <div className="shrink-0">
+                      <CheckCircleIcon aria-hidden="true" className="size-5 text-green-400" />
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-green-800">Profile Saved</h3>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </main>

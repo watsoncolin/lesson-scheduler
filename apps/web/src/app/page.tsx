@@ -7,17 +7,27 @@ import About from './components/about'
 import Pools from './components/pools'
 import Photos from './components/photos'
 import Nav from './components/nav'
+import { InstructorsProvider, PoolsProvider, UserProvider } from './contexts'
+import { AppProvider } from './app-provider'
 
 export default function Index() {
   return (
-    <div className={styles.page}>
-      <Nav />
-      <Header />
-      <Photos />
-      <About />
-      <Instructors />
-      <Pricing />
-      <Pools />
-    </div>
+    <AppProvider>
+      <UserProvider>
+        <InstructorsProvider>
+          <PoolsProvider>
+            <div className={styles.page}>
+              <Nav />
+              <Header />
+              <Photos />
+              <About />
+              <Instructors />
+              <Pricing />
+              <Pools />
+            </div>
+          </PoolsProvider>
+        </InstructorsProvider>
+      </UserProvider>
+    </AppProvider>
   )
 }

@@ -37,7 +37,9 @@ async function request(endpoint: string, method = 'GET', body = null, headers = 
   }
 }
 
-export const get = (endpoint: string, headers = {}) => request(endpoint, 'GET', null, headers)
+export const get = async <T>(endpoint: string, headers = {}): Promise<T> => {
+  return request(endpoint, 'GET', null, headers)
+}
 export const post = (endpoint: string, body: any, headers = {}) => request(endpoint, 'POST', body, headers)
 export const put = (endpoint: string, body: any, headers = {}) => request(endpoint, 'PUT', body, headers)
 export const patch = (endpoint: string, body: any, headers = {}) => request(endpoint, 'PATCH', body, headers)

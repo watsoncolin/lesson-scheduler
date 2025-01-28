@@ -1,0 +1,4 @@
+- finish schedule page
+  - add schedule button
+  - add pagination
+  - get days from backend and populate a field indicating there are available lessons on a day

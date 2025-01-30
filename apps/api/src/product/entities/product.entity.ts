@@ -12,6 +12,9 @@ export class ProductEntity extends Document {
   updatedAt: Date
 
   @Prop({ required: true })
+  order: number
+
+  @Prop({ required: true })
   name: string
 
   @Prop({ type: String, required: true, enum: LessonTypesEnum })
@@ -31,6 +34,9 @@ export class ProductEntity extends Document {
 
   @Prop({ required: false })
   scheduleId: Types.ObjectId
+
+  @Prop({ type: [String], required: false })
+  features: string[]
 }
 
 export const ProductSchema = SchemaFactory.createForClass(ProductEntity)

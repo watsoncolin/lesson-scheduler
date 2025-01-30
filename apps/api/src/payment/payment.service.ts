@@ -85,6 +85,14 @@ export class PaymentService {
     return mapper(entity)
   }
 
+  async findByGatewayId(paymentGatewayId: string): Promise<Payment> {
+    const entity = await this.model.findOne({ paymentGatewayId })
+    if (!entity) {
+      throw new Error('Payment not found')
+    }
+    return mapper(entity)
+  }
+
   async update(updatePaymentDto: UpdatePaymentDto): Promise<Payment> {
     const updates = {}
 

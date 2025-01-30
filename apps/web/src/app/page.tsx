@@ -9,6 +9,7 @@ import Photos from './components/photos'
 import Nav from './components/nav'
 import { InstructorsProvider, PoolsProvider, UserProvider } from './contexts'
 import { AppProvider } from './app-provider'
+import ParentTot from './components/parent-tot'
 
 export default function Index() {
   return (
@@ -24,6 +25,7 @@ export default function Index() {
               <Instructors />
               <Pricing />
               <Pools />
+              <ParentTot />
             </div>
           </PoolsProvider>
         </InstructorsProvider>

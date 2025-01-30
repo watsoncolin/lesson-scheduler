@@ -13,4 +13,5 @@ export class Transaction {
   credits: number
   createdAt: Date
   updatedAt: Date
+  studentId?: string
 }

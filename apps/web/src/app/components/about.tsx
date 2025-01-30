@@ -1,29 +1,29 @@
-import { ArrowPathIcon, CloudArrowUpIcon, FingerPrintIcon, LockClosedIcon } from '@heroicons/react/24/outline'
+import { AcademicCapIcon, CalendarIcon, ShieldCheckIcon, SparklesIcon } from '@heroicons/react/24/outline'
 
 const features = [
   {
     name: 'Over 10 years in the community',
     description:
       'Stansbury swim has been teaching kids to swim for over 10 years. We specialize in teaching beginner skills and stroke development to kids ages 3-10.',
-    icon: CloudArrowUpIcon,
+    icon: SparklesIcon,
   },
   {
     name: 'Instructors',
     description:
       'Our instructors are passionate about what they do and dedicated to delivering the best results for our students. We have a dynamic group of individuals who are passionate about what they do and dedicated to delivering the best results for our students.',
-    icon: LockClosedIcon,
+    icon: AcademicCapIcon,
   },
   {
     name: 'Online Scheduling',
     description:
       'We offer online scheduling for your convenience. You can schedule your lessons online and pay for them online as well.',
-    icon: ArrowPathIcon,
+    icon: CalendarIcon,
   },
   {
     name: 'Flexible Cancellation Policy',
     description:
       'We have a flexible cancellation policy. If you need to cancel your lesson, you can do so up to 24 hours before your lesson time.',
-    icon: FingerPrintIcon,
+    icon: ShieldCheckIcon,
   },
 ]
 

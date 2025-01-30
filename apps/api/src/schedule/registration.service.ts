@@ -67,6 +67,7 @@ export class RegistrationService {
       creditType: schedule.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
       transactionType: TransactionTypesEnum.Register,
       scheduleId,
+      studentId: createRegistrationDto.studentId,
     })
 
     // Push registration on model
@@ -130,13 +131,14 @@ export class RegistrationService {
       },
     )
 
-  // Create the counter transaction
+    // Create the counter transaction
     await this.transactionService.create({
       userId,
       credits: 1,
       creditType: schedule.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
       transactionType: TransactionTypesEnum.CancelRegistration,
       scheduleId,
+      studentId,
     })
   }
 }

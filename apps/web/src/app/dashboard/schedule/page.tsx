@@ -22,6 +22,7 @@ export interface Option {
 }
 
 export interface Schedule {
+  lessonType: 'private' | 'group'
   id: string
   instructorId: string
   poolId: string
@@ -145,7 +146,7 @@ export default function Schedule() {
     if (selectedDate) queryString.append('date', selectedDate)
 
     const schedules = await get<Schedule[]>('/schedules/search?' + queryString.toString())
-    setSchedules(schedules)
+    setSchedules(schedules.filter(s => s.lessonType == 'private'))
   }
 
   useEffect(() => {
@@ -190,7 +191,7 @@ export default function Schedule() {
         <main className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-              {credits} available credit {credits > 1 ? 's' : ''}{' '}
+              {credits} available credit{credits > 1 ? 's' : ''}{' '}
               {pendingSchedules.length > 0 ? `(${pendingSchedules.length} pending)` : ''}
             </span>
             <div className=" py-5">

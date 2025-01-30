@@ -10,6 +10,7 @@ import { UpdateProductDto } from './dto/update-product.dto'
 const mapper = (entity: ProductEntity): Product => {
   return {
     id: entity._id.toString(),
+    order: entity.order,
     name: entity.name,
     lessonType: entity.lessonType,
     credits: entity.credits,
@@ -17,6 +18,7 @@ const mapper = (entity: ProductEntity): Product => {
     amount: entity.amount,
     description: entity.description,
     scheduleId: entity.scheduleId ? entity.scheduleId.toString() : undefined,
+    features: entity.features,
   }
 }
 
@@ -30,6 +32,7 @@ export class ProductService {
     const _id = new ObjectId()
     const result = await this.model.create({
       _id,
+      order: createProductDto.order,
       name: createProductDto.name,
       lessonType: createProductDto.lessonType,
       credits: createProductDto.credits,
@@ -37,6 +40,7 @@ export class ProductService {
       amount: createProductDto.amount,
       description: createProductDto.description,
       scheduleId: createProductDto.scheduleId ? new ObjectId(createProductDto.scheduleId) : undefined,
+      features: createProductDto.features,
     })
     const entity = await this.model.findById(result._id)
     if (!entity) {
@@ -85,6 +89,14 @@ export class ProductService {
 
     if (updateProductDto.scheduleId) {
       updates['scheduleId'] = new ObjectId(updateProductDto.scheduleId)
+    }
+
+    if (updateProductDto.features) {
+      updates['features'] = updateProductDto.features
+    }
+
+    if (updateProductDto.order) {
+      updates['order'] = updateProductDto.order
     }
 
     await this.model.updateOne(

@@ -1,5 +1,5 @@
 'use client'
-import { CalendarIcon, CheckIcon, HandThumbUpIcon, UserIcon } from '@heroicons/react/20/solid'
+import { CalendarIcon, CheckIcon, CreditCardIcon, HandThumbUpIcon, UserIcon } from '@heroicons/react/20/solid'
 import { useEffect, useState } from 'react'
 import { get } from '../../utils/api'
 import { useInstructors, usePools } from '../../contexts'
@@ -88,7 +88,8 @@ export default function History() {
       setTransactions(transactions)
 
       const scheduleIds = transactions.filter(t => t.scheduleId).map(t => t.scheduleId)
-      const queryString = scheduleIds.map(id => id).join(',')
+      const uniqueScheduleIds = Array.from(new Set(scheduleIds))
+      const queryString = uniqueScheduleIds.map(id => id).join(',')
       const schedules = await get<Schedule[]>('/schedules/?scheduleIds=' + queryString)
       setSchedules(schedules)
     } catch (err: any) {
@@ -118,7 +119,7 @@ export default function History() {
     fetchTransactions()
     fetchProducts()
     fetchStudents()
-  })
+  }, [])
 
   return (
     <>
@@ -131,40 +132,88 @@ export default function History() {
         <main className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             <ul role="list" className="-mb-8">
-              {timeline.map((event, eventIdx) => (
-                <li key={event.id}>
-                  <div className="relative pb-8">
-                    {eventIdx !== timeline.length - 1 ? (
-                      <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
-                    ) : null}
-                    <div className="relative flex space-x-3">
-                      <div>
-                        <span
-                          className={classNames(
-                            event.iconBackground,
-                            'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white',
-                          )}
-                        >
-                          <event.icon className="h-5 w-5 text-white" aria-hidden="true" />
-                        </span>
-                      </div>
-                      <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+              {transactions.map((transaction, transactionIdx) => {
+                const schedule = schedules.find(s => s.id === transaction.scheduleId)
+                const product = products.find(p => p.id === transaction.productId)
+                const student = students.find(s => s.id === transaction.studentId)
+                const pool = pools.find(p => p.id === schedule?.poolId)
+                const iconBackground =
+                  transaction.transactionType === 'PURCHASE_CREDITS'
+                    ? 'bg-green-500'
+                    : transaction.transactionType === 'CANCEL_REGISTRATION'
+                      ? 'bg-red-400'
+                      : 'bg-blue-500'
+                const Icon =
+                  transaction.transactionType === 'PURCHASE_CREDITS' ? (
+                    <CreditCardIcon className="h-5 w-5 text-white" aria-hidden="true" />
+                  ) : (
+                    <CalendarIcon className="h-5 w-5 text-white" aria-hidden="true" />
+                  )
+
+                const content =
+                  transaction.transactionType === 'PURCHASE_CREDITS'
+                    ? 'Purchased'
+                    : transaction.transactionType == 'CANCEL_REGISTRATION'
+                      ? 'Canceled lesson for'
+                      : 'Scheduled lesson for'
+                const target =
+                  transaction.transactionType === 'PURCHASE_CREDITS' ? `${transaction.credits} credits` : student?.name
+                let details = null
+                if (transaction.transactionType == 'REGISTER' || transaction.transactionType == 'CANCEL_REGISTRATION') {
+                  const startTimeFormatted = schedule
+                    ? new Date(schedule.startDateTime).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                      })
+                    : ''
+                  details = ` with ${instructors.find(i => i.id === schedule?.instructorId)?.name} at ${pool?.name} on ${startTimeFormatted}`
+                }
+
+                const transactionDateFormatted = new Date(transaction.createdAt).toLocaleString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  hour12: true,
+                })
+
+                return (
+                  <li key={transaction.id}>
+                    <div className="relative pb-8">
+                      {transactionIdx !== transactions.length - 1 ? (
+                        <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
+                      ) : null}
+                      <div className="relative flex space-x-3">
                         <div>
-                          <p className="text-sm text-gray-500">
-                            {event.content}{' '}
-                            <a href={event.href} className="font-medium text-gray-900">
-                              {event.target}
-                            </a>
-                          </p>
+                          <span
+                            className={classNames(
+                              iconBackground,
+                              'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white',
+                            )}
+                          >
+                            {Icon}
+                          </span>
                         </div>
-                        <div className="whitespace-nowrap text-right text-sm text-gray-500">
-                          <time dateTime={event.datetime}>{event.date}</time>
+                        <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                          <div>
+                            <p className="text-sm text-gray-500">
+                              {content} <span className="font-medium text-gray-900">{target}</span>
+                            </p>
+                            {details && <p className="text-sm text-gray-500">{details}</p>}
+                          </div>
+                          <div className="whitespace-nowrap text-right text-sm text-gray-500">
+                            <time dateTime={transactionDateFormatted}>{transactionDateFormatted}</time>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                )
+              })}
             </ul>
           </div>
         </main>

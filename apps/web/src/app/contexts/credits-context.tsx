@@ -18,7 +18,7 @@ export const CreditsProvider = ({ children }: { children: React.ReactNode }) => 
   }, [])
 
   const fetchCredits = async () => {
-    const response = await get<CreditBalance>('/users/me/credit-balance')
+    const response = await get<CreditBalance>('/transactions/me/credit-balance')
     const credits = response.balances.find((b: any) => b.creditType === 'private')?.balance ?? 0
     setCredits(credits)
   }

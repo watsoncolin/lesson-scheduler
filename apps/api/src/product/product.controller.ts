@@ -10,7 +10,7 @@ export class ProductController {
   @Get('')
   async findAll() {
     const products = await this.productService.findAll()
-    return products
+    return products.sort((a, b) => a.order ?? 0 - b.order ?? 0)
   }
 
   // TODO add role guard

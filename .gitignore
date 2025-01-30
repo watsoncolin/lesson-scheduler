@@ -33,6 +33,8 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+localhost-key.pem
+localhost.pem
 
 # System Files
 .DS_Store
@@ -48,3 +50,4 @@ out
 .nx/workspace-data
 
 .env
+certificates

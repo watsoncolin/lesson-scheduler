@@ -20,6 +20,7 @@ const mapper = (entity: TransactionEntity): Transaction => {
     credits: entity.credits,
     creditType: entity.creditType,
     transactionType: entity.transactionType,
+    studentId: entity.studentId ? entity.studentId.toString() : undefined,
   }
 }
 
@@ -41,6 +42,7 @@ export class TransactionService {
       creditType: createTransactionDto.creditType,
       transactionType: createTransactionDto.transactionType,
       paymentId: createTransactionDto.paymentId ? new ObjectId(createTransactionDto.paymentId) : undefined,
+      studentId: createTransactionDto.studentId ? new ObjectId(createTransactionDto.studentId) : undefined,
     })
     const entity = await this.model.findById(result._id)
     if (!entity) {

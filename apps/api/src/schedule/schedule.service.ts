@@ -6,6 +6,7 @@ import { ScheduleEntity } from './entities/schedule.entity'
 import { Schedule } from './schedule'
 import { CreateScheduleDto } from './dto/create-schedule.dto'
 import { UpdateScheduleDto } from './dto/update-schedule.dto'
+import { LessonTypesEnum } from 'shared/lesson-types.enum'
 
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
@@ -169,5 +170,13 @@ export class ScheduleService {
 
   async remove(id: string): Promise<void> {
     await this.model.deleteOne({ _id: new ObjectId(id) })
+  }
+
+  async findAllParentTot() {
+    const result = await this.model.find({
+      lessonType: LessonTypesEnum.GROUP,
+    })
+
+    return result.map(mapper)
   }
 }

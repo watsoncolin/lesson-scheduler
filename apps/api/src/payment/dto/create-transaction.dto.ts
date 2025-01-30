@@ -10,4 +10,5 @@ export class CreateTransactionDto {
   credits: number
   amount?: number
   paymentId?: string
+  studentId?: string
 }

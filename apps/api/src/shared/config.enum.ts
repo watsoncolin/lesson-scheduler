@@ -7,4 +7,7 @@ export enum ConfigEnum {
   SendGridApiKey = 'SENDGRID_API_KEY',
   EmailResetPasswordUrl = 'EMAIL_RESET_PASSWORD_URL',
   MongoUri = 'MONGO_URI',
+  PaypalClientId = 'PAYPAL_CLIENT_ID',
+  PaypalClientSecret = 'PAYPAL_CLIENT_SECRET',
+  PaypalEnvironment = 'PAYPAL_ENVIRONMENT',
 }

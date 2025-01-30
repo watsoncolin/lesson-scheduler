@@ -35,6 +35,9 @@ export class TransactionEntity extends Document {
 
   @Prop({ required: false })
   paymentId?: Types.ObjectId
+
+  @Prop({ required: false })
+  studentId?: Types.ObjectId
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(TransactionEntity)

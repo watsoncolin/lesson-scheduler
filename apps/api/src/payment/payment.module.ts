@@ -12,9 +12,14 @@ import { CreateTransactionFromPaymentHandler } from './commands/create-transacti
 import { SiteConfigModule } from 'site-config/site-config.module'
 import { WaitlistModule } from 'waitlist/waitlist.module'
 import { TransactionsController } from './transactions.controller'
+import { PaypalService } from './paypal.service'
+import { ConfigModule } from '@nestjs/config'
+import { UserModule } from 'user/user.module'
 
 @Module({
   imports: [
+    UserModule,
+    ConfigModule,
     ProductModule,
     SiteConfigModule,
     WaitlistModule,
@@ -25,7 +30,7 @@ import { TransactionsController } from './transactions.controller'
     ]),
   ],
   controllers: [PaymentController, TransactionsController],
-  providers: [PaymentService, TransactionService, CreateTransactionFromPaymentHandler, PaymentSaga],
+  providers: [PaymentService, TransactionService, CreateTransactionFromPaymentHandler, PaymentSaga, PaypalService],
   exports: [TransactionService],
 })
 export class PaymentModule {}

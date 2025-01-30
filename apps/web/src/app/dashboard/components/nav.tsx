@@ -10,6 +10,7 @@ import { useUser } from '../../contexts'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Purchase', href: '/dashboard/purchase' },
   { name: 'Schedule', href: '/dashboard/schedule' },
   { name: 'My Students', href: '/dashboard/students' },
   { name: 'History', href: '/dashboard/history' },

@@ -25,9 +25,22 @@ export class ScheduleController {
 
   @Get('')
   async findAll(@Query() query: { scheduleIds?: string }) {
-    const scheduleIds = query.scheduleIds?.split(',')
+    const scheduleIds = query.scheduleIds?.split(',').filter(id => id.length > 0)
+    if (query.scheduleIds && scheduleIds?.length === 0) {
+      return []
+    }
     const schedules = await this.scheduleService.findAll(scheduleIds)
     return schedules
+  }
+
+  @Get('parent-tot')
+  async findAllParentTot() {
+    const schedules = await this.scheduleService.findAllParentTot()
+    return schedules.map(schedule => ({
+      ...schedule,
+      registrations: undefined,
+      spotsAvailable: schedule.classSize - schedule.registrations.length,
+    }))
   }
 
   @Get('me')

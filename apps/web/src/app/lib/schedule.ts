@@ -12,4 +12,6 @@ export interface Schedule {
     createdAt: string
     transactionId: string
   }>
+
+  spotsAvailable?: number
 }

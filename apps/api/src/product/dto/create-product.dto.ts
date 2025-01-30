@@ -2,6 +2,8 @@ import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'class-validat
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
 
 export class CreateProductDto {
+  @IsNumber()
+  order: number
   @IsString()
   name: string
   @IsEnum(LessonTypesEnum)
@@ -17,4 +19,6 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   scheduleId?: string
+  @IsString({ each: true })
+  features: string[]
 }

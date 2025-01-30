@@ -9,10 +9,7 @@ import { CreditBalanceResponseDto } from './dto/credit-balance-response.dto'
 
 @Controller('users')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly transactionService: TransactionService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   // TODO add role guard
   @Post()
@@ -43,17 +40,5 @@ export class UserController {
   @HttpCode(204)
   remove(@Param('id') id: string) {
     return this.userService.remove(id)
-  }
-
-  // TODO add role guard
-  @Get(':id/credit-balance')
-  async getCreditBalance(@Param('id') id: string): Promise<CreditBalanceResponseDto> {
-    const balances = await this.transactionService.readCreditBalances(id)
-    return {
-      balances: balances.map(balance => ({
-        creditType: balance.creditType,
-        balance: balance.balance,
-      })),
-    }
   }
 }

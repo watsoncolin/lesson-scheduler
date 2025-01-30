@@ -89,4 +89,8 @@ export class TransactionService {
         })
     )
   }
+
+  async findByUserId(userId: string): Promise<Transaction[]> {
+    return (await this.model.find({ userId: new ObjectId(userId) })).map(mapper)
+  }
 }

@@ -11,6 +11,7 @@ import { ProductModule } from 'product/product.module'
 import { CreateTransactionFromPaymentHandler } from './commands/create-transaction-from-payment/create-transaction-from-payment.handler'
 import { SiteConfigModule } from 'site-config/site-config.module'
 import { WaitlistModule } from 'waitlist/waitlist.module'
+import { TransactionsController } from './transactions.controller'
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { WaitlistModule } from 'waitlist/waitlist.module'
       { name: TransactionEntity.name, schema: TransactionSchema },
     ]),
   ],
-  controllers: [PaymentController],
+  controllers: [PaymentController, TransactionsController],
   providers: [PaymentService, TransactionService, CreateTransactionFromPaymentHandler, PaymentSaga],
   exports: [TransactionService],
 })

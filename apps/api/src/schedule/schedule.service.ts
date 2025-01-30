@@ -49,8 +49,13 @@ export class ScheduleService {
     return mapper(entity)
   }
 
-  async findAll(): Promise<Schedule[]> {
-    return (await this.model.find()).map(mapper)
+  async findAll(scheduleIds?: string[]): Promise<Schedule[]> {
+    const filter = {}
+    if (scheduleIds) {
+      filter['_id'] = { $in: scheduleIds.map(id => new ObjectId(id)) }
+    }
+    const entities = await this.model.find(filter)
+    return entities.map(mapper)
   }
 
   async findAllByUserId(userId: string): Promise<Schedule[]> {

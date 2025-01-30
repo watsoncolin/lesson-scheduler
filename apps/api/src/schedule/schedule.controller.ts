@@ -24,8 +24,9 @@ export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
   @Get('')
-  async findAll() {
-    const schedules = await this.scheduleService.findAll()
+  async findAll(@Query() query: { scheduleIds?: string }) {
+    const scheduleIds = query.scheduleIds?.split(',')
+    const schedules = await this.scheduleService.findAll(scheduleIds)
     return schedules
   }
 

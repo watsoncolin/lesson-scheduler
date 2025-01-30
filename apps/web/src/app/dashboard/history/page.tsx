@@ -1,5 +1,9 @@
 'use client'
 import { CalendarIcon, CheckIcon, HandThumbUpIcon, UserIcon } from '@heroicons/react/20/solid'
+import { useEffect, useState } from 'react'
+import { get } from '../../utils/api'
+import { useInstructors, usePools } from '../../contexts'
+import { Product, Schedule, Student, Transaction } from '../../lib'
 
 const timeline = [
   {
@@ -68,7 +72,54 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Index() {
+export default function History() {
+  const [transactions, setTransactions] = useState([] as Transaction[])
+  const [products, setProducts] = useState([] as Product[])
+  const [students, setStudents] = useState([] as Student[])
+  const [schedules, setSchedules] = useState([] as Schedule[])
+  const { instructors } = useInstructors()
+  const { pools } = usePools()
+
+  const fetchTransactions = async () => {
+    try {
+      const transactions = await get<Transaction[]>('/transactions/me')
+      // sort by created at descending
+      transactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      setTransactions(transactions)
+
+      const scheduleIds = transactions.filter(t => t.scheduleId).map(t => t.scheduleId)
+      const queryString = scheduleIds.map(id => id).join(',')
+      const schedules = await get<Schedule[]>('/schedules/?scheduleIds=' + queryString)
+      setSchedules(schedules)
+    } catch (err: any) {
+      console.error(err)
+    }
+  }
+
+  const fetchProducts = async () => {
+    try {
+      const products = await get<Product[]>('/products')
+      setProducts(products)
+    } catch (err: any) {
+      console.error(err)
+    }
+  }
+
+  const fetchStudents = async () => {
+    try {
+      const students = await get<Student[]>('/users/me/students')
+      setStudents(students)
+    } catch (err: any) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    fetchTransactions()
+    fetchProducts()
+    fetchStudents()
+  })
+
   return (
     <>
       <div className="py-10">

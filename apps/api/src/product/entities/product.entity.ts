@@ -32,9 +32,6 @@ export class ProductEntity extends Document {
   @Prop({ required: true })
   description: string
 
-  @Prop({ required: false })
-  scheduleId: Types.ObjectId
-
   @Prop({ type: [String], required: false })
   features: string[]
 }

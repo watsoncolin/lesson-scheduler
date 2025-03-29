@@ -6,10 +6,18 @@ import { ScheduleService } from './schedule.service'
 import { RegistrationController } from './registration.controller'
 import { RegistrationService } from './registration.service'
 import { PaymentModule } from 'payment/payment.module'
+import { CreateReservationFromTransactionHandler } from './commands/create-reservation-from-transaction/create-reservation-from-transaction.handler'
+import { ProductModule } from 'product/product.module'
+import { TransactionsSaga } from './transactions.saga'
 
 @Module({
-  imports: [PaymentModule, MongooseModule.forFeature([{ name: ScheduleEntity.name, schema: ScheduleSchema }])],
+  imports: [
+    PaymentModule,
+    ProductModule,
+    MongooseModule.forFeature([{ name: ScheduleEntity.name, schema: ScheduleSchema }]),
+  ],
   controllers: [ScheduleController, RegistrationController],
-  providers: [ScheduleService, RegistrationService],
+  providers: [ScheduleService, RegistrationService, CreateReservationFromTransactionHandler, TransactionsSaga],
+  exports: [RegistrationService],
 })
 export class ScheduleModule {}

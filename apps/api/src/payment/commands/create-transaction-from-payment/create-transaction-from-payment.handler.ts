@@ -7,6 +7,7 @@ import { LessonTypesEnum } from 'shared/lesson-types.enum'
 import { CreditTypesEnum } from 'shared/credit-types.enum'
 import { TransactionTypesEnum } from 'shared/transaction-types.enum'
 import { CreateTransactionFromPaymentCommand } from './create-transaction-from-payment.command'
+import { RegistrationService } from 'schedule/registration.service'
 
 @CommandHandler(CreateTransactionFromPaymentCommand)
 export class CreateTransactionFromPaymentHandler implements ICommandHandler<CreateTransactionFromPaymentCommand> {
@@ -29,6 +30,8 @@ export class CreateTransactionFromPaymentHandler implements ICommandHandler<Crea
       creditType: product.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
       transactionType: TransactionTypesEnum.PurchaseCredits,
       paymentId: command.payment.id,
+      scheduleId: command.payment.scheduleId,
+      studentId: command.payment.studentId,
     }
     await this.transactionService.create(dto)
   }

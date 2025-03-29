@@ -1,11 +1,17 @@
 'use client'
-import { CheckCircleIcon, ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
+import {
+  CheckCircleIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ExclamationTriangleIcon,
+  XMarkIcon,
+} from '@heroicons/react/20/solid'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 
 import { del, get, patch, post } from '../../utils/api'
 import React from 'react'
-import { Product, Schedule } from '../../lib'
+import { Product, Schedule, Student } from '../../lib'
 import { usePools, useInstructors, useUser } from '../../contexts'
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 
@@ -21,9 +27,12 @@ export default function Purchase() {
   const [selectedProductId, setSelectedProductId] = useState('')
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
   const [paymentCompleted, setPaymentCompleted] = useState(false)
   const [canUseApplePay, setCanUseApplePay] = useState(false)
+  const [selectedScheduleId, setSelectedScheduleId] = useState('')
+  const [selectedStudentId, setSelectedStudentId] = useState('')
+  const [students, setStudents] = useState([] as Student[])
 
   const [schedules, setSchedules] = useState([] as Schedule[])
   const { pools } = usePools()
@@ -44,8 +53,21 @@ export default function Purchase() {
     }
   }
 
+  const fetchStudents = async () => {
+    try {
+      const students = await get<Student[]>('/users/me/students')
+      setStudents(students)
+    } catch (err: any) {
+      console.error(err)
+    }
+  }
+
   useEffect(() => {
     fetchSchedules()
+  }, [])
+
+  useEffect(() => {
+    fetchStudents()
   }, [])
 
   const fetchProducts = async () => {
@@ -67,6 +89,7 @@ export default function Purchase() {
   }, [])
 
   const paypalCreateOrder = async (): Promise<void> => {
+    setError('')
     setPaymentCompleted(false)
     try {
       const product = products.find(p => p.id == selectedProductId)
@@ -75,11 +98,23 @@ export default function Purchase() {
         setQuantity(1)
         selectedQuantity = 1
       }
+      if (product?.lessonType == 'group' && !selectedScheduleId) {
+        setError('Please select a session')
+        return Promise.reject('Please select a session')
+      }
+
+      if (product?.lessonType == 'group' && !selectedStudentId) {
+        setError('Please select a student')
+        return Promise.reject('Please select a student')
+      }
+
       const response = await post('/payments/paypal-create-order', {
         productId: selectedProductId,
         userId: user?.id,
         paymentGateway: 'PAYPAL',
         quantity: selectedQuantity,
+        scheduleId: selectedScheduleId || undefined,
+        studentId: selectedStudentId || undefined,
       })
       return response.id
     } catch (err: any) {
@@ -90,7 +125,7 @@ export default function Purchase() {
 
   const paypalCaptureOrder = async (orderId: string): Promise<void> => {
     try {
-      const response = await post('/payments/paypal-capture-order', {
+      await post('/payments/paypal-capture-order', {
         orderId,
       })
     } catch (err: any) {
@@ -220,6 +255,7 @@ export default function Purchase() {
                         id="quantity"
                         name="quantity"
                         className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        onChange={e => setSelectedScheduleId(e.target.value)}
                       >
                         <option>select a session</option>
                         {schedules
@@ -238,6 +274,26 @@ export default function Purchase() {
                               </option>
                             )
                           })}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="px-4">
+                    <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
+                      Student
+                    </label>
+                    <div className="mt-2 grid grid-cols-1">
+                      <select
+                        id="quantity"
+                        name="quantity"
+                        className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        onChange={e => setSelectedStudentId(e.target.value)}
+                      >
+                        <option>select a student</option>
+                        {students.map(student => (
+                          <option key={student.id} value={student.id}>
+                            {student.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -287,7 +343,30 @@ export default function Purchase() {
                   </button>
                 ) : null}
               </div>
-
+              {error ? (
+                <div className="mt-10 border-l-4 border-yellow-400 bg-yellow-50 p-4">
+                  <div className="flex">
+                    <div className="shrink-0">
+                      <ExclamationTriangleIcon aria-hidden="true" className="size-5 text-yellow-400" />
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-yellow-700">{error}</p>
+                    </div>
+                    <div className="ml-auto pl-3">
+                      <div className="-mx-1.5 -my-1.5">
+                        <button
+                          type="button"
+                          className="inline-flex rounded-md bg-yellow-50 p-1.5 text-yellow-500 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-yellow-50"
+                          onClick={() => setError('')}
+                        >
+                          <span className="sr-only">Dismiss</span>
+                          <XMarkIcon aria-hidden="true" className="size-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               {paymentCompleted ? (
                 <div className="mt-10 rounded-md bg-green-50 p-4">
                   <div className="flex">
@@ -302,7 +381,8 @@ export default function Purchase() {
                           <a className="font-medium underline" href="/dashboard/schedule">
                             schedule
                           </a>{' '}
-                          page to reserve your lesson.
+                          page to reserve your lessons. <strong>Parent and Tot</strong> lessons are automatically
+                          scheduled.
                         </p>
                       </div>
                       <div className="mt-4">

@@ -1,9 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException, HttpCode } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode } from '@nestjs/common'
 
 import { CreatePoolDto } from './dto/create-pool.dto'
 import { UpdatePoolDto } from './dto/update-pool.dto'
 import { PoolService } from './pool.service'
-import { ApiResponse } from '@nestjs/swagger'
 
 @Controller('pools')
 export class PoolController {

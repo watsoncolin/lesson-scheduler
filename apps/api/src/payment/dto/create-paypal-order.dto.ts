@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator'
+import { IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class CreatePaypalOrderDto {
   @IsString()
@@ -7,4 +7,10 @@ export class CreatePaypalOrderDto {
   productId: string
   @IsNumber()
   quantity: number
+  @IsString()
+  @IsOptional()
+  scheduleId?: string
+  @IsString()
+  @IsOptional()
+  studentId?: string
 }

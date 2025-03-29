@@ -17,7 +17,6 @@ const mapper = (entity: ProductEntity): Product => {
     active: entity.active,
     amount: entity.amount,
     description: entity.description,
-    scheduleId: entity.scheduleId ? entity.scheduleId.toString() : undefined,
     features: entity.features,
   }
 }
@@ -39,7 +38,6 @@ export class ProductService {
       active: createProductDto.active,
       amount: createProductDto.amount,
       description: createProductDto.description,
-      scheduleId: createProductDto.scheduleId ? new ObjectId(createProductDto.scheduleId) : undefined,
       features: createProductDto.features,
     })
     const entity = await this.model.findById(result._id)

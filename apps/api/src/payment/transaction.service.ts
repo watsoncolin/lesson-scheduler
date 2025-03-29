@@ -7,6 +7,8 @@ import { Transaction } from './transaction'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
 import { CreditBalanceDto } from './dto/credit-balance.dto'
 import { CreditTypesEnum } from 'shared/credit-types.enum'
+import { EventBus } from '@nestjs/cqrs'
+import { TransactionCreatedEvent } from './events'
 
 const mapper = (entity: TransactionEntity): Transaction => {
   return {
@@ -29,6 +31,7 @@ export class TransactionService {
   constructor(
     @InjectModel(TransactionEntity.name)
     private readonly model: Model<TransactionEntity>,
+    private readonly eventBus: EventBus,
   ) {}
   async create(createTransactionDto: CreateTransactionDto): Promise<Transaction> {
     const _id = new ObjectId()
@@ -49,6 +52,7 @@ export class TransactionService {
       throw new Error('Transaction not found')
     }
     const transaction = mapper(entity)
+    this.eventBus.publish(new TransactionCreatedEvent(transaction))
     return transaction
   }
 
@@ -79,17 +83,12 @@ export class TransactionService {
       },
     ])
 
-    return (
-      creditBalances
-        // Filter out group credit type since these aren't tracked and are immediately consumed
-        .filter(creditBalance => creditBalance._id != CreditTypesEnum.GROUP)
-        .map(creditBalance => {
-          return {
-            creditType: creditBalance._id,
-            balance: creditBalance.balance,
-          }
-        })
-    )
+    return creditBalances.map(creditBalance => {
+      return {
+        creditType: creditBalance._id,
+        balance: creditBalance.balance,
+      }
+    })
   }
 
   async findByUserId(userId: string): Promise<Transaction[]> {

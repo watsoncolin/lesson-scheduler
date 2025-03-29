@@ -9,6 +9,5 @@ export class Product {
   active: boolean
   amount: number
   description: string
-  scheduleId?: string
   features: string[]
 }

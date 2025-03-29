@@ -47,6 +47,8 @@ export class PaymentController {
       paymentGateway: PaymentGatewayTypesEnum.PAYPAL,
       paymentGatewayId: order.id,
       status: PaymentStatusTypesEnum.PENDING,
+      scheduleId: createPaypalOrder.scheduleId,
+      studentId: createPaypalOrder.studentId,
     })
     return {
       id: order.id,

@@ -13,10 +13,10 @@ export class PaymentEntity extends Document {
   updatedAt: Date
 
   @Prop({ required: true })
-  userId: string
+  userId: Types.ObjectId
 
   @Prop({ required: true })
-  productId: string
+  productId: Types.ObjectId
 
   @Prop({ required: true })
   amount: number
@@ -29,6 +29,12 @@ export class PaymentEntity extends Document {
 
   @Prop({ required: true, type: String, enum: PaymentStatusTypesEnum })
   status: PaymentStatusTypesEnum
+
+  @Prop({ required: false })
+  scheduleId?: Types.ObjectId
+
+  @Prop({ required: false })
+  studentId?: Types.ObjectId
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(PaymentEntity)

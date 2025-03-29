@@ -10,4 +10,5 @@ export interface User {
   address1: string
   address2: string
   phone: string
+  role: string
 }

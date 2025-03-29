@@ -99,7 +99,8 @@ export default function UpcomingLessons() {
                   <img src={instructor.imageUrl} alt="" className="h-14 w-14 flex-none rounded-full" />
                   <div className="flex-auto">
                     <h3 className="pr-10 font-semibold text-gray-900 xl:pr-0">
-                      {student.name} with {instructor.name}
+                      {student.name} with {instructor.name} (
+                      {schedule.lessonType === 'private' ? 'Private' : 'Parent and Tot'})
                     </h3>
                     <dl className="mt-2 flex flex-col text-gray-500 xl:flex-row">
                       <div className="flex items-start space-x-3">

@@ -5,7 +5,7 @@ import ProfileDropdown from './profile-dropdown'
 import SignOutButton from './sign-out-button'
 import { AvatarComponent } from 'avatar-initials'
 import { usePathname } from 'next/navigation'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useUser } from '../../contexts'
 
 const navigation = [
@@ -30,6 +30,13 @@ function classNames(...classes: string[]) {
 export default function Nav() {
   const { user } = useUser()
   const pathname = usePathname()
+  const isAdmin = user?.role === 'admin'
+
+  if (isAdmin) {
+    if (!navigation.some(item => item.name === 'Admin')) {
+      navigation.push({ name: 'Admin', href: '/dashboard/admin' })
+    }
+  }
 
   return (
     <Disclosure as="nav" className="border-b border-gray-200">

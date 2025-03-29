@@ -18,7 +18,6 @@ const ProtectedPage = ({ children, redirectTo = '/sign-in' }: { children: ReactN
       setLoading(false) // Token exists; show the content
     }
   }, [router, redirectTo])
-
   if (loading) {
     return (
       <div>

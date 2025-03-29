@@ -25,6 +25,8 @@ const mapper = (entity: PaymentEntity): Payment => {
     paymentGatewayId: entity.paymentGatewayId,
     amount: entity.amount,
     status: entity.status,
+    scheduleId: entity.scheduleId ? entity.scheduleId.toString() : undefined,
+    studentId: entity.studentId ? entity.studentId.toString() : undefined,
   }
 }
 
@@ -57,12 +59,14 @@ export class PaymentService {
     const _id = new ObjectId()
     const result = await this.model.create({
       _id,
-      userId: createPaymentDto.userId,
-      productId: createPaymentDto.productId,
+      userId: new ObjectId(createPaymentDto.userId),
+      productId: new ObjectId(createPaymentDto.productId),
       amount: product.amount,
       paymentGateway: createPaymentDto.paymentGateway,
       paymentGatewayId: createPaymentDto.paymentGatewayId,
       status: createPaymentDto.status ?? PaymentStatusTypesEnum.PENDING,
+      scheduleId: createPaymentDto.scheduleId ? new ObjectId(createPaymentDto.scheduleId) : undefined,
+      studentId: createPaymentDto.studentId ? new ObjectId(createPaymentDto.studentId) : undefined,
     })
     const entity = await this.model.findById(result._id)
     if (!entity) {

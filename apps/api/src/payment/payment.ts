@@ -11,4 +11,6 @@ export class Payment {
   paymentGatewayId: string
   amount: number
   status: PaymentStatusTypesEnum
+  scheduleId?: string
+  studentId?: string
 }

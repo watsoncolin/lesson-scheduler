@@ -12,6 +12,7 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  trailingSlash: true,
   distDir: 'dist',
   output: 'export',
   images: { unoptimized: true },

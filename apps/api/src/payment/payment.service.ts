@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
-import { ObjectId } from 'mongodb'
 import { PaymentEntity } from './entities/payment.entity'
 import { Payment } from './payment'
 import { CreatePaymentDto } from './dto/create-payment.dto'
@@ -56,17 +55,17 @@ export class PaymentService {
       }
     }
     const product = await this.productService.findOne(createPaymentDto.productId)
-    const _id = new ObjectId()
+    const _id = new Types.ObjectId()
     const result = await this.model.create({
       _id,
-      userId: new ObjectId(createPaymentDto.userId),
-      productId: new ObjectId(createPaymentDto.productId),
+      userId: new Types.ObjectId(createPaymentDto.userId),
+      productId: new Types.ObjectId(createPaymentDto.productId),
       amount: product.amount,
       paymentGateway: createPaymentDto.paymentGateway,
       paymentGatewayId: createPaymentDto.paymentGatewayId,
       status: createPaymentDto.status ?? PaymentStatusTypesEnum.PENDING,
-      scheduleId: createPaymentDto.scheduleId ? new ObjectId(createPaymentDto.scheduleId) : undefined,
-      studentId: createPaymentDto.studentId ? new ObjectId(createPaymentDto.studentId) : undefined,
+      scheduleId: createPaymentDto.scheduleId ? new Types.ObjectId(createPaymentDto.scheduleId) : undefined,
+      studentId: createPaymentDto.studentId ? new Types.ObjectId(createPaymentDto.studentId) : undefined,
     })
     const entity = await this.model.findById(result._id)
     if (!entity) {
@@ -82,7 +81,7 @@ export class PaymentService {
   }
 
   async findOne(id: string): Promise<Payment> {
-    const entity = await this.model.findById(new ObjectId(id))
+    const entity = await this.model.findById(new Types.ObjectId(id))
     if (!entity) {
       throw new Error('Payment not found')
     }
@@ -109,14 +108,14 @@ export class PaymentService {
     }
 
     await this.model.updateOne(
-      { _id: new ObjectId(updatePaymentDto.id) },
+      { _id: new Types.ObjectId(updatePaymentDto.id) },
       {
         $set: {
           ...updates,
         },
       },
     )
-    const entity = await this.model.findById(new ObjectId(updatePaymentDto.id))
+    const entity = await this.model.findById(new Types.ObjectId(updatePaymentDto.id))
     if (!entity) {
       throw new Error('Payment not found')
     }

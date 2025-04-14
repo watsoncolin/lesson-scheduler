@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { CreateStudentDto } from './dto/create-student.dto'
 import { UpdateStudentDto } from './dto/update-student.dto'
 import { StudentEntity } from './entities/student.entity'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
 import { Student } from './student'
-import { ObjectId } from 'mongodb'
 
 const mapper = (entity: StudentEntity): Student => {
   return {
@@ -26,10 +25,10 @@ export class StudentService {
   ) {}
 
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
-    const _id = new ObjectId()
+    const _id = new Types.ObjectId()
     const result = await this.model.create({
       _id,
-      userId: new ObjectId(createStudentDto.userId),
+      userId: new Types.ObjectId(createStudentDto.userId),
       name: createStudentDto.name,
       birthday: new Date(createStudentDto.birthday),
       ability: createStudentDto.ability,
@@ -47,11 +46,11 @@ export class StudentService {
   }
 
   async findAllByUserId(userId: string): Promise<Student[]> {
-    return (await this.model.find({ userId: new ObjectId(userId), deletedAt: { $exists: false } })).map(mapper)
+    return (await this.model.find({ userId: new Types.ObjectId(userId), deletedAt: { $exists: false } })).map(mapper)
   }
 
   async findOne(id: string): Promise<Student> {
-    const entity = await this.model.findById(new ObjectId(id))
+    const entity = await this.model.findById(new Types.ObjectId(id))
     if (!entity) {
       throw new Error('Student not found')
     }
@@ -74,14 +73,14 @@ export class StudentService {
     }
 
     await this.model.updateOne(
-      { _id: new ObjectId(updateStudentDto.id) },
+      { _id: new Types.ObjectId(updateStudentDto.id) },
       {
         $set: {
           ...updates,
         },
       },
     )
-    const entity = await this.model.findById(new ObjectId(updateStudentDto.id))
+    const entity = await this.model.findById(new Types.ObjectId(updateStudentDto.id))
     if (!entity) {
       throw new Error('Student not found')
     }
@@ -89,6 +88,6 @@ export class StudentService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.model.updateOne({ _id: new ObjectId(id) }, { $set: { deletedAt: new Date() } })
+    await this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { deletedAt: new Date() } })
   }
 }

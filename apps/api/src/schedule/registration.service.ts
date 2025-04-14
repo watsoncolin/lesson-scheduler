@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
-import { ObjectId } from 'mongodb'
 import { ScheduleEntity } from './entities/schedule.entity'
 import { Schedule } from './schedule'
 import { CreateRegistrationDto } from './dto/create-registration.dto'
@@ -38,7 +37,7 @@ export class RegistrationService {
   ) {}
   async create(scheduleId: string, createRegistrationDto: CreateRegistrationDto): Promise<Schedule> {
     // Find schedule
-    const schedule = await this.model.findById(new ObjectId(scheduleId))
+    const schedule = await this.model.findById(new Types.ObjectId(scheduleId))
     if (!schedule) {
       throw new NotFoundException('Schedule not found')
     }
@@ -70,12 +69,12 @@ export class RegistrationService {
 
     // Push registration on model
     await this.model.updateOne(
-      { _id: new ObjectId(scheduleId) },
+      { _id: new Types.ObjectId(scheduleId) },
       {
         $push: {
           registrations: {
-            userId: new ObjectId(createRegistrationDto.userId),
-            studentId: new ObjectId(createRegistrationDto.studentId),
+            userId: new Types.ObjectId(createRegistrationDto.userId),
+            studentId: new Types.ObjectId(createRegistrationDto.studentId),
             createdAt: new Date(),
             transactionId: transaction.id,
           },
@@ -91,7 +90,7 @@ export class RegistrationService {
   }
 
   async findAll(scheduleId: string): Promise<Registration[]> {
-    const schedule = await this.model.findById(new ObjectId(scheduleId))
+    const schedule = await this.model.findById(new Types.ObjectId(scheduleId))
     if (!schedule) {
       throw new NotFoundException('Schedule not found')
     }
@@ -104,7 +103,7 @@ export class RegistrationService {
   }
 
   async remove(scheduleId: string, studentId: string): Promise<void> {
-    const schedule = await this.model.findById(new ObjectId(scheduleId))
+    const schedule = await this.model.findById(new Types.ObjectId(scheduleId))
     if (!schedule) {
       throw new NotFoundException('Schedule not found')
     }
@@ -121,7 +120,7 @@ export class RegistrationService {
     schedule.registrations.splice(registrationIndex, 1)
 
     await this.model.updateOne(
-      { _id: new ObjectId(scheduleId) },
+      { _id: new Types.ObjectId(scheduleId) },
       {
         $set: {
           registrations: schedule.registrations,

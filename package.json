@@ -7,12 +7,14 @@
   },
   "scripts": {
     "build": "nx build",
+    "build:api": "nx build api",
     "build:web:prod": "npx nx build web --prod --skip-nx-cache=true ",
     "start": "npx nx run api:serve --configuration=development --watch=true ",
     "lint": "nx lint",
     "test": "nx test",
     "e2e": "nx e2e",
-    "start:web": "npx nx run web:dev"
+    "start:web": "npx nx run web:dev",
+    "deploy": "gcloud builds submit --config=cloudbuild.yaml"
   },
   "private": true,
   "dependencies": {

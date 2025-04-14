@@ -51,3 +51,7 @@ out
 
 .env
 certificates
+
+.env.production
+.env.staging
+.env.development

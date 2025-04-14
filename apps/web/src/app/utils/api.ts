@@ -2,6 +2,8 @@ import { deleteCookie, getCookie } from './cookies'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
+console.log('API_BASE_URL', API_BASE_URL)
+
 async function request(endpoint: string, method = 'GET', body = null, headers = {}) {
   const authToken = getCookie('authToken')
   const url = `${API_BASE_URL}${endpoint}`

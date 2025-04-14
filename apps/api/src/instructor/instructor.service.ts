@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
-import { ObjectId } from 'mongodb'
 import { InstructorEntity } from './entities/instructor.entity'
 import { Instructor } from './instructor'
 import { CreateInstructorDto } from './dto/create-instructor.dto'
@@ -24,10 +23,10 @@ export class InstructorService {
     private readonly model: Model<InstructorEntity>,
   ) {}
   async create(createInstructorDto: CreateInstructorDto): Promise<Instructor> {
-    const _id = new ObjectId()
+    const _id = new Types.ObjectId()
     const result = await this.model.create({
       _id,
-      userId: createInstructorDto.userId ? new ObjectId(createInstructorDto.userId) : undefined,
+      userId: createInstructorDto.userId ? new Types.ObjectId(createInstructorDto.userId) : undefined,
       name: createInstructorDto.name,
       bio: createInstructorDto.bio,
       imageUrl: createInstructorDto.imageUrl,
@@ -44,11 +43,11 @@ export class InstructorService {
   }
 
   async findAllByUserId(userId: string): Promise<Instructor[]> {
-    return (await this.model.find({ userId: new ObjectId(userId) })).map(mapper)
+    return (await this.model.find({ userId: new Types.ObjectId(userId) })).map(mapper)
   }
 
   async findOne(id: string): Promise<Instructor> {
-    const entity = await this.model.findById(new ObjectId(id))
+    const entity = await this.model.findById(new Types.ObjectId(id))
     if (!entity) {
       throw new Error('Instructor not found')
     }
@@ -68,14 +67,14 @@ export class InstructorService {
     }
 
     await this.model.updateOne(
-      { _id: new ObjectId(updateInstructorDto.id) },
+      { _id: new Types.ObjectId(updateInstructorDto.id) },
       {
         $set: {
           ...updates,
         },
       },
     )
-    const entity = await this.model.findById(new ObjectId(updateInstructorDto.id))
+    const entity = await this.model.findById(new Types.ObjectId(updateInstructorDto.id))
     if (!entity) {
       throw new Error('Instructor not found')
     }
@@ -83,6 +82,6 @@ export class InstructorService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.model.deleteOne({ _id: new ObjectId(id) })
+    await this.model.deleteOne({ _id: new Types.ObjectId(id) })
   }
 }

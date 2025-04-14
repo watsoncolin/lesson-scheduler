@@ -10,4 +10,10 @@ dist/
 .idea/
 coverage/
 tmp/
-temp/ 
+temp/
+.github/
+.next/
+.nx/
+certificates/
+apps/ios/
+*.pem

@@ -1,5 +1,53 @@
 steps:
-  # Build and deploy API to Cloud Run
+  # Install dependencies
+  - name: 'node:20'
+    entrypoint: npm
+    args: ['ci', '--legacy-peer-deps']
+    env:
+      - NODE_OPTIONS=--max_old_space_size=4096
+
+  # Build and export static site
+  - name: 'node:20'
+    entrypoint: npm
+    args: ['run', 'build:web:prod']
+    env:
+      - NEXT_PUBLIC_API_BASE_URL=https://lesson-scheduler-api-472605745668.us-central1.run.app/api
+      - NODE_OPTIONS=--max_old_space_size=4096
+
+  # Configure website settings
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['web', 'set', '-m', 'index.html', '-e', '404.html', 'gs://stansburyswim-web']
+
+  # Make the bucket public (optional if already done)
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['iam', 'ch', 'allUsers:objectViewer', 'gs://stansburyswim-web']
+
+  # Upload the static site
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['-m', 'rsync', '-r', 'apps/web/dist', 'gs://stansburyswim-web']
+
+  # Set cache headers for static files (only if they exist)
+  - name: 'gcr.io/cloud-builders/gsutil'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        for ext in js css woff woff2 png jpg jpeg svg; do
+          files=$(gsutil ls gs://stansburyswim-web/**/*.$ext 2>/dev/null || true)
+          if [ -n "$files" ]; then
+            echo "Setting metadata for *.$ext files..."
+            gsutil -m setmeta -h "Cache-Control:public, max-age=31536000" $files
+          else
+            echo "No .$ext files found. Skipping..."
+          fi
+        done
+
+  # Invalidate Cloud CDN cache
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['compute', 'url-maps', 'invalidate-cdn-cache', 'stansburyswim-lb', '--path', '/*', '--project=stansburyswim']
+
+  #Build and deploy API to Cloud Run
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/lesson-scheduler-api', '.']
 
@@ -19,24 +67,15 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
+      - '--min-instances'
+      - '0'
+      - '--max-instances'
+      - '10'
+      - '--cpu'
+      - '1'
+      - '--memory'
+      - '512Mi'
 
-  # Build and deploy web app to Cloud Storage
-  - name: 'node:lts-alpine3.10'
-    entrypoint: npm
-    args: ['run', 'build', 'web']
-
-  - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['-m', 'cp', '-r', 'dist/apps/web/*', 'gs://$PROJECT_ID-web/']
-
-  - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['-m', 'setmeta', '-h', 'Cache-Control:public, max-age=0, must-revalidate', 'gs://$PROJECT_ID-web/**/*.html']
-
-  - name: 'gcr.io/cloud-builders/gsutil'
-    args:
-      [
-        '-m',
-        'setmeta',
-        '-h',
-        'Cache-Control:public, max-age=31536000',
-        'gs://$PROJECT_ID-web/**/*.{js,css,png,jpg,jpeg,gif,ico,svg,woff,woff2,ttf,eot}',
-      ]
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'

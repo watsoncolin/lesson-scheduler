@@ -1,13 +1,20 @@
-FROM node:lts-alpine3.10 as builder
+FROM node:20-alpine as builder
 ARG NODE_ENV
 ARG BUILD_FLAG
 WORKDIR /app/builder
-COPY . .
-RUN npm i
-RUN npm run build api
 
-FROM node:lts-alpine3.10 as runner
+# Copy package files first for better caching
+COPY package*.json ./
+RUN npm ci
+
+# Copy the rest of the application
+COPY . .
+RUN npm run build:api
+
+FROM node:20-alpine as runner
 WORKDIR /app
+
+# Copy only the necessary files from builder
 COPY --from=builder /app/builder/dist/apps/api ./dist
 COPY --from=builder /app/builder/node_modules ./node_modules
 COPY --from=builder /app/builder/package.json ./package.json

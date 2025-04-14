@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
-import { ObjectId } from 'mongodb'
 import { ProductEntity } from './entities/product.entity'
 import { Product } from './product'
 import { CreateProductDto } from './dto/create-product.dto'
@@ -28,7 +27,7 @@ export class ProductService {
     private readonly model: Model<ProductEntity>,
   ) {}
   async create(createProductDto: CreateProductDto): Promise<Product> {
-    const _id = new ObjectId()
+    const _id = new Types.ObjectId()
     const result = await this.model.create({
       _id,
       order: createProductDto.order,
@@ -52,7 +51,7 @@ export class ProductService {
   }
 
   async findOne(id: string): Promise<Product> {
-    const entity = await this.model.findById(new ObjectId(id))
+    const entity = await this.model.findById(new Types.ObjectId(id))
     if (!entity) {
       throw new Error('Product not found')
     }
@@ -86,7 +85,7 @@ export class ProductService {
     }
 
     if (updateProductDto.scheduleId) {
-      updates['scheduleId'] = new ObjectId(updateProductDto.scheduleId)
+      updates['scheduleId'] = new Types.ObjectId(updateProductDto.scheduleId)
     }
 
     if (updateProductDto.features) {
@@ -98,14 +97,14 @@ export class ProductService {
     }
 
     await this.model.updateOne(
-      { _id: new ObjectId(updateProductDto.id) },
+      { _id: new Types.ObjectId(updateProductDto.id) },
       {
         $set: {
           ...updates,
         },
       },
     )
-    const entity = await this.model.findById(new ObjectId(updateProductDto.id))
+    const entity = await this.model.findById(new Types.ObjectId(updateProductDto.id))
     if (!entity) {
       throw new Error('Product not found')
     }
@@ -113,6 +112,6 @@ export class ProductService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.model.deleteOne({ _id: new ObjectId(id) })
+    await this.model.deleteOne({ _id: new Types.ObjectId(id) })
   }
 }

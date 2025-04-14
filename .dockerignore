@@ -2,3 +2,10 @@ node_modules
 dist
 tmp
 .vscode
+.github
+.next
+.nx
+.gcloudignore
+.gitignore
+.git
+apps/ios/

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
-import { ObjectId } from 'mongodb'
 import { SiteConfig } from './site-config'
 import { SiteConfigEntity } from './entities/site-config.entity'
 
@@ -22,7 +21,7 @@ export class SiteConfigService {
     let entity = await this.model.findOne()
 
     if (entity == null) {
-      const _id = new ObjectId()
+      const _id = new Types.ObjectId()
       await this.model.create({
         _id,
         waitlistEnabled: true,

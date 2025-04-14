@@ -3,9 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { InjectModel } from '@nestjs/mongoose'
 import { UserEntity } from './entities/user.entity'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { User } from './user'
-import { ObjectId } from 'mongodb'
 import { SignUpDto } from '../iam/authentication/dto/sign-up.dto'
 import { UserForAuth } from './user-for-auth'
 
@@ -32,7 +31,7 @@ export class UserService {
     private readonly model: Model<UserEntity>,
   ) {}
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const _id = new ObjectId()
+    const _id = new Types.ObjectId()
     await this.model.create({
       _id,
       email: createUserDto.email,
@@ -65,7 +64,7 @@ export class UserService {
   }
 
   async findOne(id: string): Promise<User> {
-    const entity = await this.model.findById(new ObjectId(id))
+    const entity = await this.model.findById(new Types.ObjectId(id))
     if (!entity) {
       throw new NotFoundException()
     }
@@ -104,7 +103,7 @@ export class UserService {
 
   async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
     await this.model.updateOne(
-      { _id: new ObjectId(userId) },
+      { _id: new Types.ObjectId(userId) },
       {
         $set: {
           email: updateUserDto.email,
@@ -120,7 +119,7 @@ export class UserService {
         },
       },
     )
-    const entity = await this.model.findById(new ObjectId(userId))
+    const entity = await this.model.findById(new Types.ObjectId(userId))
     if (!entity) {
       throw new Error('User not found')
     }
@@ -128,7 +127,7 @@ export class UserService {
   }
 
   async remove(id: string): Promise<void> {
-    this.model.deleteOne({ _id: new ObjectId(id) })
+    this.model.deleteOne({ _id: new Types.ObjectId(id) })
   }
 
   async findOneByGoogleId({ googleId }: { googleId: string }) {
@@ -142,7 +141,7 @@ export class UserService {
     given_name: string | undefined,
     family_name: string | undefined,
   ): Promise<User> {
-    const _id = new ObjectId()
+    const _id = new Types.ObjectId()
     await this.model.create({
       _id,
       email,
@@ -159,7 +158,7 @@ export class UserService {
 
   public async updateResetToken(user: UserForAuth, token: string) {
     return await this.model.updateOne(
-      { _id: new ObjectId(user.id) },
+      { _id: new Types.ObjectId(user.id) },
       {
         $set: {
           resetToken: token,
@@ -170,7 +169,7 @@ export class UserService {
 
   public async updatePassword(user: UserForAuth, password: string) {
     await this.model.updateOne(
-      { _id: new ObjectId(user.id) },
+      { _id: new Types.ObjectId(user.id) },
       {
         $set: {
           password,

@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
-import { ObjectId } from 'mongodb'
 import { WaitlistEntity } from './entities/waitlist.entity'
 import { Waitlist } from './waitlist'
 
@@ -21,10 +20,10 @@ export class WaitlistService {
     private readonly model: Model<WaitlistEntity>,
   ) {}
   async join(userId: string): Promise<Waitlist> {
-    const _id = new ObjectId()
+    const _id = new Types.ObjectId()
     const result = await this.model.create({
       _id,
-      userId: new ObjectId(userId),
+      userId: new Types.ObjectId(userId),
       allowed: false,
     })
     const entity = await this.model.findById(result._id)
@@ -39,7 +38,7 @@ export class WaitlistService {
   }
 
   async findByUserId(userId: string): Promise<Waitlist> {
-    const waitlist = await this.model.findOne({ userId: new ObjectId(userId) })
+    const waitlist = await this.model.findOne({ userId: new Types.ObjectId(userId) })
     if (!waitlist) {
       throw new NotFoundException('Waitlist not found')
     }
@@ -48,7 +47,7 @@ export class WaitlistService {
 
   async allowPurchase(userId: string): Promise<Waitlist> {
     await this.model.updateOne(
-      { userId: new ObjectId(userId) },
+      { userId: new Types.ObjectId(userId) },
       {
         $set: {
           allowed: true,
@@ -56,7 +55,7 @@ export class WaitlistService {
         },
       },
     )
-    const entity = await this.model.findOne({ userId: new ObjectId(userId) })
+    const entity = await this.model.findOne({ userId: new Types.ObjectId(userId) })
     if (!entity) {
       throw new BadRequestException('User is not allowed to purchase. While on waitlist.')
     }
@@ -64,6 +63,6 @@ export class WaitlistService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.model.deleteOne({ _id: new ObjectId(id) })
+    await this.model.deleteOne({ _id: new Types.ObjectId(id) })
   }
 }

@@ -1,11 +1,5 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import { Logger, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
-
 import { AppModule } from './app/app.module'
 
 async function bootstrap() {
@@ -23,7 +17,10 @@ async function bootstrap() {
     origin: ['https://stansburyswim.com', 'http://localhost:3000'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
   const port = process.env.PORT || 3001
   await app.listen(port)

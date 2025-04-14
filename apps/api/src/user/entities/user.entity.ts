@@ -40,6 +40,15 @@ export class UserEntity {
 
   @Prop({ required: false })
   resetToken: string
+
+  @Prop({ default: 0 })
+  failedLoginAttempts: number
+
+  @Prop()
+  lastFailedLogin: Date
+
+  @Prop({ required: false })
+  salt: string
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserEntity)

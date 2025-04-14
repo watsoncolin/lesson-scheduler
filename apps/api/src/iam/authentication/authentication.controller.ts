@@ -17,20 +17,26 @@ export class AuthenticationController {
   ) {}
 
   @Post('register')
-  signUp(@Body() signUpDto: SignUpDto) {
-    return this.authService.signUp(signUpDto)
+  async signUp(@Res({ passthrough: true }) response: Response, @Body() signUpDto: SignUpDto) {
+    const result = await this.authService.signUp(signUpDto)
+    response.cookie('authToken', result.accessToken, {
+      secure: this.configService.get('NODE_ENV') === 'production',
+      httpOnly: true,
+      sameSite: true,
+    })
+    return result
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async signIn(@Res({ passthrough: true }) response: Response, @Body() signInDto: SignInDto) {
-    const user = await this.authService.signIn(signInDto)
-    response.cookie('accessToken', user.accessToken, {
-      secure: true,
+    const result = await this.authService.signIn(signInDto)
+    response.cookie('authToken', result.accessToken, {
+      secure: this.configService.get('NODE_ENV') === 'production',
       httpOnly: true,
       sameSite: true,
     })
-    return user
+    return result
   }
   @HttpCode(HttpStatus.OK) // changed since the default is 201
   @Post('refresh-tokens')

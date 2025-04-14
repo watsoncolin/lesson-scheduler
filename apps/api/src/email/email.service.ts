@@ -28,6 +28,11 @@ export class EmailService {
     })
 
     const user = await this.userService.findOneForAuth(email)
+
+    if (!user) {
+      throw new BadRequestException('User not found')
+    }
+
     await this.userService.updateResetToken(user, token)
 
     const url = `${this.configService.get(ConfigEnum.EmailResetPasswordUrl)}?token=${token}`

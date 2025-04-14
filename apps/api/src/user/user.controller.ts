@@ -4,8 +4,6 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ActiveUser } from '../iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from '../iam/authentication/interfaces/active-user-data.interface'
-import { TransactionService } from 'payment/transaction.service'
-import { CreditBalanceResponseDto } from './dto/credit-balance-response.dto'
 
 @Controller('users')
 export class UserController {

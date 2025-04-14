@@ -1,7 +1,11 @@
 'use client'
 import { GoogleLogin } from '@react-oauth/google'
-import { useState, useEffect, Suspense } from 'react'
+import { Suspense } from 'react'
 import LoginForm from './components/login-form'
+import Link from 'next/link'
+import router from 'next/router'
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export default function Index() {
   return (
@@ -22,9 +26,15 @@ export default function Index() {
           </Suspense>
 
           <div className="mt-10 text-center text-sm text-gray-500">
+            <p className="mb-4">
+              Don't have an account?{' '}
+              <Link href="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                Register here
+              </Link>
+            </p>
             <GoogleLogin
               onSuccess={response => {
-                fetch('http://localhost:3001/api/auth/google', {
+                fetch(`${API_BASE_URL}/auth/google`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -35,7 +45,7 @@ export default function Index() {
                 })
                   .then(response => response.json())
                   .then(data => {
-                    document.location.href = '/dashboard'
+                    router.push('/dashboard')
                   })
               }}
               onError={() => {

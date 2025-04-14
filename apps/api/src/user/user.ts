@@ -13,4 +13,6 @@ export class User {
   phone: string
   privateRegistration: boolean
   role: Role
+  failedLoginAttempts: number
+  lastFailedLogin: Date | null
 }

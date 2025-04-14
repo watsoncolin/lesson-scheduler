@@ -14,14 +14,16 @@ const mapper = (entity: UserEntity): User => {
     email: entity.email,
     firstName: entity.firstName,
     lastName: entity.lastName,
-    address1: entity.address1,
-    address2: entity.address2,
-    city: entity.city,
-    state: entity.state,
-    zip: entity.zip,
-    phone: entity.phone,
-    privateRegistration: entity.privateRegistration,
+    address1: entity.address1 || '',
+    address2: entity.address2 || '',
+    city: entity.city || '',
+    state: entity.state || '',
+    zip: entity.zip || '',
+    phone: entity.phone || '',
+    privateRegistration: entity.privateRegistration || false,
     role: entity.role,
+    failedLoginAttempts: entity.failedLoginAttempts || 0,
+    lastFailedLogin: entity.lastFailedLogin || null,
   }
 }
 @Injectable()
@@ -52,11 +54,24 @@ export class UserService {
     }
     return mapper(entity)
   }
-  async signUp(signUpDto: SignUpDto) {
+  async signUp(signUpDto: SignUpDto, hashedPassword: string, salt: string): Promise<User> {
+    const _id = new Types.ObjectId()
     await this.model.create({
-      email: signUpDto.email,
-      password: signUpDto.password,
+      _id,
+      email: signUpDto.email.toLowerCase(),
+      password: hashedPassword,
+      firstName: signUpDto.firstName,
+      lastName: signUpDto.lastName,
+      phone: signUpDto.phoneNumber,
+      salt,
+      failedLoginAttempts: 0,
+      lastFailedLogin: null,
     })
+    const entity = await this.model.findById(_id)
+    if (!entity) {
+      throw new Error('User not found')
+    }
+    return mapper(entity)
   }
 
   async findAll(): Promise<User[]> {
@@ -71,33 +86,31 @@ export class UserService {
     return mapper(entity)
   }
 
-  async findOneForAuth(email: string): Promise<UserForAuth> {
+  async findOneForAuth(email: string): Promise<UserForAuth | null> {
     const entity = await this.model.findOne(
-      { email },
+      { email: email.toLowerCase() },
       {
         _id: 1,
         email: 1,
         password: 1,
+        salt: 1,
         firstName: 1,
         lastName: 1,
-        address1: 1,
-        address2: 1,
-        city: 1,
-        state: 1,
-        zip: 1,
-        phone: 1,
-        privateRegistration: 1,
+        role: 1,
+        failedLoginAttempts: 1,
+        lastFailedLogin: 1,
       },
     )
     if (!entity) {
-      throw new NotFoundException()
+      return null
     }
     const user = mapper(entity)
 
     return {
       ...user,
-      password: entity.password,
-      resetToken: entity.resetToken,
+      password: entity.password || null,
+      resetToken: entity.resetToken || null,
+      salt: entity.salt,
     }
   }
 
@@ -167,13 +180,38 @@ export class UserService {
     )
   }
 
-  public async updatePassword(user: UserForAuth, password: string) {
+  public async updatePassword(user: UserForAuth, password: string, salt: string) {
     await this.model.updateOne(
       { _id: new Types.ObjectId(user.id) },
       {
         $set: {
           password,
+          salt,
           resetToken: null,
+          failedLoginAttempts: 0,
+          lastFailedLogin: null,
+        },
+      },
+    )
+  }
+
+  async incrementFailedAttempts(userId: string): Promise<void> {
+    await this.model.updateOne(
+      { _id: new Types.ObjectId(userId) },
+      {
+        $inc: { failedLoginAttempts: 1 },
+        $set: { lastFailedLogin: new Date() },
+      },
+    )
+  }
+
+  async resetLoginAttempts(userId: string): Promise<void> {
+    await this.model.updateOne(
+      { _id: new Types.ObjectId(userId) },
+      {
+        $set: {
+          failedLoginAttempts: 0,
+          lastFailedLogin: null,
         },
       },
     )

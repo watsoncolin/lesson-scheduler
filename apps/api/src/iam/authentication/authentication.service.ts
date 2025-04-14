@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
+import { Injectable, NotFoundException, UnauthorizedException, Logger, BadRequestException } from '@nestjs/common'
 import { HashingService } from '../hashing/hashing.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
@@ -9,100 +9,160 @@ import { User } from '../../user/user'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
 import { Role } from '../../user/enums/role.enum'
 import { EmailService } from '../../email/email.service'
+import { randomBytes } from 'crypto'
 
 @Injectable()
 export class AuthenticationService {
+  private readonly logger = new Logger(AuthenticationService.name)
+  private readonly MAX_FAILED_ATTEMPTS = 5
+  private readonly LOCKOUT_TIME = 15 * 60 * 1000 // 15 minutes in milliseconds
+
   constructor(
-    // private readonly logger: Logger,
     private readonly userService: UserService,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
   ) {}
 
-  async signUp(signUpDto: SignUpDto) {
-    const password = await this.hashingService.hash(signUpDto.password)
-    // eslint-disable-next-line no-useless-catch
+  async signUp(
+    signUpDto: SignUpDto,
+  ): Promise<{ accessToken: string; refreshToken: string; id: string; role: Role; name: string }> {
     try {
-      this.userService.signUp({
-        email: signUpDto.email,
-        password,
-      })
+      // Generate a random salt for each user
+      const salt = randomBytes(16).toString('hex')
+      const password = await this.hashingService.hash(signUpDto.password + salt)
+
+      const user = await this.userService.signUp(signUpDto, password, salt)
+      return await this.generateTokens(user)
     } catch (err) {
-      // this.logger.error(err)
-      throw err
+      this.logger.error(`Failed to sign up user: ${err.message}`, err.stack)
+      throw new BadRequestException('Failed to create user account')
     }
   }
 
   async signIn(
     signInDto: SignInDto,
   ): Promise<{ accessToken: string; refreshToken: string; id: string; role: Role; name: string }> {
-    const user = await this.userService.findOneForAuth(signInDto.email)
+    const user = await this.userService.findOneForAuth(signInDto.email.toLowerCase())
     if (!user) {
-      throw new UnauthorizedException('User does not exists')
+      // Use the same error message for security
+      throw new UnauthorizedException('Invalid credentials')
     }
-    if (!user.password) {
-      throw new UnauthorizedException('User does not have a password. User signed up with social login')
+
+    // Check if account is locked
+    if (user.failedLoginAttempts >= this.MAX_FAILED_ATTEMPTS && user.lastFailedLogin) {
+      const lockoutEndTime = new Date(user.lastFailedLogin.getTime() + this.LOCKOUT_TIME)
+      if (new Date() < lockoutEndTime) {
+        throw new UnauthorizedException('Account is temporarily locked. Please try again later.')
+      }
+      // Reset counter if lockout period has passed
+      await this.userService.resetLoginAttempts(user.id)
     }
-    const isEqual = await this.hashingService.compare(signInDto.password, user.password)
+
+    if (!user.password || !user.salt) {
+      throw new UnauthorizedException('Invalid credentials')
+    }
+
+    // Add salt to the provided password before comparing
+    const isEqual = await this.hashingService.compare(signInDto.password + user.salt, user.password)
+
     if (!isEqual) {
-      throw new UnauthorizedException('Password does not match')
+      // Increment failed attempts
+      await this.userService.incrementFailedAttempts(user.id)
+      throw new UnauthorizedException('Invalid credentials')
     }
+
+    // Reset failed attempts on successful login
+    await this.userService.resetLoginAttempts(user.id)
+
     return await this.generateTokens(user)
   }
 
   async generateTokens(
     user: User,
   ): Promise<{ accessToken: string; refreshToken: string; id: string; role: Role; name: string }> {
-    const [accessToken, refreshToken] = await Promise.all([
-      this.signToken<Partial<ActiveUserData>>(user.id, { email: user.email }),
-      this.signToken(user.id),
-    ])
-    return {
-      accessToken,
-      refreshToken,
-      id: user.id,
-      role: user.role,
-      name: user.firstName,
+    try {
+      const [accessToken, refreshToken] = await Promise.all([
+        this.signToken<Partial<ActiveUserData>>(
+          user.id,
+          { email: user.email },
+          '15m', // Short-lived access token
+        ),
+        this.signToken(user.id, {}, '7d'), // Longer-lived refresh token
+      ])
+      return {
+        accessToken,
+        refreshToken,
+        id: user.id,
+        role: user.role,
+        name: user.firstName,
+      }
+    } catch (err) {
+      this.logger.error(`Failed to generate tokens: ${err.message}`, err.stack)
+      throw new UnauthorizedException('Failed to generate authentication tokens')
     }
   }
 
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     try {
       const { sub } = await this.jwtService.verifyAsync<Pick<ActiveUserData, 'sub'>>(refreshTokenDto.refreshToken)
-
       const user = await this.userService.findOne(sub)
+
+      if (!user) {
+        throw new UnauthorizedException('Invalid refresh token')
+      }
+
       return this.generateTokens(user)
     } catch (err) {
-      throw new UnauthorizedException()
+      this.logger.error(`Failed to refresh tokens: ${err.message}`, err.stack)
+      throw new UnauthorizedException('Invalid refresh token')
     }
   }
 
   async forgotPassword(email: string): Promise<void> {
-    const user = await this.userService.findOneForAuth(email)
-    if (!user) {
-      throw new NotFoundException(`No user found for email: ${email}`)
+    try {
+      const user = await this.userService.findOneForAuth(email.toLowerCase())
+      if (!user) {
+        // Don't reveal whether the email exists
+        return
+      }
+      await this.emailService.sendResetPasswordLink(email)
+    } catch (err) {
+      this.logger.error(`Failed to process forgot password: ${err.message}`, err.stack)
+      // Don't reveal whether the email exists
+      return
     }
-    await this.emailService.sendResetPasswordLink(email)
   }
 
   async resetPassword(token: string, password: string): Promise<void> {
-    const email = await this.emailService.decodeConfirmationToken(token)
+    try {
+      const email = await this.emailService.decodeConfirmationToken(token)
+      const user = await this.userService.findOneForAuth(email.toLowerCase())
 
-    const user = await this.userService.findOneForAuth(email)
+      if (!user) {
+        throw new UnauthorizedException('Invalid or expired reset token')
+      }
 
-    if (!user) {
-      throw new NotFoundException(`No user found for email: ${email}`)
+      // Generate new salt and hash password with it
+      const salt = randomBytes(16).toString('hex')
+      const hashedPassword = await this.hashingService.hash(password + salt)
+
+      await this.userService.updatePassword(user, hashedPassword, salt)
+    } catch (err) {
+      this.logger.error(`Failed to reset password: ${err.message}`, err.stack)
+      throw new UnauthorizedException('Invalid or expired reset token')
     }
-
-    const hashedPassword = await this.hashingService.hash(password)
-    await this.userService.updatePassword(user, hashedPassword)
   }
 
-  private async signToken<T>(userId: string, payload?: T) {
-    return await this.jwtService.signAsync({
-      sub: userId,
-      ...payload,
-    })
+  private async signToken<T>(userId: string, payload?: T, expiresIn?: string) {
+    return await this.jwtService.signAsync(
+      {
+        sub: userId,
+        ...payload,
+      },
+      {
+        expiresIn: expiresIn || '15m', // Default to 15 minutes
+      },
+    )
   }
 }

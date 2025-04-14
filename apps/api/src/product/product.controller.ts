@@ -2,12 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundExcepti
 import { ProductService } from './product.service'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
-
+import { Auth } from 'iam/authentication/decorators/auth.decorator'
+import { AuthType } from 'iam/authentication/enums/auth-type.enum'
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get('')
+  @Auth(AuthType.None)
   async findAll() {
     const products = await this.productService.findAll()
     return products.sort((a, b) => a.order ?? 0 - b.order ?? 0)

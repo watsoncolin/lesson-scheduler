@@ -3,12 +3,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, H
 import { CreatePoolDto } from './dto/create-pool.dto'
 import { UpdatePoolDto } from './dto/update-pool.dto'
 import { PoolService } from './pool.service'
+import { Auth } from 'iam/authentication/decorators/auth.decorator'
+import { AuthType } from 'iam/authentication/enums/auth-type.enum'
 
 @Controller('pools')
 export class PoolController {
   constructor(private readonly poolService: PoolService) {}
 
   @Get('')
+  @Auth(AuthType.None)
   async findAll() {
     const pools = await this.poolService.findAll()
     return pools

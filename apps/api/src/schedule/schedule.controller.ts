@@ -18,6 +18,8 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto'
 import { SearchScheduleDto } from './dto/search-schedule.dto'
 import { ActiveUser } from 'iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from 'iam/authentication/interfaces/active-user-data.interface'
+import { Auth } from 'iam/authentication/decorators/auth.decorator'
+import { AuthType } from 'iam/authentication/enums/auth-type.enum'
 
 @Controller('schedules')
 export class ScheduleController {
@@ -34,6 +36,7 @@ export class ScheduleController {
   }
 
   @Get('parent-tot')
+  @Auth(AuthType.None)
   async findAllParentTot() {
     const schedules = await this.scheduleService.findAllParentTot()
     return schedules.map(schedule => ({

@@ -1,15 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundException, HttpCode } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode } from '@nestjs/common'
 
 import { InstructorService } from './instructor.service'
 import { CreateInstructorDto } from './dto/create-instructor.dto'
 import { UpdateInstructorDto } from './dto/update-instructor.dto'
-import { ApiResponse } from '@nestjs/swagger'
+import { Auth } from 'iam/authentication/decorators/auth.decorator'
+import { AuthType } from 'iam/authentication/enums/auth-type.enum'
 
 @Controller('instructors')
 export class InstructorController {
   constructor(private readonly instructorService: InstructorService) {}
 
   @Get('')
+  @Auth(AuthType.None)
   async findAll() {
     const instructors = await this.instructorService.findAll()
     return instructors

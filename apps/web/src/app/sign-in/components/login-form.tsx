@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
-import { setCookie } from '../../utils/cookies'
+import { setAuthToken } from '../../utils/api'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -23,6 +23,7 @@ export default function LoginForm() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       })
 
@@ -31,8 +32,7 @@ export default function LoginForm() {
       }
 
       const data = await response.json()
-
-      setCookie('authToken', data.accessToken, 7) // Sets the token to expire in 7 days
+      setAuthToken(data.accessToken)
 
       // Redirect to a protected page after successful login
       router.push('/dashboard')

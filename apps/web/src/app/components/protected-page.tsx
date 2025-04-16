@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { useEffect } from 'react'
-import { getCookie } from '../utils/cookies'
+import { getAuthToken } from '../utils/api'
 
 import { ReactNode } from 'react'
 import Nav from '../dashboard/components/nav'
@@ -11,7 +11,7 @@ const ProtectedPage = ({ children, redirectTo = '/sign-in' }: { children: ReactN
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = getCookie('authToken')
+    const token = getAuthToken()
     if (!token) {
       router.push(redirectTo) // Redirect to the specified page
     } else {

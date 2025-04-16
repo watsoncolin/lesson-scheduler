@@ -56,6 +56,12 @@ export class UserService {
   }
   async signUp(signUpDto: SignUpDto, hashedPassword: string, salt: string): Promise<User> {
     const _id = new Types.ObjectId()
+
+    const user = await this.model.findOne({ email: signUpDto.email.toLowerCase() })
+    if (user) {
+      throw new Error('User already exists')
+    }
+
     await this.model.create({
       _id,
       email: signUpDto.email.toLowerCase(),

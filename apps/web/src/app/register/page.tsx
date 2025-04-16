@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { setCookie } from '../utils/cookies'
+import { setAuthToken } from '../utils/api'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -72,7 +72,7 @@ export default function Register() {
       }
 
       const data = await response.json()
-      setCookie('authToken', data.accessToken, 7)
+      setAuthToken(data.accessToken)
 
       // Redirect to dashboard after successful registration
       router.push('/dashboard')

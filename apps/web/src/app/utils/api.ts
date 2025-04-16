@@ -2,8 +2,23 @@ import { deleteCookie, getCookie } from './cookies'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
+// Get token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('authToken')
+}
+
+// Set token in localStorage
+const setAuthToken = (token: string) => {
+  localStorage.setItem('authToken', token)
+}
+
+// Remove token from localStorage
+const removeAuthToken = () => {
+  localStorage.removeItem('authToken')
+}
+
 async function request(endpoint: string, method = 'GET', body = null, headers = {}) {
-  const authToken = getCookie('authToken')
+  const authToken = getAuthToken()
   const url = `${API_BASE_URL}${endpoint}`
   const options = {
     method,
@@ -22,7 +37,7 @@ async function request(endpoint: string, method = 'GET', body = null, headers = 
 
     if (!response.ok) {
       if (response.status == 401) {
-        deleteCookie('authToken')
+        removeAuthToken()
       }
       const error = await response.json()
       throw new Error(error.message || 'Something went wrong')
@@ -46,3 +61,6 @@ export const post = (endpoint: string, body: any, headers = {}) => request(endpo
 export const put = (endpoint: string, body: any, headers = {}) => request(endpoint, 'PUT', body, headers)
 export const patch = (endpoint: string, body: any, headers = {}) => request(endpoint, 'PATCH', body, headers)
 export const del = (endpoint: string, headers = {}) => request(endpoint, 'DELETE', null, headers)
+
+// Export auth token functions
+export { getAuthToken, setAuthToken, removeAuthToken }

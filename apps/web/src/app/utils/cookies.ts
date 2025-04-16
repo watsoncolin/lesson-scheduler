@@ -1,9 +1,8 @@
 // Cookie settings
-const COOKIE_SETTINGS = process.env.NODE_ENV === 'development' ? 'path=/;' : 'path=/; HttpOnly; Secure'
+const COOKIE_SETTINGS = process.env.NODE_ENV === 'development' ? 'path=/;' : 'path=/; Secure'
 
 // Set a cookie
 export const setCookie = (name: string, value: string, days = 7) => {
-  console.log('setting cookie', name, value)
   const date = new Date()
   date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000) // Expiration time in days
   const expires = `expires=${date.toUTCString()}`

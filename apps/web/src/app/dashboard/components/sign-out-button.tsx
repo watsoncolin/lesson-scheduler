@@ -1,4 +1,5 @@
-import { deleteCookie } from '../../utils/cookies'
+import { removeAuthToken } from '../../utils/api'
+
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
@@ -6,7 +7,7 @@ function classNames(...classes: string[]) {
 export default function SignOutButton() {
   async function handleSignOut(event: React.FormEvent) {
     event.preventDefault()
-    deleteCookie('authToken')
+    removeAuthToken()
 
     window.location.href = '/'
   }

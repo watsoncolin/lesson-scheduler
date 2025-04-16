@@ -13,8 +13,14 @@ async function bootstrap() {
       forbidNonWhitelisted: false, // Throws an error if non-whitelisted properties are found
     }),
   )
+
+  // Get allowed origins from environment variable or use defaults
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['https://stansburyswim.com', 'https://www.stansburyswim.com', 'http://localhost:3000']
+
   app.enableCors({
-    origin: ['https://stansburyswim.com', 'http://localhost:3000'],
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],

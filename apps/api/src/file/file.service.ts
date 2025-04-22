@@ -23,6 +23,7 @@ export class FileService {
 
     const blobStream = blob.createWriteStream({
       resumable: false,
+      validation: false, // Disable validation to avoid stream destruction issues
       metadata: {
         contentType: file.mimetype,
       },
@@ -34,18 +35,22 @@ export class FileService {
         reject(error)
       })
 
-      blobStream.on('finish', async () => {
-        try {
-          // Get the public URL
-          const publicUrl = `https://storage.googleapis.com/${this.bucket}/${fileName}`
-          resolve(publicUrl)
-        } catch (error) {
-          console.error('Error making file public:', error)
-          reject(error)
-        }
+      blobStream.on('finish', () => {
+        const publicUrl = `https://storage.googleapis.com/${this.bucket}/${fileName}`
+        resolve(publicUrl)
       })
 
-      blobStream.end(file.buffer)
+      blobStream.on('close', () => {
+        console.log('Stream closed')
+      })
+
+      try {
+        console.log('Buffer size:', file.buffer?.length)
+        blobStream.end(file.buffer)
+      } catch (err) {
+        console.error('Error calling .end() on blobStream:', err)
+        reject(err)
+      }
     })
   }
 }

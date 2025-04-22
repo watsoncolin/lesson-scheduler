@@ -4,6 +4,7 @@
   "sourceRoot": "apps/api/src",
   "projectType": "application",
   "tags": [],
+  "dependencies": ["shared"],
   "targets": {
     "serve": {
       "executor": "@nx/js:node",

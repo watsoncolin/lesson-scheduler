@@ -34,7 +34,7 @@ export default function Nav() {
 
   if (isAdmin) {
     if (!navigation.some(item => item.name === 'Admin')) {
-      navigation.push({ name: 'Admin', href: '/dashboard/admin' })
+      navigation.push({ name: 'Admin', href: '/admin' })
     }
   }
 

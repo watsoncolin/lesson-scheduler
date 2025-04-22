@@ -1,4 +1,4 @@
-import { Role } from './enums/role.enum'
+import { Role } from '@lesson-scheduler/shared'
 
 export class User {
   id: string

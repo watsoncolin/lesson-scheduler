@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
-import { Role } from '../enums/role.enum'
+import { Role } from '@lesson-scheduler/shared'
 
 @Schema({
   collection: 'users',

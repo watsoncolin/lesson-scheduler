@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt'
 import { ActiveUserData } from './interfaces/active-user-data.interface'
 import { User } from '../../user/user'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
-import { Role } from '../../user/enums/role.enum'
+import { Role } from '@lesson-scheduler/shared'
 import { EmailService } from '../../email/email.service'
 import { randomBytes } from 'crypto'
 

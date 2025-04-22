@@ -4,7 +4,13 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 // Get token from cookies
 const getAuthToken = () => {
-  return getCookie(AUTH_COOKIE_NAME)
+  const user = getUser()
+  if (user) {
+    return JSON.parse(user).accessToken
+  }
+
+  const cookie = getCookie(AUTH_COOKIE_NAME)
+  return cookie
 }
 
 // Set token in cookies
@@ -25,6 +31,10 @@ const getUser = () => {
   return localStorage.getItem('user')
 }
 
+const removeUser = () => {
+  localStorage.removeItem('user')
+}
+
 // Logout function
 const logout = async () => {
   try {
@@ -33,6 +43,7 @@ const logout = async () => {
       credentials: 'include',
     })
     removeAuthToken()
+    removeUser()
   } catch (error) {
     console.error('Logout failed:', error)
     // Still remove the token locally even if the server request fails
@@ -44,6 +55,7 @@ async function request(endpoint: string, method = 'GET', body = null, headers = 
   const url = `${API_BASE_URL}${endpoint}`
   // Add auth token to headers if it exists
   const authToken = getAuthToken()
+  console.log('authToken', authToken)
   if (authToken) {
     headers['Authorization'] = `Bearer ${authToken}`
   }
@@ -62,6 +74,7 @@ async function request(endpoint: string, method = 'GET', body = null, headers = 
 
     if (!response.ok) {
       if (response.status == 401) {
+        removeUser()
         removeAuthToken()
       }
       const error = await response.json()

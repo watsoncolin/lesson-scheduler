@@ -86,7 +86,7 @@ export class AuthenticationService {
         this.signToken<Partial<ActiveUserData>>(
           user.id,
           { email: user.email },
-          '15m', // Short-lived access token
+          '14d', // Changed from 15m to 7d
         ),
         this.signToken(user.id, {}, '7d'), // Longer-lived refresh token
       ])

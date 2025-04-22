@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import LoginForm from './components/login-form'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { setUser } from '@/app/utils/api'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -48,6 +49,7 @@ export default function Index() {
                 })
                   .then(response => response.json())
                   .then(data => {
+                    setUser(data)
                     router.push('/dashboard')
                   })
               }}

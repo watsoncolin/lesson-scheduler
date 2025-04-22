@@ -24,21 +24,11 @@ import {
 import { SidebarLayout } from '@components/sidebar-layout'
 import {
   ArrowRightStartOnRectangleIcon,
-  ChevronUpIcon,
   LightBulbIcon,
   ShieldCheckIcon,
   UserCircleIcon,
 } from '@heroicons/react/16/solid'
-import {
-  CalendarDaysIcon,
-  Cog6ToothIcon,
-  HomeIcon,
-  QuestionMarkCircleIcon,
-  SparklesIcon,
-  Square2StackIcon,
-  TicketIcon,
-  UserGroupIcon,
-} from '@heroicons/react/20/solid'
+import { CalendarDaysIcon, HomeIcon, TicketIcon, UserGroupIcon } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
 
 function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom end' }) {

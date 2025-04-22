@@ -2,7 +2,7 @@
 
 import { useUser } from '../contexts/user-context'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Role } from '@lesson-scheduler/shared'
 
 interface AdminProtectedPageProps {
@@ -12,20 +12,27 @@ interface AdminProtectedPageProps {
 export function AdminProtectedPage({ children }: AdminProtectedPageProps) {
   const { user } = useUser()
   const router = useRouter()
+  const [loading, setLoading] = useState(true)
 
+  console.log('user', user)
   useEffect(() => {
     if (!user) {
-      router.push('/sign-in')
       return
     }
+    setLoading(false)
 
     if (user.role !== Role.Admin && user.role !== Role.Instructor) {
       router.push('/')
     }
   }, [user, router])
 
-  if (!user || (user.role !== Role.Admin && user.role !== Role.Instructor)) {
-    return null
+  if (loading) {
+    console.log('loading')
+    return <div>Loading...</div>
+  }
+
+  if (user?.role !== Role.Admin && user?.role !== Role.Instructor) {
+    return <div>Not authorized</div>
   }
 
   return <>{children}</>

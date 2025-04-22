@@ -1,0 +1,54 @@
+'use client'
+
+import { Divider } from '@components/divider'
+import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@components/dropdown'
+import { Link } from '@components/link'
+import { EllipsisVerticalIcon } from '@heroicons/react/16/solid'
+import { Instructor } from '@lib/instructor'
+
+interface InstructorsListProps {
+  instructors: Instructor[]
+}
+
+export default function InstructorsList({ instructors }: InstructorsListProps) {
+  return (
+    <ul className="mt-10">
+      {instructors.length > 0 ? (
+        instructors.map((instructor, index) => (
+          <li key={instructor.id}>
+            <Divider soft={index > 0} />
+            <div className="flex items-center justify-between">
+              <div className="flex gap-6 py-6">
+                <div className="w-32 shrink-0">
+                  <Link href={`/admin/instructors/${instructor.id}`} aria-hidden="true">
+                    <img className="rounded-lg shadow-sm" src={instructor.imageUrl} alt="" />
+                  </Link>
+                </div>
+                <div className="space-y-1.5">
+                  <div className="text-base/6 font-semibold">
+                    <Link href={`/admin/instructors/${instructor.id}`}>{instructor.name}</Link>
+                  </div>
+                  <div className="text-xs/6 text-zinc-500">{instructor.bio}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <Dropdown>
+                  <DropdownButton plain aria-label="More options">
+                    <EllipsisVerticalIcon />
+                  </DropdownButton>
+                  <DropdownMenu anchor="bottom end">
+                    <DropdownItem href={`/admin/instructors/${instructor.id}`}>View</DropdownItem>
+                    <DropdownItem>Edit</DropdownItem>
+                    <DropdownItem>Delete</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+            </div>
+          </li>
+        ))
+      ) : (
+        <li className="py-6 text-center text-sm text-zinc-500">No instructors found.</li>
+      )}
+    </ul>
+  )
+}

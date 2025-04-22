@@ -58,7 +58,7 @@ export class StudentService {
   }
 
   async update(updateStudentDto: UpdateStudentDto): Promise<Student> {
-    const updates = {}
+    const updates: any = {}
     if (updateStudentDto.name) {
       updates['name'] = updateStudentDto.name
     }

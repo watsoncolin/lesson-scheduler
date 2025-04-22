@@ -15,7 +15,7 @@ export class AccessTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
-    const token = this.extractTokenFromHeader(request)
+    const token = this.extractTokenFromRequest(request)
     if (!token) {
       throw new UnauthorizedException()
     }
@@ -28,7 +28,14 @@ export class AccessTokenGuard implements CanActivate {
     return true
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
+  private extractTokenFromRequest(request: Request): string | undefined {
+    // First try to get token from cookies
+    const cookieToken = request.cookies?.authToken
+    if (cookieToken) {
+      return cookieToken
+    }
+
+    // If not in cookies, try to get from Authorization header
     const [_, token] = request.headers.authorization?.split(' ') ?? []
     return token
   }

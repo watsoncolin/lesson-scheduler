@@ -17,7 +17,7 @@ export class UserController {
 
   // TODO add role guard
   @Get()
-  findAll(@ActiveUser() user) {
+  findAll(@ActiveUser() user: ActiveUserData) {
     return this.userService.findAll()
   }
 

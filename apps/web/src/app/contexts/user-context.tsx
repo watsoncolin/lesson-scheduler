@@ -1,9 +1,8 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react'
-import { getCookie } from '../utils/cookies'
 import { get } from '../utils/api'
 import { ReactNode } from 'react'
-import { User } from '../lib/user'
+import { User } from '@lib/user'
 
 export interface UserContextType {
   user: User | null

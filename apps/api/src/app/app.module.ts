@@ -15,6 +15,7 @@ import { ScheduleModule } from 'schedule/schedule.module'
 import { PaymentModule } from 'payment/payment.module'
 import { SiteConfigModule } from 'site-config/site-config.module'
 import { WaitlistModule } from 'waitlist/waitlist.module'
+import { FileModule } from '../file/file.module'
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { WaitlistModule } from 'waitlist/waitlist.module'
     PaymentModule,
     SiteConfigModule,
     WaitlistModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

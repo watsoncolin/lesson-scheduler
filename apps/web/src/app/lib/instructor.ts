@@ -1,7 +1,7 @@
 export interface Instructor {
   id: string
+  userId?: string
   name: string
-  role: string
   bio: string
   imageUrl: string
 }

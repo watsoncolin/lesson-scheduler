@@ -57,7 +57,7 @@ export class EmailService {
         return payload.email
       }
       throw new BadRequestException()
-    } catch (error) {
+    } catch (error: any) {
       if (error?.name === 'TokenExpiredError') {
         throw new BadRequestException('Email confirmation token expired')
       }

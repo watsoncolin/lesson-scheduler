@@ -34,7 +34,7 @@ export class AuthenticationService {
 
       const user = await this.userService.signUp(signUpDto, password, salt)
       return await this.generateTokens(user)
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error(`Failed to sign up user: ${err.message}`, err.stack)
       throw new BadRequestException('Failed to create user account')
     }
@@ -97,7 +97,7 @@ export class AuthenticationService {
         role: user.role,
         name: user.firstName,
       }
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error(`Failed to generate tokens: ${err.message}`, err.stack)
       throw new UnauthorizedException('Failed to generate authentication tokens')
     }
@@ -113,7 +113,7 @@ export class AuthenticationService {
       }
 
       return this.generateTokens(user)
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error(`Failed to refresh tokens: ${err.message}`, err.stack)
       throw new UnauthorizedException('Invalid refresh token')
     }
@@ -127,7 +127,7 @@ export class AuthenticationService {
         return
       }
       await this.emailService.sendResetPasswordLink(email)
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error(`Failed to process forgot password: ${err.message}`, err.stack)
       // Don't reveal whether the email exists
       return
@@ -148,7 +148,7 @@ export class AuthenticationService {
       const hashedPassword = await this.hashingService.hash(password + salt)
 
       await this.userService.updatePassword(user, hashedPassword, salt)
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error(`Failed to reset password: ${err.message}`, err.stack)
       throw new UnauthorizedException('Invalid or expired reset token')
     }

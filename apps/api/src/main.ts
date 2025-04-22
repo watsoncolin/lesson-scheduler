@@ -1,6 +1,7 @@
 import { Logger, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app/app.module'
+import cookieParser from 'cookie-parser'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -13,6 +14,9 @@ async function bootstrap() {
       forbidNonWhitelisted: false, // Throws an error if non-whitelisted properties are found
     }),
   )
+
+  // Enable cookie-parser middleware
+  app.use(cookieParser())
 
   // Get allowed origins from environment variable or use defaults
   const allowedOrigins = process.env.ALLOWED_ORIGINS

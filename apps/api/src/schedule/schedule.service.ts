@@ -50,7 +50,7 @@ export class ScheduleService {
   }
 
   async findAll(scheduleIds?: string[]): Promise<Schedule[]> {
-    const filter = {}
+    const filter: any = {}
     if (scheduleIds) {
       filter['_id'] = { $in: scheduleIds.map(id => new Types.ObjectId(id)) }
     }
@@ -126,7 +126,7 @@ export class ScheduleService {
   }
 
   async update(updateScheduleDto: UpdateScheduleDto): Promise<Schedule> {
-    const updates = {}
+    const updates: any = {}
 
     if (updateScheduleDto.poolId) {
       updates['poolId'] = new Types.ObjectId(updateScheduleDto.poolId)

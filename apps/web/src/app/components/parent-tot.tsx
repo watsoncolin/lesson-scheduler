@@ -1,9 +1,8 @@
 'use client'
 import React, { use, useEffect, useState } from 'react'
-import { useInstructors, usePools } from '../contexts'
-import { Schedule } from '../lib'
-import pools from './pools'
-import { get } from '../utils/api'
+import { useInstructors, usePools } from '@contexts/index'
+import { Schedule } from '@lib/schedule'
+import { get } from '@utils/api'
 
 export default function ParentTot() {
   const [schedules, setSchedules] = useState([] as Schedule[])

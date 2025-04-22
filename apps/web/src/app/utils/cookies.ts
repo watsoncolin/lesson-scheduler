@@ -1,6 +1,8 @@
 // Cookie settings
 const COOKIE_SETTINGS = process.env.NODE_ENV === 'development' ? 'path=/;' : 'path=/; Secure'
 
+export const AUTH_COOKIE_NAME = 'authToken'
+
 // Set a cookie
 export const setCookie = (name: string, value: string, days = 7) => {
   const date = new Date()
@@ -12,6 +14,7 @@ export const setCookie = (name: string, value: string, days = 7) => {
 
 // Get a cookie by name
 export const getCookie = (name: string) => {
+  console.log('document.cookie', document.cookie)
   const value = `; ${document.cookie}` // Get all cookies
   const parts = value.split(`; ${name}=`) // Split by the cookie name
   if (parts.length === 2) {

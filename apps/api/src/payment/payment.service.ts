@@ -97,7 +97,7 @@ export class PaymentService {
   }
 
   async update(updatePaymentDto: UpdatePaymentDto): Promise<Payment> {
-    const updates = {}
+    const updates: any = {}
 
     if (updatePaymentDto.status) {
       updates['status'] = updatePaymentDto.status

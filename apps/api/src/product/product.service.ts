@@ -59,7 +59,7 @@ export class ProductService {
   }
 
   async update(updateProductDto: UpdateProductDto): Promise<Product> {
-    const updates = {}
+    const updates: any = {}
     if (updateProductDto.name) {
       updates['name'] = updateProductDto.name
     }

@@ -38,10 +38,25 @@ export class AuthenticationController {
     })
     return result
   }
+
   @HttpCode(HttpStatus.OK) // changed since the default is 201
   @Post('refresh-tokens')
-  refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
-    return this.authService.refreshTokens(refreshTokenDto)
+  async refreshTokens(@Res({ passthrough: true }) response: Response, @Body() refreshTokenDto: RefreshTokenDto) {
+    const result = await this.authService.refreshTokens(refreshTokenDto)
+    response.cookie('authToken', result.accessToken, {
+      secure: this.configService.get('NODE_ENV') === 'production',
+      httpOnly: true,
+      sameSite: true,
+    })
+    return result
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(@Res({ passthrough: true }) response: Response) {
+    // Clear the auth cookie
+    response.clearCookie('authToken')
+    return { message: 'Logged out successfully' }
   }
 
   @Post('forgot-password')

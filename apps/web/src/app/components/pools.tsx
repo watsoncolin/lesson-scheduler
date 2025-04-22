@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { usePools } from '../contexts'
+import { usePools } from '@contexts/pools-context'
 
 export default function Pools() {
   const { pools } = usePools()

@@ -15,8 +15,17 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@lesson-scheduler/shared-types": ["libs/shared/src/index.ts"]
-    }
+      "@lesson-scheduler/shared": ["libs/shared/src/index.ts"]
+    },
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": false,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "types": ["node", "Multer"]
   },
   "exclude": ["node_modules", "tmp"]
 }

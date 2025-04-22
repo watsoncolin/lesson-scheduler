@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { useInstructors } from '../contexts'
+import { useInstructors } from '@contexts/instructor-context'
 
 export default function Instructors() {
   const { instructors } = useInstructors()
@@ -23,7 +23,6 @@ export default function Instructors() {
               <li key={instructor.id}>
                 <img className="aspect-[3/2] w-full rounded-2xl object-cover" src={instructor.imageUrl} alt="" />
                 <h3 className="mt-6 text-lg font-semibold leading-8 text-gray-900">{instructor.name}</h3>
-                <p className="text-base leading-7 text-gray-600">{instructor.role}</p>
                 <p className="mt-4 text-base leading-7 text-gray-600">{instructor.bio}</p>
               </li>
             ))

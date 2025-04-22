@@ -20,15 +20,12 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   // Fetch user details when the app initializes
   useEffect(() => {
-    console.log('fetching user details')
     fetchUserDetails()
   }, [])
 
   const fetchUserDetails = async () => {
     try {
-      console.log('fetching user details')
       const response = await get<User>('/users/me', {})
-      console.log('response', response)
       if (response) {
         setUser(response)
       } else {

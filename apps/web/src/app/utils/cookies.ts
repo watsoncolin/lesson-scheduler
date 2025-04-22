@@ -14,7 +14,6 @@ export const setCookie = (name: string, value: string, days = 7) => {
 
 // Get a cookie by name
 export const getCookie = (name: string) => {
-  console.log('document.cookie', document.cookie)
   const value = `; ${document.cookie}` // Get all cookies
   const parts = value.split(`; ${name}=`) // Split by the cookie name
   if (parts.length === 2) {

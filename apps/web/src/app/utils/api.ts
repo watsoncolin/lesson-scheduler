@@ -24,15 +24,22 @@ const removeAuthToken = () => {
 }
 
 const setUser = (user: any) => {
-  localStorage.setItem('user', JSON.stringify(user))
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('user', JSON.stringify(user))
+  }
 }
 
 const getUser = () => {
-  return localStorage.getItem('user')
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('user')
+  }
+  return null
 }
 
 const removeUser = () => {
-  localStorage.removeItem('user')
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('user')
+  }
 }
 
 // Logout function
@@ -46,7 +53,6 @@ const logout = async () => {
     removeUser()
   } catch (error) {
     console.error('Logout failed:', error)
-    // Still remove the token locally even if the server request fails
     removeAuthToken()
   }
 }
@@ -64,7 +70,7 @@ async function request(endpoint: string, method = 'GET', body = null, headers = 
       'Content-Type': 'application/json',
       ...headers,
     },
-    credentials: 'include' as RequestCredentials, // Include cookies in the request
+    credentials: 'include' as RequestCredentials,
     body: body ? JSON.stringify(body) : null,
   }
 
@@ -81,13 +87,13 @@ async function request(endpoint: string, method = 'GET', body = null, headers = 
     }
 
     if (response.status === 204) {
-      return null // For no content responses (e.g., DELETE)
+      return null
     }
 
     return await response.json()
   } catch (error) {
     console.error('API Request Failed:', error)
-    throw error // Re-throw error to handle it where the API call is made
+    throw error
   }
 }
 
@@ -121,9 +127,11 @@ async function uploadFile(endpoint: string, file: File) {
   }
 }
 
+// Client-side API functions
 export const get = async <T>(endpoint: string, headers = {}): Promise<T> => {
   return request(endpoint, 'GET', null, headers)
 }
+
 export const post = (endpoint: string, body: any, headers = {}) => request(endpoint, 'POST', body, headers)
 export const put = (endpoint: string, body: any, headers = {}) => request(endpoint, 'PUT', body, headers)
 export const patch = (endpoint: string, body: any, headers = {}) => request(endpoint, 'PATCH', body, headers)

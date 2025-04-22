@@ -154,6 +154,26 @@ export class UserService {
     return entity && mapper(entity)
   }
 
+  async addGoogleId(
+    email: string,
+    googleId: string,
+    given_name: string | undefined,
+    family_name: string | undefined,
+  ): Promise<User> {
+    await this.model.updateOne(
+      { email },
+      {
+        $set: {
+          googleId,
+        },
+      },
+    )
+    const entity = await this.model.findOne({ email })
+    if (!entity) {
+      throw new Error('User not found')
+    }
+    return mapper(entity)
+  }
   async saveGoogleId(
     email: string,
     googleId: string,

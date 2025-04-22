@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <GoogleOAuthProvider clientId="299167588978-echgmfh32bhms6fe5sojp4ioh04jtlj3.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="472605745668-v91hb1ig5c6sv9unnc8r0ddi7h0vvnu8.apps.googleusercontent.com">
       <html className="h-full bg-white">
         <head>
           <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />

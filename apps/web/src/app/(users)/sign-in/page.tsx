@@ -3,12 +3,13 @@ import { GoogleLogin } from '@react-oauth/google'
 import { Suspense } from 'react'
 import LoginForm from './components/login-form'
 import Link from 'next/link'
-import router from 'next/router'
-import { setAuthToken } from '../../utils/api'
+import { useRouter } from 'next/navigation'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export default function Index() {
+  const router = useRouter()
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-36 lg:px-8">

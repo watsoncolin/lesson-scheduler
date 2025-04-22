@@ -12,7 +12,7 @@ interface ClientWrapperProps {
 
 export function ClientWrapper({ children }: ClientWrapperProps) {
   return (
-    <GoogleOAuthProvider clientId="299167588978-echgmfh32bhms6fe5sojp4ioh04jtlj3.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="472605745668-v91hb1ig5c6sv9unnc8r0ddi7h0vvnu8.apps.googleusercontent.com">
       <UserProvider>
         <AdminProtectedPage>
           <AppProvider>

@@ -33,16 +33,35 @@ export class GoogleAuthenticationService implements OnModuleInit {
         throw new UnauthorizedException()
       }
       const { email, sub: googleId, given_name, family_name } = payload
-      const user = await this.userService.findOneByGoogleId({ googleId })
+
+      // First check if user exists with this Google ID
+      let user = await this.userService.findOneByGoogleId({ googleId })
+
       if (user) {
         return this.authService.generateTokens(user)
-      } else {
-        if (!email) {
-          throw new UnauthorizedException()
-        }
-        const newUser = await this.userService.saveGoogleId(email, googleId, given_name, family_name)
-        return this.authService.generateTokens(newUser)
       }
+
+      if (!email) {
+        throw new UnauthorizedException()
+      }
+
+      // Check if user exists with this email
+      const existingUser = await this.userService.findOneForAuth(email)
+
+      if (existingUser) {
+        // Merge accounts by adding Google ID to existing account
+        user = await this.userService.addGoogleId(
+          email,
+          googleId,
+          given_name || existingUser.firstName,
+          family_name || existingUser.lastName,
+        )
+      } else {
+        // Create new user with Google ID
+        user = await this.userService.saveGoogleId(email, googleId, given_name, family_name)
+      }
+
+      return this.authService.generateTokens(user)
     } catch (err) {
       throw new UnauthorizedException()
     }

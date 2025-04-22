@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import { Student } from '../../lib/student'
+import { Student } from '@lib/student'
 
 interface StudentModalProps {
   student: Student | null

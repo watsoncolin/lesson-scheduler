@@ -95,7 +95,7 @@ export default function History() {
                       : 'Scheduled lesson for'
                 const target =
                   transaction.transactionType === 'PURCHASE_CREDITS' ? `${transaction.credits} credits` : student?.name
-                let details = null
+                let details: string | null = null
                 if (transaction.transactionType == 'REGISTER' || transaction.transactionType == 'CANCEL_REGISTRATION') {
                   const startTimeFormatted = schedule
                     ? new Date(schedule.startDateTime).toLocaleString('en-US', {

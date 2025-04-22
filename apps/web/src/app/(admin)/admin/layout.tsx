@@ -1,7 +1,8 @@
 import '@/app/global.css'
 import type { Metadata } from 'next'
 import AdminLayout from './admin-layout'
-
+import { UserProvider } from '@/app/contexts/user-context'
+import { AdminProtectedPage } from '@/app/components/admin-protected-page'
 export const metadata: Metadata = {
   title: {
     template: '%s - Stansbury Swim',
@@ -21,7 +22,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
       </head>
       <body>
-        <AdminLayout>{children}</AdminLayout>
+        <UserProvider>
+          <AdminProtectedPage>
+            <AdminLayout>{children}</AdminLayout>
+          </AdminProtectedPage>
+        </UserProvider>
       </body>
     </html>
   )

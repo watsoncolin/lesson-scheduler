@@ -106,6 +106,10 @@ async function uploadFile(endpoint: string, file: File) {
   const options = {
     method: 'POST',
     credentials: 'include' as RequestCredentials,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
     body: formData,
   }
 

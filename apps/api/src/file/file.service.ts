@@ -29,19 +29,22 @@ export class FileService {
     })
 
     return new Promise((resolve, reject) => {
-      blobStream.on('error', error => reject(error))
+      blobStream.on('error', error => {
+        console.error('Stream error:', error)
+        reject(error)
+      })
+
       blobStream.on('finish', async () => {
         try {
-          // Instead of making the file public, generate a signed URL that expires in 1 year
-          const [url] = await blob.getSignedUrl({
-            action: 'read',
-            expires: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year from now
-          })
-          resolve(url)
+          // Get the public URL
+          const publicUrl = `https://storage.googleapis.com/${this.bucket}/${fileName}`
+          resolve(publicUrl)
         } catch (error) {
+          console.error('Error making file public:', error)
           reject(error)
         }
       })
+
       blobStream.end(file.buffer)
     })
   }

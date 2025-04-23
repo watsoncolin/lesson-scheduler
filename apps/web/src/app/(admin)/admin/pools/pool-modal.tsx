@@ -5,27 +5,27 @@ import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
 import { Textarea } from '@components/textarea'
-import { post, put, upload } from '@utils/api'
+import { post, upload } from '@utils/api'
 import Image from 'next/image'
-import { Instructor } from '@lib/instructor'
-interface InstructorModalProps {
+
+interface PoolModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
-  instructor?: Instructor
 }
 
-export default function InstructorModal({ isOpen, onClose, onSuccess, instructor }: InstructorModalProps) {
+export default function PoolModal({ isOpen, onClose, onSuccess }: PoolModalProps) {
   const [formData, setFormData] = useState({
-    name: instructor?.name || '',
-    bio: instructor?.bio || '',
-    imageUrl: instructor?.imageUrl || '',
+    name: '',
+    address: '',
+    details: '',
+    imageUrl: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(instructor?.imageUrl || null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,16 +33,12 @@ export default function InstructorModal({ isOpen, onClose, onSuccess, instructor
     setError(null)
 
     try {
-      if (instructor) {
-        await put(`/instructors/${instructor.id}`, formData)
-      } else {
-        await post('/instructors', formData)
-      }
+      await post('/pools', formData)
       onSuccess()
       onClose()
     } catch (err) {
-      setError('Failed to create instructor. Please try again.')
-      console.error('Error creating instructor:', err)
+      setError('Failed to create pool. Please try again.')
+      console.error('Error creating pool:', err)
     } finally {
       setIsSubmitting(false)
     }
@@ -77,15 +73,13 @@ export default function InstructorModal({ isOpen, onClose, onSuccess, instructor
     }
   }
 
-  const buttonText = instructor ? 'Edit Instructor' : 'Create Instructor'
-
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <div className="relative z-50">
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <DialogPanel className="mx-auto max-w-4xl w-full rounded-lg bg-white p-8 dark:bg-zinc-900">
-            <DialogTitle className="text-lg font-medium">{buttonText}</DialogTitle>
+            <DialogTitle className="text-lg font-medium">Add New Pool</DialogTitle>
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -99,21 +93,37 @@ export default function InstructorModal({ isOpen, onClose, onSuccess, instructor
                   onChange={handleChange}
                   required
                   className="mt-1"
-                  placeholder="Instructor Name"
+                  placeholder="Pool Name"
                 />
               </div>
               <div>
-                <label htmlFor="bio" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Bio
+                <label htmlFor="address" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Address
+                </label>
+                <Input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                  className="mt-1"
+                  placeholder="Pool Address"
+                />
+              </div>
+              <div>
+                <label htmlFor="details" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Details
                 </label>
                 <Textarea
-                  id="bio"
-                  name="bio"
-                  value={formData.bio}
+                  id="details"
+                  name="details"
+                  value={formData.details}
                   onChange={handleChange}
                   required
                   className="mt-1"
                   rows={4}
+                  placeholder="Pool details and description"
                 />
               </div>
               <div>
@@ -150,8 +160,8 @@ export default function InstructorModal({ isOpen, onClose, onSuccess, instructor
                 <Button onClick={onClose} plain>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting || isUploading || !previewUrl}>
-                  {isSubmitting ? 'Saving...' : buttonText}
+                <Button type="submit" disabled={isSubmitting || isUploading}>
+                  {isSubmitting ? 'Creating...' : 'Create Pool'}
                 </Button>
               </div>
             </form>

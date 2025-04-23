@@ -5,12 +5,39 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@component
 import { Link } from '@components/link'
 import { EllipsisVerticalIcon } from '@heroicons/react/16/solid'
 import { Instructor } from '@lib/instructor'
+import { useState } from 'react'
+import DeleteInstructorModal from './delete-instructor-modal'
+import InstructorModal from './instructor-modal'
 
 interface InstructorsListProps {
   instructors: Instructor[]
 }
 
 export default function InstructorsList({ instructors }: InstructorsListProps) {
+  const [editingInstructor, setEditingInstructor] = useState<Instructor | undefined>(undefined)
+  const [deletingInstructor, setDeletingInstructor] = useState<Instructor | undefined>(undefined)
+
+  const handleEditClick = (instructor: Instructor) => {
+    setEditingInstructor(instructor)
+  }
+
+  const handleDeleteClick = (instructor: Instructor) => {
+    setDeletingInstructor(instructor)
+  }
+
+  const handleCloseEditModal = () => {
+    setEditingInstructor(undefined)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setDeletingInstructor(undefined)
+  }
+
+  const handleSuccess = () => {
+    // Refresh the page to get the updated data
+    window.location.reload()
+  }
+
   return (
     <ul className="mt-10">
       {instructors.length > 0 ? (
@@ -37,9 +64,8 @@ export default function InstructorsList({ instructors }: InstructorsListProps) {
                     <EllipsisVerticalIcon />
                   </DropdownButton>
                   <DropdownMenu anchor="bottom end">
-                    <DropdownItem href={`/admin/instructors/${instructor.id}`}>View</DropdownItem>
-                    <DropdownItem>Edit</DropdownItem>
-                    <DropdownItem>Delete</DropdownItem>
+                    <DropdownItem onClick={() => handleEditClick(instructor)}>Edit</DropdownItem>
+                    <DropdownItem onClick={() => handleDeleteClick(instructor)}>Delete</DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </div>
@@ -48,6 +74,22 @@ export default function InstructorsList({ instructors }: InstructorsListProps) {
         ))
       ) : (
         <li className="py-6 text-center text-sm text-zinc-500">No instructors found.</li>
+      )}
+      {editingInstructor && (
+        <InstructorModal
+          isOpen={!!editingInstructor}
+          onClose={handleCloseEditModal}
+          onSuccess={handleSuccess}
+          instructor={editingInstructor}
+        />
+      )}
+      {deletingInstructor && (
+        <DeleteInstructorModal
+          isOpen={!!deletingInstructor}
+          onClose={handleCloseDeleteModal}
+          onSuccess={handleSuccess}
+          instructor={deletingInstructor}
+        />
       )}
     </ul>
   )

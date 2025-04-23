@@ -1,7 +1,7 @@
 export interface Pool {
   id: string
   name: string
-  role: string
-  bio: string
+  address: string
+  details: string
   imageUrl: string
 }

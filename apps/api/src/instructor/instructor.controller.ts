@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode, Put } from '@nestjs/common'
 
 import { InstructorService } from './instructor.service'
 import { CreateInstructorDto } from './dto/create-instructor.dto'
@@ -33,7 +33,7 @@ export class InstructorController {
   }
 
   // TODO add role guard
-  @Patch(':id')
+  @Put(':id')
   async update(@Param('id') id: string, @Body() updateInstructorDto: UpdateInstructorDto) {
     const instructor = await this.instructorService.findOne(id)
     if (!instructor) {

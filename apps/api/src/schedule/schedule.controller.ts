@@ -54,6 +54,7 @@ export class ScheduleController {
     return schedules
   }
 
+  @Roles(Role.Admin)
   @Get('search')
   async search(@Query() query: SearchScheduleDto) {
     const { pools, instructors, daysOfWeek, date } = query
@@ -115,9 +116,9 @@ export class ScheduleController {
     })
   }
 
-  // TODO add role guard
   @Delete(':id')
   @HttpCode(204)
+  @Roles(Role.Admin)
   async remove(@Param('id') id: string) {
     const schedule = await this.scheduleService.findOne(id)
     if (!schedule) {

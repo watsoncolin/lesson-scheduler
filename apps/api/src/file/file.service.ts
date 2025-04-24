@@ -21,35 +21,47 @@ export class FileService {
     const bucket = this.storage.bucket(this.bucket)
     const blob = bucket.file(fileName)
 
-    const blobStream = blob.createWriteStream({
-      resumable: false,
-      validation: false, // Disable validation to avoid stream destruction issues
-      metadata: {
-        contentType: file.mimetype,
-      },
-    })
-
     return new Promise((resolve, reject) => {
+      const blobStream = blob.createWriteStream({
+        resumable: false,
+        validation: true,
+        metadata: {
+          contentType: file.mimetype,
+        },
+      })
+
+      // Handle stream errors
       blobStream.on('error', error => {
         console.error('Stream error:', error)
+        if (!blobStream.destroyed) {
+          blobStream.destroy()
+        }
         reject(error)
       })
 
+      // Handle successful upload
       blobStream.on('finish', () => {
         const publicUrl = `https://storage.googleapis.com/${this.bucket}/${fileName}`
         resolve(publicUrl)
       })
 
+      // Handle stream close
       blobStream.on('close', () => {
         console.log('Stream closed')
       })
 
-      try {
-        console.log('Buffer size:', file.buffer?.length)
-        blobStream.end(file.buffer)
-      } catch (err) {
-        console.error('Error calling .end() on blobStream:', err)
-        reject(err)
+      // Write the file buffer to the stream
+      if (file.buffer) {
+        const writeSuccess = blobStream.write(file.buffer)
+        if (!writeSuccess) {
+          blobStream.once('drain', () => {
+            blobStream.end()
+          })
+        } else {
+          blobStream.end()
+        }
+      } else {
+        reject(new Error('File buffer is empty'))
       }
     })
   }

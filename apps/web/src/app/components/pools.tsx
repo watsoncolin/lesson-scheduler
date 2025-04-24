@@ -23,8 +23,8 @@ export default function Pools() {
             <li key={pool.name}>
               <img className="aspect-[3/2] w-full rounded-2xl object-cover" src={pool.imageUrl} alt="" />
               <h3 className="mt-6 text-lg font-semibold leading-8 text-gray-900">{pool.name}</h3>
-              <p className="text-base leading-7 text-gray-600">{pool.role}</p>
-              <p className="mt-4 text-base leading-7 text-gray-600">{pool.bio}</p>
+              <p className="text-base leading-7 text-gray-600">{pool.address}</p>
+              <p className="mt-4 text-base leading-7 text-gray-600">{pool.details}</p>
             </li>
           ))}
         </ul>

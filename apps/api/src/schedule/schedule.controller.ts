@@ -20,12 +20,14 @@ import { ActiveUser } from 'iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from 'iam/authentication/interfaces/active-user-data.interface'
 import { Auth } from 'iam/authentication/decorators/auth.decorator'
 import { AuthType } from 'iam/authentication/enums/auth-type.enum'
-
+import { Role } from '@lesson-scheduler/shared'
+import { Roles } from 'iam/authentication/decorators/roles.decorator'
 @Controller('schedules')
 export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
   @Get('')
+  @Roles(Role.Admin)
   async findAll(@Query() query: { scheduleIds?: string }) {
     const scheduleIds = query.scheduleIds?.split(',').filter(id => id.length > 0)
     if (query.scheduleIds && scheduleIds?.length === 0) {

@@ -99,9 +99,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <TicketIcon />
                 <SidebarLabel>Pools</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="/admin/scheduling" current={pathname.startsWith('/admin/scheduling')}>
+              <SidebarItem href="/admin/schedules" current={pathname.startsWith('/admin/schedules')}>
                 <CalendarDaysIcon />
-                <SidebarLabel>Scheduling</SidebarLabel>
+                <SidebarLabel>Schedules</SidebarLabel>
               </SidebarItem>
               <SidebarItem href="/admin/users" current={pathname.startsWith('/admin/users')}>
                 <UserCircleIcon />

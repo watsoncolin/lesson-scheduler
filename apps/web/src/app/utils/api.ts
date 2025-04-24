@@ -61,6 +61,7 @@ async function request(endpoint: string, method = 'GET', body = null, headers = 
   const url = `${API_BASE_URL}${endpoint}`
   // Add auth token to headers if it exists
   const authToken = getAuthToken()
+  console.log('authToken', authToken)
   if (authToken) {
     headers['Authorization'] = `Bearer ${authToken}`
   }

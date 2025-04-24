@@ -51,6 +51,7 @@
     "class-validator": "^0.14.1",
     "clsx": "^2.1.1",
     "cookie-parser": "^1.4.7",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.7.4",
     "google-auth-library": "^9.15.0",
     "mongoose": "^8.9.5",

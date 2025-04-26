@@ -29,7 +29,7 @@ export class FileService {
 
     await blob.save(file.buffer, {
       resumable: false,
-      validation: false,
+      validation: 'crc32c',
       metadata: {
         contentType: file.mimetype,
       },

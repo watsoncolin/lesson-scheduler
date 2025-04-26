@@ -1,4 +1,4 @@
-FROM node:20-alpine as builder
+FROM node:20 as builder
 
 # Pass environment variables
 ARG NODE_ENV
@@ -22,7 +22,7 @@ COPY . .
 RUN npm run build:api
 
 # --- Final lightweight image ---
-FROM node:20-alpine as runner
+FROM node:20 as runner
 
 WORKDIR /app
 

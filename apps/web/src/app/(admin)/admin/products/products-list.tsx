@@ -1,91 +1,105 @@
+'use client'
+
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { ProductModalWrapper } from './product-modal-wrapper'
-import { DeleteProductModal } from './delete-product-modal'
-import { api } from '@/lib/api'
+import { Divider } from '@components/divider'
+import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@components/dropdown'
+import { Link } from '@components/link'
+import { EllipsisVerticalIcon } from '@heroicons/react/16/solid'
 import { IProduct } from '@lesson-scheduler/shared'
+import ProductModal from './product-modal'
+import DeleteProductModal from './delete-product-modal'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/table'
+import { Button } from '@components/button'
+import ProductEditModal from './product-edit-modal'
+interface ProductsListProps {
+  products: IProduct[]
+}
 
-export function ProductsList() {
-  const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+export default function ProductsList({ products }: ProductsListProps) {
+  const [editingProduct, setEditingProduct] = useState<IProduct | null>(null)
+  const [deletingProduct, setDeletingProduct] = useState<IProduct | null>(null)
 
-  const { data: products, isLoading } = useQuery({
-    queryKey: ['products'],
-    queryFn: async () => {
-      const response = await api.get('/products')
-      return response.data
-    },
-  })
+  const handleEditClick = (product: IProduct, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setEditingProduct(product)
+  }
 
-  if (isLoading) {
-    return <div>Loading...</div>
+  const handleDeleteClick = (product: IProduct, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDeletingProduct(product)
+  }
+
+  const handleCloseEditModal = () => {
+    setEditingProduct(null)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setDeletingProduct(null)
+  }
+
+  const handleSuccess = () => {
+    window.location.reload()
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b">
-              <th className="px-4 py-2 text-left">Order</th>
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-left">Type</th>
-              <th className="px-4 py-2 text-left">Credits</th>
-              <th className="px-4 py-2 text-left">Amount</th>
-              <th className="px-4 py-2 text-left">Status</th>
-              <th className="px-4 py-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products?.map((product: IProduct) => (
-              <tr key={product.id} className="border-b">
-                <td className="px-4 py-2">{product.order}</td>
-                <td className="px-4 py-2">{product.name}</td>
-                <td className="px-4 py-2">{product.lessonType}</td>
-                <td className="px-4 py-2">{product.credits}</td>
-                <td className="px-4 py-2">${product.amount}</td>
-                <td className="px-4 py-2">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      product.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {product.active ? 'Active' : 'Inactive'}
-                  </span>
-                </td>
-                <td className="px-4 py-2">
-                  <div className="flex gap-2">
-                    <button onClick={() => setSelectedProduct(product)} className="text-blue-600 hover:text-blue-800">
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedProduct(product)
-                        setIsDeleteModalOpen(true)
-                      }}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+    <>
+      <ul className="mt-10">
+        <Table className="mt-8 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
+          <TableHead>
+            <TableRow>
+              <TableHeader>Name</TableHeader>
+              <TableHeader>Amount</TableHeader>
+              <TableHeader>Description</TableHeader>
+              <TableHeader>Credits</TableHeader>
+              <TableHeader>Lesson type</TableHeader>
+              <TableHeader>Actions</TableHeader>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {products
+              .sort((a, b) => a.order - b.order)
+              .map(product => (
+                <TableRow key={product.id} title={`Product #${product.id}`}>
+                  <TableCell>{product.name}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span>{product.amount}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>{product.description}</TableCell>
+                  <TableCell>{product.credits}</TableCell>
+                  <TableCell>{product.lessonType}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button onClick={e => handleEditClick(product, e)}>Edit</Button>
+                      <Button onClick={e => handleDeleteClick(product, e)}>Delete</Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </ul>
 
-      {selectedProduct && <ProductModalWrapper product={selectedProduct} onClose={() => setSelectedProduct(null)} />}
-
-      {isDeleteModalOpen && selectedProduct && (
-        <DeleteProductModal
-          product={selectedProduct}
-          onClose={() => {
-            setIsDeleteModalOpen(false)
-            setSelectedProduct(null)
-          }}
+      {editingProduct && (
+        <ProductEditModal
+          isOpen={!!editingProduct}
+          onClose={handleCloseEditModal}
+          onSuccess={handleSuccess}
+          product={editingProduct}
         />
       )}
-    </div>
+
+      {deletingProduct && (
+        <DeleteProductModal
+          isOpen={!!deletingProduct}
+          onClose={handleCloseDeleteModal}
+          onSuccess={handleSuccess}
+          product={deletingProduct}
+        />
+      )}
+    </>
   )
 }

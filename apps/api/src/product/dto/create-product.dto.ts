@@ -1,8 +1,10 @@
 import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
+import { Transform } from 'class-transformer'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
 
 export class CreateProductDto {
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   order: number
   @IsString()
   name: string
@@ -11,8 +13,10 @@ export class CreateProductDto {
   @IsString()
   description: string
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   credits: number
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   amount: number
   @IsBoolean()
   active: boolean = false

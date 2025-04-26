@@ -1,11 +1,10 @@
-import { Button } from '@components/button'
 import { Heading } from '@components/heading'
 import { Input, InputGroup } from '@components/input'
 import { Select } from '@components/select'
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid'
 import type { Metadata } from 'next'
 import { get } from '@utils/api'
-import { Pool } from '@lib/pool'
+import { IPool } from '@lesson-scheduler/shared'
 import PoolsList from './pools-list'
 import PoolModalWrapper from './pool-modal-wrapper'
 
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
 // Server-side data fetching
 async function getPools() {
   try {
-    const pools = await get<Pool[]>('/pools')
+    const pools = await get<IPool[]>('/pools')
     return pools
   } catch (error) {
     console.error('Failed to fetch pools:', error)

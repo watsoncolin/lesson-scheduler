@@ -47,7 +47,7 @@ export class ProductService {
   }
 
   async findAll(): Promise<Product[]> {
-    return (await this.model.find()).map(mapper)
+    return (await this.model.find({ active: true })).map(mapper)
   }
 
   async findOne(id: string): Promise<Product> {
@@ -112,6 +112,6 @@ export class ProductService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.model.deleteOne({ _id: new Types.ObjectId(id) })
+    await this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { active: false } })
   }
 }

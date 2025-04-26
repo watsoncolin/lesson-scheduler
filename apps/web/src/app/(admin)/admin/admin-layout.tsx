@@ -28,7 +28,7 @@ import {
   ShieldCheckIcon,
   UserCircleIcon,
 } from '@heroicons/react/16/solid'
-import { CalendarDaysIcon, HomeIcon, TicketIcon, UserGroupIcon } from '@heroicons/react/20/solid'
+import { CalendarDaysIcon, HomeIcon, ShoppingCartIcon, TicketIcon, UserGroupIcon } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
 
 function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom end' }) {
@@ -106,6 +106,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <SidebarItem href="/admin/users" current={pathname.startsWith('/admin/users')}>
                 <UserCircleIcon />
                 <SidebarLabel>Users</SidebarLabel>
+              </SidebarItem>
+              <SidebarItem href="/admin/products" current={pathname.startsWith('/admin/products')}>
+                <ShoppingCartIcon />
+                <SidebarLabel>Products</SidebarLabel>
               </SidebarItem>
             </SidebarSection>
 

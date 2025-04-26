@@ -1,46 +1,62 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+'use client'
+
+import { useState } from 'react'
+import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
+import { Button } from '@components/button'
 import { IProduct } from '@lesson-scheduler/shared'
+import { del } from '@utils/api'
 
 interface DeleteProductModalProps {
-  product: IProduct
+  isOpen: boolean
   onClose: () => void
+  onSuccess: () => void
+  product: IProduct
 }
 
-export function DeleteProductModal({ product, onClose }: DeleteProductModalProps) {
-  const queryClient = useQueryClient()
+export default function DeleteProductModal({ isOpen, onClose, onSuccess, product }: DeleteProductModalProps) {
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.delete(`/products/${product.id}`)
-      return response.data
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] })
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    setError(null)
+
+    try {
+      await del(`/products/${product.id}`)
+      onSuccess()
       onClose()
-    },
-  })
+    } catch (err) {
+      setError('Failed to delete product. Please try again.')
+      console.error('Error deleting product:', err)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Delete Product</h2>
-        <p className="mb-4">
-          Are you sure you want to delete the product "{product.name}"? This action cannot be undone.
-        </p>
-        <div className="flex justify-end gap-4">
-          <button onClick={onClose} className="px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200">
-            Cancel
-          </button>
-          <button
-            onClick={() => deleteMutation.mutate()}
-            className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
-            disabled={deleteMutation.isPending}
-          >
-            Delete
-          </button>
+    <Dialog open={isOpen} onClose={onClose}>
+      <div className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <DialogPanel className="mx-auto max-w-sm w-full rounded-lg bg-white p-8 dark:bg-zinc-900">
+            <DialogTitle className="text-lg font-medium">Delete Product</DialogTitle>
+            <div className="mt-4 space-y-4">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                Are you sure you want to delete this product? This action cannot be undone.
+              </p>
+              {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+              <div className="mt-6 flex justify-end gap-x-3">
+                <Button onClick={onClose} plain>
+                  Cancel
+                </Button>
+                <Button onClick={handleDelete} disabled={isDeleting} className="bg-red-600 hover:bg-red-700">
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </Button>
+              </div>
+            </div>
+          </DialogPanel>
         </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

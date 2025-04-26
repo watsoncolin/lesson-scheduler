@@ -1,29 +1,44 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
-import { post, upload } from '@utils/api'
+import { Textarea } from '@components/textarea'
+import { patch, upload } from '@utils/api'
+import Image from 'next/image'
+import { Pool } from '@lib/pool'
+import { IProduct } from '@lesson-scheduler/shared'
 
-interface ProductModalProps {
+interface ProductEditModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
+  product: IProduct
 }
 
-export default function ProductModal({ isOpen, onClose, onSuccess }: ProductModalProps) {
+export default function ProductEditModal({ isOpen, onClose, onSuccess, product }: ProductEditModalProps) {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    amount: 0,
-    credits: 0,
-    lessonType: '',
-    order: 0,
-    features: ['Personal Instructor', 'Warm Waters', 'Flexible Scheduling'],
+    name: product.name,
+    description: product.description,
+    amount: product.amount,
+    credits: product.credits,
+    features: product.features,
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+  useEffect(() => {
+    setFormData({
+      name: product.name,
+      description: product.description,
+      amount: product.amount,
+      credits: product.credits,
+      features: product.features,
+    })
+  }, [product])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,12 +46,12 @@ export default function ProductModal({ isOpen, onClose, onSuccess }: ProductModa
     setError(null)
 
     try {
-      await post('/products', formData)
+      await patch(`/products/${product.id}`, formData)
       onSuccess()
       onClose()
     } catch (err) {
-      setError('Failed to create product. Please try again.')
-      console.error('Error creating product:', err)
+      setError('Failed to update product. Please try again.')
+      console.error('Error updating product:', err)
     } finally {
       setIsSubmitting(false)
     }
@@ -53,7 +68,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess }: ProductModa
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <DialogPanel className="mx-auto max-w-4xl w-full rounded-lg bg-white p-8 dark:bg-zinc-900">
-            <DialogTitle className="text-lg font-medium">Add New Product</DialogTitle>
+            <DialogTitle className="text-lg font-medium">Edit Product</DialogTitle>
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -100,58 +115,13 @@ export default function ProductModal({ isOpen, onClose, onSuccess }: ProductModa
                   placeholder="Product Amount"
                 />
               </div>
-              <div>
-                <label htmlFor="credits" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Credits
-                </label>
-                <Input
-                  type="number"
-                  id="credits"
-                  name="credits"
-                  value={formData.credits}
-                  onChange={handleChange}
-                  required
-                  className="mt-1"
-                  placeholder="Product Credits"
-                />
-              </div>
-              <div>
-                <label htmlFor="lessonType" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Lesson Type
-                </label>
-                <Input
-                  type="text"
-                  id="lessonType"
-                  name="lessonType"
-                  value={formData.lessonType}
-                  onChange={handleChange}
-                  required
-                  className="mt-1"
-                  placeholder="Product Lesson Type"
-                />
-              </div>
-              <div>
-                <label htmlFor="order" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Order
-                </label>
-                <Input
-                  type="number"
-                  id="order"
-                  name="order"
-                  value={formData.order}
-                  onChange={handleChange}
-                  required
-                  className="mt-1"
-                  placeholder="Product Order"
-                />
-              </div>
               {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
               <div className="mt-6 flex justify-end gap-x-3">
                 <Button onClick={onClose} plain>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Creating...' : 'Create Product'}
+                <Button type="submit" disabled={isSubmitting || isUploading}>
+                  {isSubmitting ? 'Updating...' : 'Update Product'}
                 </Button>
               </div>
             </form>

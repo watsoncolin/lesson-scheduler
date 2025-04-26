@@ -1,29 +1,29 @@
+'use client'
+
 import { useState } from 'react'
-import { ProductModal } from './product-modal'
-import { IProduct } from '@lesson-scheduler/shared'
+import { Button } from '@components/button'
+import ProductModal from './product-modal'
 
-interface ProductModalWrapperProps {
-  product?: IProduct
-  onClose?: () => void
-}
+export default function ProductModalWrapper() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-export function ProductModalWrapper({ product, onClose }: ProductModalWrapperProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const handleOpenModal = () => {
+    setIsModalOpen(true)
+  }
 
-  const handleClose = () => {
-    setIsOpen(false)
-    onClose?.()
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleSuccess = () => {
+    // Refresh the page to get the updated data
+    window.location.reload()
   }
 
   return (
     <>
-      {!product && (
-        <button onClick={() => setIsOpen(true)} className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
-          Add Product
-        </button>
-      )}
-
-      {(isOpen || product) && <ProductModal product={product} onClose={handleClose} />}
+      <Button onClick={handleOpenModal}>Create product</Button>
+      <ProductModal isOpen={isModalOpen} onClose={handleCloseModal} onSuccess={handleSuccess} />
     </>
   )
 }

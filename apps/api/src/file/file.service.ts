@@ -21,31 +21,14 @@ export class FileService {
     const bucket = this.storage.bucket(this.bucket)
     const blob = bucket.file(fileName)
 
-    return new Promise((resolve, reject) => {
-      const blobStream = blob.createWriteStream({
-        resumable: false,
-        validation: false,
-        metadata: {
-          contentType: file.mimetype,
-        },
-      })
-
-      blobStream.on('error', error => {
-        console.error('Stream error:', error)
-        reject(error)
-      })
-
-      blobStream.on('finish', () => {
-        const publicUrl = `https://storage.googleapis.com/${this.bucket}/${fileName}`
-        resolve(publicUrl)
-      })
-
-      // This safely writes and closes the stream at once
-      if (file.buffer) {
-        blobStream.end(file.buffer)
-      } else {
-        reject(new Error('File buffer is empty'))
-      }
+    await blob.save(file.buffer, {
+      resumable: false,
+      metadata: {
+        contentType: file.mimetype,
+      },
     })
+
+    const publicUrl = `https://storage.googleapis.com/${this.bucket}/${fileName}`
+    return publicUrl
   }
 }

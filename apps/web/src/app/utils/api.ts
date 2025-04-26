@@ -103,13 +103,12 @@ async function uploadFile(endpoint: string, file: File) {
   const url = `${API_BASE_URL}${endpoint}`
   const formData = new FormData()
   formData.append('file', file)
-
+  const headers = new Headers()
+  headers.append('Authorization', `Bearer ${getAuthToken()}`)
   const options = {
     method: 'POST',
     credentials: 'include' as RequestCredentials,
-    headers: {
-      Authorization: `Bearer ${getAuthToken()}`,
-    },
+    headers,
     body: formData,
   }
 

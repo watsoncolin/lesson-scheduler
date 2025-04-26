@@ -24,7 +24,7 @@ export class FileService {
     return new Promise((resolve, reject) => {
       const blobStream = blob.createWriteStream({
         resumable: false,
-        validation: true,
+        validation: false,
         metadata: {
           contentType: file.mimetype,
         },

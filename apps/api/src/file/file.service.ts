@@ -15,7 +15,7 @@ export class FileService {
   }
 
   async uploadFile(file: Express.Multer.File, userId: string): Promise<string> {
-    console.log('uploadFile', file, userId)
+    console.log('uploadFile', userId)
     if (!file || !file.buffer) {
       throw new Error('File buffer is empty')
     }
@@ -25,9 +25,7 @@ export class FileService {
     const fileName = `${userId}/${uuidv4()}.${fileExtension}`
     console.log('fileName', fileName)
     const bucket = this.storage.bucket(this.bucketName)
-    console.log('bucket', bucket)
     const blob = bucket.file(fileName)
-    console.log('blob', blob)
 
     await blob.save(file.buffer, {
       resumable: false,
@@ -37,8 +35,8 @@ export class FileService {
       },
       predefinedAcl: 'publicRead', // optional: make file public immediately
     })
-    console.log('saved')
     const publicUrl = `https://storage.googleapis.com/${this.bucketName}/${fileName}`
+    console.log('publicUrl', publicUrl)
     return publicUrl
   }
 }

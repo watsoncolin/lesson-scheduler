@@ -42,6 +42,16 @@ export class FileController {
     } catch (error: any) {
       console.error('Error uploading file:', error)
 
+      // 🔥 New Validation 🔥
+      if (!file.buffer || file.buffer.length === 0) {
+        throw new BadRequestException('Uploaded file buffer is empty.')
+      }
+
+      // 🔥 New Critical Validation 🔥
+      if (file.buffer.length !== file.size) {
+        throw new BadRequestException('Uploaded file is incomplete or corrupted.')
+      }
+
       if (error.message?.includes('uniform bucket-level access is enabled')) {
         throw new InternalServerErrorException('Storage configuration error. Please contact support.')
       }

@@ -36,7 +36,6 @@ export class FileService {
         metadata: {
           contentType: file.mimetype,
         },
-        predefinedAcl: 'publicRead',
       })
 
       localReadStream

@@ -15,7 +15,6 @@ const nextConfig = {
   },
   trailingSlash: true,
   distDir: 'dist',
-  output: 'export',
   images: { unoptimized: true },
   webpack: config => {
     config.resolve.alias = {

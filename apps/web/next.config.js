@@ -14,7 +14,6 @@ const nextConfig = {
     svgr: false,
   },
   trailingSlash: true,
-  distDir: 'dist',
   images: { unoptimized: true },
   webpack: config => {
     config.resolve.alias = {

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'Users',
 }
 
-export default async function UsersPage({ searchParams }: { searchParams: { page?: string; limit?: string } }) {
+export default async function UsersPage() {
   return (
     <>
       <div className="flex flex-wrap items-end justify-between gap-4">

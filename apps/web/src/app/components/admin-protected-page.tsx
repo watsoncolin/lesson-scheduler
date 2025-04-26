@@ -14,7 +14,6 @@ export function AdminProtectedPage({ children }: AdminProtectedPageProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
 
-  console.log('user', user)
   useEffect(() => {
     if (!user) {
       return

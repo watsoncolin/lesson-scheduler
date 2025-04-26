@@ -1,4 +1,4 @@
-import { Role } from '@lesson-scheduler/shared'
+import { IStudent, Role } from '@lesson-scheduler/shared'
 
 export interface IUser {
   id: string
@@ -17,4 +17,6 @@ export interface IUser {
   googleId?: string
   createdAt: Date
   updatedAt: Date
+  students: IStudent[]
+  unusedCredits: number
 }

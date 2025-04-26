@@ -80,8 +80,16 @@ export class UserService {
     return mapper(entity)
   }
 
-  async findAll(): Promise<User[]> {
-    return (await this.model.find()).map(mapper)
+  async findAll(page = 1, limit = 10): Promise<{ users: User[]; total: number }> {
+    const skip = (page - 1) * limit
+    const [users, total] = await Promise.all([
+      this.model.find().skip(skip).limit(limit).exec(),
+      this.model.countDocuments(),
+    ])
+    return {
+      users: users.map(mapper),
+      total,
+    }
   }
 
   async findOne(id: string): Promise<User> {

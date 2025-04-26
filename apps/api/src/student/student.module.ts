@@ -9,5 +9,6 @@ import { StudentController } from './student.controller'
   imports: [MongooseModule.forFeature([{ name: StudentEntity.name, schema: StudentSchema }])],
   controllers: [MyStudentController, StudentController],
   providers: [StudentService],
+  exports: [StudentService],
 })
 export class StudentModule {}

@@ -18,4 +18,5 @@ export interface ISchedule {
   registrations: IRegistration[]
   createdAt: Date
   updatedAt: Date
+  spotsAvailable: number
 }

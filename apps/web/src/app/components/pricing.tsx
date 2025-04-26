@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { RadioGroup } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/20/solid'
-import { Product } from '../lib'
+import { IProduct } from '@lesson-scheduler/shared'
 import { get } from '../utils/api'
 
 const tiers = [
@@ -54,11 +54,11 @@ function classNames(...classes: string[]) {
 export default function Pricing() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [products, setProducts] = useState([] as Product[])
+  const [products, setProducts] = useState([] as IProduct[])
 
   const fetchProducts = async () => {
     try {
-      const products = await get<Product[]>('/products')
+      const products = await get<IProduct[]>('/products')
       setProducts(products)
     } catch (err: any) {
       setError(err.message)

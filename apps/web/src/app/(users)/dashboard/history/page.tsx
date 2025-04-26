@@ -3,23 +3,23 @@ import { CalendarIcon, CheckIcon, CreditCardIcon, HandThumbUpIcon, UserIcon } fr
 import { useEffect, useState } from 'react'
 import { get } from '@utils/api'
 import { useInstructors, usePools } from '@contexts/index'
-import { Product, Schedule, Student, Transaction } from '@lib/index'
+import { IProduct, ITransaction, IStudent, ISchedule } from '@lesson-scheduler/shared'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function History() {
-  const [transactions, setTransactions] = useState([] as Transaction[])
-  const [products, setProducts] = useState([] as Product[])
-  const [students, setStudents] = useState([] as Student[])
-  const [schedules, setSchedules] = useState([] as Schedule[])
+  const [transactions, setTransactions] = useState([] as ITransaction[])
+  const [products, setProducts] = useState([] as IProduct[])
+  const [students, setStudents] = useState([] as IStudent[])
+  const [schedules, setSchedules] = useState([] as ISchedule[])
   const { instructors } = useInstructors()
   const { pools } = usePools()
 
   const fetchTransactions = async () => {
     try {
-      const transactions = await get<Transaction[]>('/transactions/me')
+      const transactions = await get<ITransaction[]>('/transactions/me')
       // sort by created at descending
       transactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       setTransactions(transactions)
@@ -27,7 +27,7 @@ export default function History() {
       const scheduleIds = transactions.filter(t => t.scheduleId).map(t => t.scheduleId)
       const uniqueScheduleIds = Array.from(new Set(scheduleIds))
       const queryString = uniqueScheduleIds.map(id => id).join(',')
-      const schedules = await get<Schedule[]>('/schedules/?scheduleIds=' + queryString)
+      const schedules = await get<ISchedule[]>('/schedules/?scheduleIds=' + queryString)
       setSchedules(schedules)
     } catch (err: any) {
       console.error(err)
@@ -36,7 +36,7 @@ export default function History() {
 
   const fetchProducts = async () => {
     try {
-      const products = await get<Product[]>('/products')
+      const products = await get<IProduct[]>('/products')
       setProducts(products)
     } catch (err: any) {
       console.error(err)
@@ -45,7 +45,7 @@ export default function History() {
 
   const fetchStudents = async () => {
     try {
-      const students = await get<Student[]>('/users/me/students')
+      const students = await get<IStudent[]>('/users/me/students')
       setStudents(students)
     } catch (err: any) {
       console.error(err)

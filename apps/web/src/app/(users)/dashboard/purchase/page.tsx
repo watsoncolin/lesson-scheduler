@@ -5,9 +5,9 @@ import { useState, useEffect } from 'react'
 
 import { get, post } from '@utils/api'
 import React from 'react'
-import { Product } from '@lib/product'
-import { Schedule } from '@lib/schedule'
-import { Student } from '@lib/student'
+import { IProduct } from '@lesson-scheduler/shared'
+import { ISchedule } from '@lesson-scheduler/shared'
+import { IStudent } from '@lesson-scheduler/shared'
 import { usePools } from '@contexts/pools-context'
 import { useInstructors } from '@contexts/instructor-context'
 import { useUser } from '@contexts/user-context'
@@ -21,7 +21,7 @@ declare global {
 }
 
 export default function Purchase() {
-  const [products, setProducts] = useState([] as Product[])
+  const [products, setProducts] = useState([] as IProduct[])
   const [selectedProductId, setSelectedProductId] = useState('')
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -30,9 +30,9 @@ export default function Purchase() {
   const [canUseApplePay, setCanUseApplePay] = useState(false)
   const [selectedScheduleId, setSelectedScheduleId] = useState('')
   const [selectedStudentId, setSelectedStudentId] = useState('')
-  const [students, setStudents] = useState([] as Student[])
+  const [students, setStudents] = useState([] as IStudent[])
 
-  const [schedules, setSchedules] = useState([] as Schedule[])
+  const [schedules, setSchedules] = useState([] as ISchedule[])
   const { pools } = usePools()
   const { instructors } = useInstructors()
   const { user } = useUser()
@@ -44,7 +44,7 @@ export default function Purchase() {
   }, [])
   const fetchSchedules = async () => {
     try {
-      const schedules = await get<Schedule[]>('/schedules/parent-tot')
+      const schedules = await get<ISchedule[]>('/schedules/parent-tot')
       setSchedules(schedules)
     } catch (err: any) {
       console.error(err)
@@ -53,7 +53,7 @@ export default function Purchase() {
 
   const fetchStudents = async () => {
     try {
-      const students = await get<Student[]>('/users/me/students')
+      const students = await get<IStudent[]>('/users/me/students')
       setStudents(students)
     } catch (err: any) {
       console.error(err)
@@ -70,7 +70,7 @@ export default function Purchase() {
 
   const fetchProducts = async () => {
     try {
-      const products = await get<Product[]>('/products')
+      const products = await get<IProduct[]>('/products')
       setProducts(products)
     } catch (err: any) {
       setError(err.message)

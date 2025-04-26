@@ -23,6 +23,7 @@ export class FileService {
 
     await blob.save(file.buffer, {
       resumable: false,
+      validation: false,
       metadata: {
         contentType: file.mimetype,
       },

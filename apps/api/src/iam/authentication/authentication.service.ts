@@ -85,10 +85,10 @@ export class AuthenticationService {
       const [accessToken, refreshToken] = await Promise.all([
         this.signToken<Partial<ActiveUserData>>(
           user.id,
-          { email: user.email },
+          { email: user.email, role: user.role },
           '14d', // Changed from 15m to 7d
         ),
-        this.signToken(user.id, {}, '7d'), // Longer-lived refresh token
+        this.signToken(user.id, {}, '14d'), // Longer-lived refresh token
       ])
       return {
         accessToken,

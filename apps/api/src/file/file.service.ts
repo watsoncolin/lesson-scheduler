@@ -3,6 +3,7 @@ import { Storage } from '@google-cloud/storage'
 import { ConfigService } from '@nestjs/config'
 import { v4 as uuidv4 } from 'uuid'
 import 'multer'
+import * as path from 'path'
 
 @Injectable()
 export class FileService {
@@ -10,7 +11,19 @@ export class FileService {
   private bucket: string
 
   constructor(private configService: ConfigService) {
-    this.storage = new Storage()
+    const credentialsBase64 = this.configService.get<string>('GOOGLE_APPLICATION_CREDENTIALS')
+    const keyFilename = path.join(process.cwd(), 'google-credentials.json')
+
+    // Initialize Storage client with either base64 credentials or key file
+    this.storage = new Storage(
+      credentialsBase64
+        ? {
+            credentials: JSON.parse(Buffer.from(credentialsBase64, 'base64').toString()),
+          }
+        : {
+            keyFilename,
+          },
+    )
     this.bucket = this.configService.get<string>('GCP_STORAGE_BUCKET', 'stansburyswim-public')
   }
 

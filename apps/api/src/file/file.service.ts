@@ -30,36 +30,19 @@ export class FileService {
         },
       })
 
-      // Handle stream errors
       blobStream.on('error', error => {
         console.error('Stream error:', error)
-        if (!blobStream.destroyed) {
-          blobStream.destroy()
-        }
         reject(error)
       })
 
-      // Handle successful upload
       blobStream.on('finish', () => {
         const publicUrl = `https://storage.googleapis.com/${this.bucket}/${fileName}`
         resolve(publicUrl)
       })
 
-      // Handle stream close
-      blobStream.on('close', () => {
-        console.log('Stream closed')
-      })
-
-      // Write the file buffer to the stream
+      // This safely writes and closes the stream at once
       if (file.buffer) {
-        const writeSuccess = blobStream.write(file.buffer)
-        if (!writeSuccess) {
-          blobStream.once('drain', () => {
-            blobStream.end()
-          })
-        } else {
-          blobStream.end()
-        }
+        blobStream.end(file.buffer)
       } else {
         reject(new Error('File buffer is empty'))
       }

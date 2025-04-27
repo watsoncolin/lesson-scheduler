@@ -20,7 +20,8 @@ export class GoogleAuthenticationController {
     response.cookie('authToken', result.accessToken, {
       secure: this.configService.get('NODE_ENV') === 'production',
       httpOnly: true,
-      sameSite: true,
+      sameSite: 'lax',
+      domain: '.stansburyswim.com',
     })
     return result
   }

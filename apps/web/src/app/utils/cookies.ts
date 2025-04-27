@@ -1,5 +1,5 @@
 // Cookie settings
-const COOKIE_SETTINGS = process.env.NODE_ENV === 'development' ? 'path=/;' : 'path=/; Secure'
+const COOKIE_SETTINGS = process.env.NODE_ENV === 'development' ? 'path=/;' : 'path=/; Secure; domain=.stansburyswim.com'
 
 export const AUTH_COOKIE_NAME = 'authToken'
 

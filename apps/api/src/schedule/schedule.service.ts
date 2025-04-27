@@ -33,14 +33,18 @@ export class ScheduleService {
   ) {}
   async create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
     const _id = new Types.ObjectId()
+
+    const startDateTime = new Date(createScheduleDto.startDateTime)
+    const endDateTime = new Date(createScheduleDto.endDateTime)
+
     const result = await this.model.create({
       _id,
       poolId: new Types.ObjectId(createScheduleDto.poolId),
       instructorId: new Types.ObjectId(createScheduleDto.instructorId),
       classSize: createScheduleDto.classSize,
       lessonType: createScheduleDto.lessonType,
-      startDateTime: createScheduleDto.startDateTime,
-      endDateTime: createScheduleDto.endDateTime,
+      startDateTime,
+      endDateTime,
     })
     const entity = await this.model.findById(result._id)
     if (!entity) {
@@ -73,11 +77,9 @@ export class ScheduleService {
     date?: string,
   ): Promise<Schedule[]> {
     const filter: {
-      startDateTime: any
       $and?: any[]
       $or: any[]
     } = {
-      startDateTime: { $gte: new Date() },
       $or: [],
     }
     if (poolIds) {
@@ -95,25 +97,21 @@ export class ScheduleService {
     }
     if (date) {
       filter.$and = filter.$and || []
+      const searchDate = new Date(date)
+      // Convert the search date to UTC start and end of day
+      const startOfDay = searchDate
+      const endOfDay = new Date(searchDate.getTime() + 24 * 60 * 60 * 1000)
+
       filter.$and.push({
-        $expr: {
-          $eq: [
-            {
-              $dateToString: {
-                format: '%Y-%m-%d',
-                date: '$startDateTime',
-              },
-            },
-            date,
-          ],
+        startDateTime: {
+          $gte: startOfDay.toISOString(),
+          $lte: endOfDay.toISOString(),
         },
       })
     }
 
     const entities = await this.model.find(filter)
-
     const results = entities.map(mapper)
-
     return results.filter(schedule => schedule.registrations.length < schedule.classSize)
   }
 

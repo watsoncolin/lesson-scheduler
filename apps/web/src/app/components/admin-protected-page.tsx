@@ -26,7 +26,6 @@ export function AdminProtectedPage({ children }: AdminProtectedPageProps) {
   }, [user, router])
 
   if (loading) {
-    console.log('loading')
     return <div>Loading...</div>
   }
 

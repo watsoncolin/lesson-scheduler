@@ -54,7 +54,6 @@ export class ScheduleController {
     return schedules
   }
 
-  @Roles(Role.Admin)
   @Get('search')
   async search(@Query() query: SearchScheduleDto) {
     const { pools, instructors, daysOfWeek, date } = query

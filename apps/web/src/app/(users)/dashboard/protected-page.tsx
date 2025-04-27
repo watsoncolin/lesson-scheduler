@@ -19,7 +19,6 @@ const ProtectedPage = ({ children, redirectTo = '/sign-in' }: { children: ReactN
   }, [router, redirectTo])
 
   if (loading) {
-    console.log('loading')
     return (
       <div>
         <Nav />

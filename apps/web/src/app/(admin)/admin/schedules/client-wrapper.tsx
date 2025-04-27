@@ -17,18 +17,18 @@ export default function ClientWrapper() {
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
 
-  useEffect(() => {
-    async function fetchSchedules() {
-      try {
-        const data = await get<Schedule[]>('/schedules')
-        setSchedules(data)
-      } catch (error) {
-        console.error('Failed to fetch schedules:', error)
-      } finally {
-        setIsLoading(false)
-      }
+  const fetchSchedules = async () => {
+    try {
+      const data = await get<Schedule[]>('/schedules')
+      setSchedules(data)
+    } catch (error) {
+      console.error('Failed to fetch schedules:', error)
+    } finally {
+      setIsLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchSchedules()
   }, [])
 
@@ -86,7 +86,7 @@ export default function ClientWrapper() {
         />
       </div>
 
-      <SchedulesList schedules={paginatedSchedules} />
+      <SchedulesList schedules={paginatedSchedules} onDelete={fetchSchedules} />
 
       {/* Pagination controls */}
       {totalPages > 1 && (

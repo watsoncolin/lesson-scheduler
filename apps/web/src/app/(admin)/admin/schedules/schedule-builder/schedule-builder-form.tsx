@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Select } from '@components/select'
 import { useInstructors } from '@contexts/instructor-context'
 import { usePools } from '@contexts/pools-context'
-import { format, subWeeks, subDays } from 'date-fns'
+import { format, subWeeks, subDays, parse } from 'date-fns'
 import { del, get, post } from '@utils/api'
 import { Schedule } from '@/app/lib/schedule'
 import { Button } from '@components/button'
@@ -51,6 +51,22 @@ export default function ScheduleBuilderForm() {
     label: pool.name,
   }))
 
+  const searchLessons = async (poolId: string, instructorId: string, date: Date, daysOfWeek?: string) => {
+    const queryString = new URLSearchParams()
+    queryString.append('pools', poolId)
+    queryString.append('instructors', instructorId)
+    queryString.append('date', date.toISOString())
+    if (daysOfWeek) {
+      queryString.append('daysOfWeek', daysOfWeek)
+    }
+
+    const lessons = await get<Schedule[]>(`/schedules/search?${queryString.toString()}`)
+    // Filter for exact pool and instructor match and sort by start time
+    return lessons
+      .filter(lesson => lesson.poolId === poolId && lesson.instructorId === instructorId)
+      .sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime())
+  }
+
   useEffect(() => {
     const fetchLessons = async () => {
       if (!selectedPool || !selectedInstructor || !selectedDate) {
@@ -66,31 +82,18 @@ export default function ScheduleBuilderForm() {
         return
       }
 
-      const selectedDateObj = new Date(`${selectedDate}T12:00:00`)
-      const previousWeekDate = format(subWeeks(selectedDateObj, 1), 'yyyy-MM-dd')
-      const previousDayDate = format(subDays(selectedDateObj, 1), 'yyyy-MM-dd')
+      const selectedDateObj = new Date(`${selectedDate}T00:00:00.000`)
+      const previousWeekDate = subWeeks(selectedDateObj, 1)
+      const previousDayDate = subDays(selectedDateObj, 1)
       const dayOfWeek = format(selectedDateObj, 'EEEE').toLowerCase()
 
       try {
         // Fetch current day's lessons
-        const currentQueryString = new URLSearchParams()
-        currentQueryString.append('pools', selectedPool)
-        currentQueryString.append('instructors', selectedInstructor)
-        currentQueryString.append('date', selectedDate)
-
-        const currentLessons = await get<Schedule[]>(`/schedules/search?${currentQueryString.toString()}`)
-        // Filter for exact pool and instructor match
-        const filteredCurrentLessons = currentLessons.filter(
-          lesson => lesson.poolId === selectedPool && lesson.instructorId === selectedInstructor,
-        )
-        setCurrentDayLessons(
-          filteredCurrentLessons.sort(
-            (a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime(),
-          ),
-        )
+        const currentLessons = await searchLessons(selectedPool, selectedInstructor, selectedDateObj)
+        setCurrentDayLessons(currentLessons)
 
         // Convert current day's lessons to form data
-        const currentLessonForms: LessonFormData[] = filteredCurrentLessons
+        const currentLessonForms: LessonFormData[] = currentLessons
           .map(lesson => ({
             id: lesson.id,
             startTime: format(new Date(lesson.startDateTime), 'HH:mm'),
@@ -115,35 +118,12 @@ export default function ScheduleBuilderForm() {
         setLessonForms(currentLessonForms)
 
         // Fetch previous week's lessons
-        const weekQueryString = new URLSearchParams()
-        weekQueryString.append('pools', selectedPool)
-        weekQueryString.append('instructors', selectedInstructor)
-        weekQueryString.append('daysOfWeek', dayOfWeek)
-        weekQueryString.append('date', previousWeekDate)
-
-        const weekLessons = await get<Schedule[]>(`/schedules/search?${weekQueryString.toString()}`)
-        // Filter for exact pool and instructor match
-        const filteredWeekLessons = weekLessons.filter(
-          lesson => lesson.poolId === selectedPool && lesson.instructorId === selectedInstructor,
-        )
-        setPreviousWeekLessons(
-          filteredWeekLessons.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime()),
-        )
+        const weekLessons = await searchLessons(selectedPool, selectedInstructor, previousWeekDate, dayOfWeek)
+        setPreviousWeekLessons(weekLessons)
 
         // Fetch previous day's lessons
-        const dayQueryString = new URLSearchParams()
-        dayQueryString.append('pools', selectedPool)
-        dayQueryString.append('instructors', selectedInstructor)
-        dayQueryString.append('date', previousDayDate)
-
-        const dayLessons = await get<Schedule[]>(`/schedules/search?${dayQueryString.toString()}`)
-        // Filter for exact pool and instructor match
-        const filteredDayLessons = dayLessons.filter(
-          lesson => lesson.poolId === selectedPool && lesson.instructorId === selectedInstructor,
-        )
-        setPreviousDayLessons(
-          filteredDayLessons.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime()),
-        )
+        const dayLessons = await searchLessons(selectedPool, selectedInstructor, previousDayDate)
+        setPreviousDayLessons(dayLessons)
       } catch (error) {
         console.error('Error fetching lessons:', error)
         setCurrentDayLessons([])
@@ -209,63 +189,35 @@ export default function ScheduleBuilderForm() {
     setLessonForms(newForms.sort((a, b) => a.startTime.localeCompare(b.startTime)))
   }
 
-  const handleSaveLesson = async (index: number) => {
+  const handleSave = async (index?: number) => {
     if (!selectedPool || !selectedInstructor || !selectedDate) return
 
-    const form = lessonForms[index]
-    const startDateTime = `${selectedDate}T${form.startTime}:00`
-    const endDateTime = `${selectedDate}T${form.endTime}:00`
+    // Determine which lessons to save
+    const lessonsToSave =
+      index !== undefined ? [lessonForms[index]] : lessonForms.filter(form => !form.id && form.isEditing)
 
-    try {
-      const savedLesson = (await post('/schedules', {
-        poolId: selectedPool,
-        instructorId: selectedInstructor,
-        lessonType: form.lessonType,
-        classSize: form.classSize,
-        startDateTime,
-        endDateTime,
-      })) as Schedule
-
-      // Update the form with the saved lesson's ID
-      const newForms = [...lessonForms]
-      newForms[index] = { ...newForms[index], id: savedLesson.id, isEditing: false, error: undefined }
-      setLessonForms(newForms)
-
-      // Refresh the current day's lessons
-      const queryString = new URLSearchParams()
-      queryString.append('pools', selectedPool)
-      queryString.append('instructors', selectedInstructor)
-      queryString.append('date', selectedDate)
-
-      const currentLessons = await get<Schedule[]>(`/schedules/search?${queryString.toString()}`)
-      setCurrentDayLessons(
-        currentLessons.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime()),
-      )
-    } catch (error) {
-      console.error('Error saving lesson:', error)
-      const newForms = [...lessonForms]
-      newForms[index] = { ...newForms[index], error: 'Failed to save lesson. Please try again.' }
-      setLessonForms(newForms)
-    }
-  }
-
-  const handleSaveAll = async () => {
-    const unsavedLessons = lessonForms.filter(form => !form.id && form.isEditing)
-    if (unsavedLessons.length === 0) return
+    if (lessonsToSave.length === 0) return
 
     setIsSavingAll(true)
     let hasError = false
     let currentForms = [...lessonForms]
 
     try {
-      for (let i = 0; i < unsavedLessons.length; i++) {
+      for (let i = 0; i < lessonsToSave.length; i++) {
         if (hasError) break
-        const form = unsavedLessons[i]
+        const form = lessonsToSave[i]
         const formIndex = currentForms.findIndex(f => f === form)
-        setCurrentSavingIndex(formIndex)
+        if (index !== undefined) {
+          setCurrentSavingIndex(formIndex)
+        }
 
-        const startDateTime = `${selectedDate}T${form.startTime}:00`
-        const endDateTime = `${selectedDate}T${form.endTime}:00`
+        // Create date strings with timezone offset
+        const startDateTime = new Date(`${selectedDate}T${form.startTime}:00`)
+        const endDateTime = new Date(`${selectedDate}T${form.endTime}:00`)
+
+        // Format dates with timezone offset
+        const startDateTimeString = startDateTime.toISOString()
+        const endDateTimeString = endDateTime.toISOString()
 
         try {
           const savedLesson = (await post('/schedules', {
@@ -273,8 +225,8 @@ export default function ScheduleBuilderForm() {
             instructorId: selectedInstructor,
             lessonType: form.lessonType,
             classSize: form.classSize,
-            startDateTime,
-            endDateTime,
+            startDateTime: startDateTimeString,
+            endDateTime: endDateTimeString,
           })) as Schedule
 
           // Update the form with the saved lesson's ID
@@ -297,15 +249,9 @@ export default function ScheduleBuilderForm() {
       }
 
       // Refresh the current day's lessons
-      const queryString = new URLSearchParams()
-      queryString.append('pools', selectedPool)
-      queryString.append('instructors', selectedInstructor)
-      queryString.append('date', selectedDate)
-
-      const currentLessons = await get<Schedule[]>(`/schedules/search?${queryString.toString()}`)
-      setCurrentDayLessons(
-        currentLessons.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime()),
-      )
+      const selectedDateObj = new Date(`${selectedDate}T00:00:00.000`)
+      const currentLessons = await searchLessons(selectedPool, selectedInstructor, selectedDateObj)
+      setCurrentDayLessons(currentLessons)
     } catch (error) {
       console.error('Error refreshing lessons:', error)
     } finally {
@@ -320,15 +266,9 @@ export default function ScheduleBuilderForm() {
       try {
         await del(`/schedules/${form.id}`)
         // Refresh current day's lessons after deletion
-        const queryString = new URLSearchParams()
-        queryString.append('pools', selectedPool)
-        queryString.append('instructors', selectedInstructor)
-        queryString.append('date', selectedDate)
-
-        const currentLessons = await get<Schedule[]>(`/schedules/search?${queryString.toString()}`)
-        setCurrentDayLessons(
-          currentLessons.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime()),
-        )
+        const selectedDateObj = new Date(`${selectedDate}T00:00:00.000`)
+        const currentLessons = await searchLessons(selectedPool, selectedInstructor, selectedDateObj)
+        setCurrentDayLessons(currentLessons)
       } catch (error) {
         console.error('Error deleting lesson:', error)
         const newForms = [...lessonForms]
@@ -462,7 +402,7 @@ export default function ScheduleBuilderForm() {
               Add Lesson
             </Button>
             <Button
-              onClick={handleSaveAll}
+              onClick={() => handleSave()}
               className="flex items-center gap-2"
               disabled={!isFormEnabled || !lessonForms.some(form => !form.id && form.isEditing) || isSavingAll}
             >
@@ -478,7 +418,8 @@ export default function ScheduleBuilderForm() {
           <div className="flex items-center mb-4">
             <div className="mt-2 text-sm text-gray-500">
               Creating schedules for {instructors.find(i => i.id === selectedInstructor)?.name} at{' '}
-              {pools.find(p => p.id === selectedPool)?.name} on {format(new Date(selectedDate), 'MMMM d, yyyy')}
+              {pools.find(p => p.id === selectedPool)?.name} on{' '}
+              {format(parse(selectedDate, 'yyyy-MM-dd', new Date()), 'MMMM d, yyyy')}
             </div>
           </div>
         )}
@@ -586,7 +527,7 @@ export default function ScheduleBuilderForm() {
                       {form.isEditing ? (
                         <>
                           <Button
-                            onClick={() => handleSaveLesson(index)}
+                            onClick={() => handleSave(index)}
                             disabled={!isFormEnabled || (isSavingAll && currentSavingIndex === index)}
                           >
                             {isSavingAll && currentSavingIndex === index ? (

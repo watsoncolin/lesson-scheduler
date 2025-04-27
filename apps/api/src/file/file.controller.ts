@@ -35,11 +35,6 @@ export class FileController {
     if (!allowedMimeTypes.includes(file.mimetype)) {
       throw new BadRequestException('Invalid file type. Only JPEG, PNG and GIF are allowed')
     }
-    console.log('file.size:', file.size)
-    console.log('file.buffer.length:', file.buffer?.length)
-    console.log('file.originalname:', file.originalname)
-    console.log('file.mimetype:', file.mimetype)
-
     // 🔥 New Validation 🔥
     if (!file.buffer || file.buffer.length === 0) {
       throw new BadRequestException('Uploaded file buffer is empty.')

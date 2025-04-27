@@ -135,7 +135,6 @@ export default function Purchase() {
   }
 
   const handlePayWithApplePay = async () => {
-    console.log('pay with apple pay')
     const product = products.find(p => p.id == selectedProductId)
     const session = new window.ApplePaySession(3, {
       countryCode: 'US',
@@ -144,7 +143,6 @@ export default function Purchase() {
       supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
       total: { label: 'Stansbury Swim', amount: product?.amount ?? 0 * quantity },
     })
-    console.log(session)
     session.onvalidatemerchant = async (event: { validationURL: any }) => {
       const response = await post('/payments/apple-validate-merchant', {
         validationUrl: event.validationURL,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Divider } from '@components/divider'
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@components/dropdown'
 import { Link } from '@components/link'
@@ -11,13 +11,29 @@ import DeleteProductModal from './delete-product-modal'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/table'
 import { Button } from '@components/button'
 import ProductEditModal from './product-edit-modal'
-interface ProductsListProps {
-  products: IProduct[]
-}
+import { get } from '@utils/api'
 
-export default function ProductsList({ products }: ProductsListProps) {
+export default function ProductsList() {
+  const [products, setProducts] = useState<IProduct[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [editingProduct, setEditingProduct] = useState<IProduct | null>(null)
   const [deletingProduct, setDeletingProduct] = useState<IProduct | null>(null)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await get<IProduct[]>('/products')
+        setProducts(data)
+      } catch (error) {
+        console.error('Failed to fetch products:', error)
+        setProducts([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
 
   const handleEditClick = (product: IProduct, e: React.MouseEvent) => {
     e.preventDefault()
@@ -41,6 +57,10 @@ export default function ProductsList({ products }: ProductsListProps) {
 
   const handleSuccess = () => {
     window.location.reload()
+  }
+
+  if (isLoading) {
+    return <div className="mt-8 text-center">Loading products...</div>
   }
 
   return (

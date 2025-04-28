@@ -21,6 +21,9 @@ export class PaymentEntity extends Document {
   @Prop({ required: true })
   amount: number
 
+  @Prop({ required: true })
+  quantity: number
+
   @Prop({ required: true, type: String, enum: PaymentGatewayTypesEnum })
   paymentGateway: PaymentGatewayTypesEnum
 

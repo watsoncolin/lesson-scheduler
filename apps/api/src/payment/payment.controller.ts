@@ -21,6 +21,8 @@ import { UserService } from 'user/user.service'
 import { CreatePaypalOrderDto } from './dto/create-paypal-order.dto'
 import { PaymentGatewayTypesEnum } from 'shared/payment-gateway-types.enum'
 import { PaymentStatusTypesEnum } from 'shared/payment-status-types.enum'
+import { Roles } from 'iam/authentication/decorators/roles.decorator'
+import { Role } from '@lesson-scheduler/shared'
 
 @Controller('payments')
 export class PaymentController {
@@ -118,6 +120,7 @@ export class PaymentController {
 
   // TODO don't allow users to manually update payment status
   @Patch(':id')
+  @Roles(Role.Admin)
   async update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
     const payment = await this.paymentService.findOne(id)
     if (!payment) {

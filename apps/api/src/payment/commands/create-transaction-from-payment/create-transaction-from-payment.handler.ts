@@ -26,7 +26,7 @@ export class CreateTransactionFromPaymentHandler implements ICommandHandler<Crea
       userId: command.payment.userId,
       productId: command.payment.productId,
       amount: command.payment.amount,
-      credits: product.credits,
+      credits: product.credits * command.payment.quantity,
       creditType: product.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
       transactionType: TransactionTypesEnum.PurchaseCredits,
       paymentId: command.payment.id,

@@ -10,6 +10,7 @@ export class Payment {
   paymentGateway: PaymentGatewayTypesEnum
   paymentGatewayId: string
   amount: number
+  quantity: number
   status: PaymentStatusTypesEnum
   scheduleId?: string
   studentId?: string

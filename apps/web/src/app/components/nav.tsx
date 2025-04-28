@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
+import { useUser } from '../contexts/user-context'
 
 const navigation = [
   { name: 'About', href: '#about' },
@@ -13,6 +14,7 @@ const navigation = [
 
 export default function Nav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user } = useUser()
 
   return (
     <header className="fixed inset-x-0 top-0 z-50" style={{ backgroundColor: 'rgba(255,255,255,.7)' }}>
@@ -41,9 +43,15 @@ export default function Nav() {
           ))}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="/sign-in" className="text-sm font-semibold leading-6 text-gray-900">
-            Log in <span aria-hidden="true">&rarr;</span>
-          </a>
+          {user ? (
+            <a href="/dashboard" className="text-sm font-semibold leading-6 text-gray-900">
+              Dashboard <span aria-hidden="true">&rarr;</span>
+            </a>
+          ) : (
+            <a href="/sign-in" className="text-sm font-semibold leading-6 text-gray-900">
+              Log in <span aria-hidden="true">&rarr;</span>
+            </a>
+          )}
         </div>
       </nav>
       <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -78,12 +86,22 @@ export default function Nav() {
                 ))}
               </div>
               <div className="py-6">
-                <a
-                  href="/sign-in"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Log in
-                </a>
+                {user ? (
+                  <a
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >
+                    Dashboard
+                  </a>
+                ) : (
+                  <a
+                    href="/sign-in"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >
+                    Log in
+                  </a>
+                )}
               </div>
             </div>
           </div>

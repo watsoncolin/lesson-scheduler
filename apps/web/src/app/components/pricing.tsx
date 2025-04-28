@@ -80,10 +80,10 @@ export default function Pricing() {
             Pricing plans for families of&nbsp;all&nbsp;sizes
           </p>
         </div>
-        <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
+        <div className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
           We offer a variety of pricing plans for families of all sizes and interest level. Choose the one that best
           fits your needs.
-        </p>
+        </div>
         <div className="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-8 md:max-w-2xl md:grid-cols-2 lg:max-w-4xl xl:mx-0 xl:max-w-none xl:grid-cols-4">
           {products.map(product => {
             const button = product.lessonType == 'group' ? 'View schedule' : 'Buy now'

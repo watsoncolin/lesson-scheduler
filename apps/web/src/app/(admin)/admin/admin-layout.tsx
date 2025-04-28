@@ -114,6 +114,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </SidebarSection>
 
             <SidebarSection className="max-lg:hidden">
+              <SidebarHeading>Public Areas</SidebarHeading>
+              <SidebarItem href="/" current={false}>
+                <HomeIcon />
+                <SidebarLabel>Public Home Page</SidebarLabel>
+              </SidebarItem>
+              <SidebarItem href="/dashboard" current={false}>
+                <UserCircleIcon />
+                <SidebarLabel>User Dashboard</SidebarLabel>
+              </SidebarItem>
+            </SidebarSection>
+            <SidebarSection className="max-lg:hidden">
               <SidebarHeading>Upcoming Events</SidebarHeading>
               {events.map(event => (
                 <SidebarItem key={event.id} href={event.url}>

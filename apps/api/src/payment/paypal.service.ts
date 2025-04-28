@@ -55,6 +55,8 @@ export class PaypalService {
       },
     } as Payer
 
+    const totalAmount = product.amount * quantity
+
     request.requestBody({
       intent: 'CAPTURE',
       payer,
@@ -64,11 +66,11 @@ export class PaypalService {
           description: product.description,
           amount: {
             currency_code: 'USD',
-            value: product.amount.toString(),
+            value: totalAmount.toString(),
             breakdown: {
               item_total: {
                 currency_code: 'USD',
-                value: product.amount.toString(),
+                value: totalAmount.toString(),
               },
             } as AmountBreakdown,
           },
@@ -78,7 +80,7 @@ export class PaypalService {
               category: 'PHYSICAL_GOODS',
               unit_amount: {
                 currency_code: 'USD',
-                value: (product.amount / quantity).toString(),
+                value: (totalAmount / quantity).toString(),
               },
               quantity: quantity.toString(),
             },

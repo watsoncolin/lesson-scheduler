@@ -42,6 +42,9 @@ export default function Purchase() {
       setCanUseApplePay(true)
     }
   }, [])
+
+  const isMissingContactInfo = !user?.phone || !user?.address1 || !user?.city || !user?.state || !user?.zip
+
   const fetchSchedules = async () => {
     try {
       const schedules = await get<ISchedule[]>('/schedules/parent-tot')
@@ -172,6 +175,23 @@ export default function Purchase() {
         </header>
         <main className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
+            {isMissingContactInfo && (
+              <div className="mb-6 border-l-4 border-yellow-400 bg-yellow-50 p-4">
+                <div className="flex">
+                  <div className="shrink-0">
+                    <ExclamationTriangleIcon aria-hidden="true" className="size-5 text-yellow-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-yellow-700">
+                      Please complete your contact information before making a purchase.{' '}
+                      <a href="/dashboard/profile" className="font-medium underline">
+                        Update your profile
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             <fieldset aria-label="products" className="-space-y-px rounded-md bg-white">
               {privateLessons.map(product => (
                 <label
@@ -187,6 +207,7 @@ export default function Purchase() {
                     name="product"
                     type="radio"
                     className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden"
+                    disabled={isMissingContactInfo}
                   />
                   <div className="flex flex-col flex-1">
                     <span className="ml-3 flex flex-col">
@@ -205,6 +226,7 @@ export default function Purchase() {
                           name="quantity"
                           className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={e => setQuantity(parseInt(e.target.value))}
+                          disabled={isMissingContactInfo}
                         >
                           <option>1</option>
                           <option>2</option>
@@ -235,6 +257,7 @@ export default function Purchase() {
                     name="product"
                     type="radio"
                     className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden"
+                    disabled={isMissingContactInfo}
                   />
                   <div className="flex flex-col flex-1">
                     <span className="ml-3 flex flex-col">
@@ -252,6 +275,7 @@ export default function Purchase() {
                         name="quantity"
                         className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         onChange={e => setSelectedScheduleId(e.target.value)}
+                        disabled={isMissingContactInfo}
                       >
                         <option>select a session</option>
                         {schedules
@@ -283,6 +307,7 @@ export default function Purchase() {
                         name="quantity"
                         className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         onChange={e => setSelectedStudentId(e.target.value)}
+                        disabled={isMissingContactInfo}
                       >
                         <option>select a student</option>
                         {students.map(student => (
@@ -320,14 +345,14 @@ export default function Purchase() {
                     onApprove={async (data, actions): Promise<void> => {
                       await paypalCaptureOrder(data.orderID)
                     }}
-                    disabled={selectedProductId == ''}
+                    disabled={selectedProductId == '' || isMissingContactInfo}
                   />
                 </PayPalScriptProvider>
                 {canUseApplePay ? (
                   <button
                     type="submit"
                     style={{ backgroundColor: 'black', maxHeight: '50px' }}
-                    disabled={selectedProductId == ''}
+                    disabled={selectedProductId == '' || isMissingContactInfo}
                     onClick={handlePayWithApplePay}
                   >
                     <img

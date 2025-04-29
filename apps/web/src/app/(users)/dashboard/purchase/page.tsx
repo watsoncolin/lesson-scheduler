@@ -213,39 +213,40 @@ export default function Purchase() {
           </div>
         </header>
         <main className="px-6">
-          {waitlistEnabled && !purchaseEnabled && (
-            <div className="mt-10 border-l-4 border-yellow-400 bg-yellow-50 p-4">
-              <div className="flex">
-                <div className="shrink-0">
-                  <ExclamationTriangleIcon aria-hidden="true" className="size-5 text-yellow-400" />
-                </div>
-                <div className="ml-3">
-                  {onWaitlist ? (
-                    <p className="text-sm text-yellow-700">
-                      You are currently on the waitlist. You will be notified when you are allowed to purchase lessons.
-                    </p>
-                  ) : (
-                    <p className="text-sm text-yellow-700">
-                      The waitlist is currently enabled. Please join the waitlist to purchase lessons.
-                    </p>
-                  )}
-                  {!onWaitlist ? (
-                    <div className="ml-auto pl-3 mt-2">
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          joinWaitlist()
-                        }}
-                      >
-                        Join waitlist
-                      </Button>
-                    </div>
-                  ) : null}
+          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
+            {waitlistEnabled && !purchaseEnabled && (
+              <div className="mt-2 border-l-4 border-yellow-400 bg-yellow-50 p-4">
+                <div className="flex">
+                  <div className="shrink-0">
+                    <ExclamationTriangleIcon aria-hidden="true" className="size-5 text-yellow-400" />
+                  </div>
+                  <div className="ml-3">
+                    {onWaitlist ? (
+                      <p className="text-sm text-yellow-700">
+                        You are currently on the waitlist. You will be notified when you are allowed to purchase
+                        lessons.
+                      </p>
+                    ) : (
+                      <p className="text-sm text-yellow-700">
+                        The waitlist is currently enabled. Please join the waitlist to purchase lessons.
+                      </p>
+                    )}
+                    {!onWaitlist ? (
+                      <div className="ml-auto pl-3 mt-2">
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            joinWaitlist()
+                          }}
+                        >
+                          Join waitlist
+                        </Button>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
+            )}
             {isMissingContactInfo && (
               <div className="mb-6 border-l-4 border-yellow-400 bg-yellow-50 p-4">
                 <div className="flex">

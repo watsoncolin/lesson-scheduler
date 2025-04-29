@@ -126,11 +126,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             <SidebarSection className="max-lg:hidden">
               <SidebarHeading>Public Areas</SidebarHeading>
-              <SidebarItem href="/" current={false}>
+              <SidebarItem href="/" current={false} target="_blank">
                 <HomeIcon />
                 <SidebarLabel>Public Home Page</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="/dashboard" current={false}>
+              <SidebarItem href="/dashboard" current={false} target="_blank">
                 <UserCircleIcon />
                 <SidebarLabel>User Dashboard</SidebarLabel>
               </SidebarItem>

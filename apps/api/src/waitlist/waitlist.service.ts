@@ -2,14 +2,22 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
 import { WaitlistEntity } from './entities/waitlist.entity'
-import { Waitlist } from './waitlist'
+import { Waitlist } from '@lesson-scheduler/shared'
+import { User } from 'user/user'
+import { UserService } from 'user/user.service'
 
-const mapper = (entity: WaitlistEntity): Waitlist => {
+const mapper = (entity: WaitlistEntity, user: User): Waitlist => {
   return {
     id: entity._id.toString(),
     userId: entity.userId.toString(),
     allowed: entity.allowed,
-    allowedOn: entity.allowedOn,
+    allowedOn: entity.allowedOn?.toISOString(),
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phone: user.phone,
+    createdAt: entity.createdAt.toISOString(),
+    updatedAt: entity.updatedAt.toISOString(),
   }
 }
 
@@ -18,6 +26,7 @@ export class WaitlistService {
   constructor(
     @InjectModel(WaitlistEntity.name)
     private readonly model: Model<WaitlistEntity>,
+    private readonly userService: UserService,
   ) {}
   async join(userId: string): Promise<Waitlist> {
     const _id = new Types.ObjectId()
@@ -30,11 +39,26 @@ export class WaitlistService {
     if (!entity) {
       throw new BadRequestException('Waitlist not found')
     }
-    return mapper(entity)
+    const user = await this.userService.findOne(userId)
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+    return mapper(entity, user)
   }
 
   async findAll(): Promise<Waitlist[]> {
-    return (await this.model.find()).map(mapper)
+    const entities = await this.model.find()
+    const userIds = entities.map(entity => entity.userId.toString())
+    const users = await this.userService.findMany(userIds)
+    return entities
+      .map(entity => {
+        const user = users.find(user => user.id === entity.userId.toString())
+        if (!user) {
+          return null
+        }
+        return mapper(entity, user)
+      })
+      .filter(e => e != null)
   }
 
   async findByUserId(userId: string): Promise<Waitlist> {
@@ -42,7 +66,11 @@ export class WaitlistService {
     if (!waitlist) {
       throw new NotFoundException('Waitlist not found')
     }
-    return mapper(waitlist)
+    const user = await this.userService.findOne(userId)
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+    return mapper(waitlist, user)
   }
 
   async allowPurchase(userId: string): Promise<Waitlist> {
@@ -57,9 +85,13 @@ export class WaitlistService {
     )
     const entity = await this.model.findOne({ userId: new Types.ObjectId(userId) })
     if (!entity) {
-      throw new BadRequestException('User is not allowed to purchase. While on waitlist.')
+      throw new BadRequestException('User is not allowed to purchase. Not on waitlist.')
     }
-    return mapper(entity)
+    const user = await this.userService.findOne(userId)
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+    return mapper(entity, user)
   }
 
   async remove(id: string): Promise<void> {

@@ -1,8 +1,12 @@
-export interface IWaitlist {
+export interface Waitlist {
   id: string
   userId: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
   allowed: boolean
-  allowedOn?: Date
-  createdAt: Date
-  updatedAt: Date
+  allowedOn?: string
+  createdAt: string
+  updatedAt: string
 }

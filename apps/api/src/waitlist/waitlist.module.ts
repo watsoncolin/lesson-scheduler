@@ -6,9 +6,14 @@ import { WaitlistController } from './waitlist.controller'
 import { RemoveUserFromWaitlistHandler } from './commands/remove-user-from-waitlist/remove-user-from-waitlist.handler'
 import { PaymentSaga } from './payment.saga'
 import { SiteConfigModule } from 'site-config/site-config.module'
+import { UserModule } from 'user/user.module'
 
 @Module({
-  imports: [SiteConfigModule, MongooseModule.forFeature([{ name: WaitlistEntity.name, schema: WaitlistSchema }])],
+  imports: [
+    SiteConfigModule,
+    UserModule,
+    MongooseModule.forFeature([{ name: WaitlistEntity.name, schema: WaitlistSchema }]),
+  ],
   controllers: [WaitlistController],
   providers: [WaitlistService, RemoveUserFromWaitlistHandler, PaymentSaga],
   exports: [WaitlistService],

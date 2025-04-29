@@ -250,4 +250,9 @@ export class UserService {
       },
     )
   }
+
+  async findMany(ids: string[]): Promise<User[]> {
+    const entities = await this.model.find({ _id: { $in: ids.map(id => new Types.ObjectId(id)) } })
+    return entities.map(mapper)
+  }
 }

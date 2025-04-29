@@ -12,6 +12,7 @@ import { usePools } from '@contexts/pools-context'
 import { useInstructors } from '@contexts/instructor-context'
 import { useUser } from '@contexts/user-context'
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
+import { Button } from '@/app/components/button'
 
 // Extend the Window interface to include ApplePaySession
 declare global {
@@ -31,11 +32,13 @@ export default function Purchase() {
   const [selectedScheduleId, setSelectedScheduleId] = useState('')
   const [selectedStudentId, setSelectedStudentId] = useState('')
   const [students, setStudents] = useState([] as IStudent[])
-
+  const [waitlistEnabled, setWaitlistEnabled] = useState(false)
   const [schedules, setSchedules] = useState([] as ISchedule[])
   const { pools } = usePools()
   const { instructors } = useInstructors()
   const { user } = useUser()
+  const [onWaitlist, setOnWaitlist] = useState(false)
+  const [purchaseEnabled, setPurchaseEnabled] = useState(false)
 
   useEffect(() => {
     if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
@@ -137,6 +140,42 @@ export default function Purchase() {
     setPaymentCompleted(true)
   }
 
+  useEffect(() => {
+    const fetchConfig = async () => {
+      const response = await get<{
+        waitlistEnabled: boolean
+      }>('/config')
+      setWaitlistEnabled(response.waitlistEnabled)
+    }
+    fetchConfig()
+  }, [])
+
+  useEffect(() => {
+    const fetchOnWaitlist = async () => {
+      try {
+        const response = await get<{
+          id: string
+          userId: string
+          allowed: boolean
+        }>('/waitlist/me')
+        setOnWaitlist(true)
+        setPurchaseEnabled(response.allowed)
+      } catch (err: any) {
+        console.error(err)
+        setOnWaitlist(false)
+        setPurchaseEnabled(false)
+      }
+    }
+    fetchOnWaitlist()
+  }, [])
+
+  const joinWaitlist = async () => {
+    await post('/waitlist/join', {
+      userId: user?.id,
+    })
+    setOnWaitlist(true)
+  }
+
   const handlePayWithApplePay = async () => {
     const product = products.find(p => p.id == selectedProductId)
     const session = new window.ApplePaySession(3, {
@@ -174,6 +213,38 @@ export default function Purchase() {
           </div>
         </header>
         <main className="px-6">
+          {waitlistEnabled && !purchaseEnabled && (
+            <div className="mt-10 border-l-4 border-yellow-400 bg-yellow-50 p-4">
+              <div className="flex">
+                <div className="shrink-0">
+                  <ExclamationTriangleIcon aria-hidden="true" className="size-5 text-yellow-400" />
+                </div>
+                <div className="ml-3">
+                  {onWaitlist ? (
+                    <p className="text-sm text-yellow-700">
+                      You are currently on the waitlist. You will be notified when you are allowed to purchase lessons.
+                    </p>
+                  ) : (
+                    <p className="text-sm text-yellow-700">
+                      The waitlist is currently enabled. Please join the waitlist to purchase lessons.
+                    </p>
+                  )}
+                  {!onWaitlist ? (
+                    <div className="ml-auto pl-3 mt-2">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          joinWaitlist()
+                        }}
+                      >
+                        Join waitlist
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          )}
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             {isMissingContactInfo && (
               <div className="mb-6 border-l-4 border-yellow-400 bg-yellow-50 p-4">

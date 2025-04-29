@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req, NotFoundExcepti
 import { WaitlistService } from './waitlist.service'
 import { ActiveUser } from 'iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from 'iam/authentication/interfaces/active-user-data.interface'
+import { Role } from '../../../../libs/shared/src/enums/role.enum'
+import { Roles } from 'iam/authentication/decorators/roles.decorator'
 
 @Controller('waitlist')
 export class WaitlistController {
@@ -25,6 +27,7 @@ export class WaitlistController {
   }
 
   // TODO add role guard
+  @Roles(Role.Admin)
   @Patch(':userId/allow-purchase')
   async update(@Param('userId') userId: string) {
     const waitlist = await this.waitlistService.allowPurchase(userId)

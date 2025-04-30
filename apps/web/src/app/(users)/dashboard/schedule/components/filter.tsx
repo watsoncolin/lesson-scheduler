@@ -26,6 +26,7 @@ interface CalendarDay {
   isToday: boolean
   isSelected: boolean
   isDisabled: boolean
+  isEmpty: boolean
 }
 
 // next four month names in an array starting from today
@@ -104,10 +105,25 @@ export default function Filter({
       baseDate.setDate(1) // Set to the first day of the month
 
       const daysInMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0).getDate() // Get correct number of days
+      const firstDayOfMonth = baseDate.getDay() // Get the day of week (0-6) for the first day of the month
 
-      return Array.from({ length: daysInMonth }, (_, j) => {
-        const date = new Date(baseDate) // Create a fresh date object
-        date.setDate(j + 1) // Set correct day
+      // Create an array that includes empty slots for days before the first of the month
+      const days = Array.from({ length: 42 }, (_, j) => {
+        const dayNumber = j - firstDayOfMonth + 1
+        if (dayNumber < 1 || dayNumber > daysInMonth) {
+          return {
+            date: '',
+            monthIndex: i,
+            isCurrentMonth: false,
+            isToday: false,
+            isSelected: false,
+            isDisabled: true,
+            isEmpty: true,
+          }
+        }
+
+        const date = new Date(baseDate)
+        date.setDate(dayNumber)
 
         return {
           date: date.toISOString().split('T')[0],
@@ -116,8 +132,11 @@ export default function Filter({
           isToday: i === 0 && date.toDateString() === new Date().toDateString(),
           isSelected: date.toISOString().split('T')[0] === selectedDate,
           isDisabled: date < new Date(),
+          isEmpty: false,
         }
       })
+
+      return days
     }).flat()
     setCalendar(cal)
   }, [selectedDate])
@@ -265,34 +284,38 @@ export default function Filter({
                                   .filter(day => day.monthIndex === selectedMonth)
                                   .map((day, dayIdx) => (
                                     <div
-                                      key={day.date}
+                                      key={day.date || `empty-${dayIdx}`}
                                       className={classNames(dayIdx > 6 ? 'border-t border-gray-200' : '', 'py-2')}
                                     >
-                                      <button
-                                        type="button"
-                                        className={classNames(
-                                          // Selected day styling
-                                          day.isSelected && day.isToday ? 'bg-indigo-600 text-white' : '', // Selected and today
-                                          day.isSelected && !day.isToday ? 'bg-gray-900 text-white' : '', // Selected but not today
+                                      {!day.isEmpty && (
+                                        <button
+                                          type="button"
+                                          className={classNames(
+                                            // Selected day styling
+                                            day.isSelected && day.isToday ? 'bg-indigo-600 text-white' : '', // Selected and today
+                                            day.isSelected && !day.isToday ? 'bg-gray-900 text-white' : '', // Selected but not today
 
-                                          // Today but not selected
-                                          !day.isSelected && day.isToday ? 'text-indigo-600 font-semibold' : '',
+                                            // Today but not selected
+                                            !day.isSelected && day.isToday ? 'text-indigo-600 font-semibold' : '',
 
-                                          // Hover effect when not selected
-                                          !day.isSelected ? 'hover:bg-gray-200' : '',
+                                            // Hover effect when not selected
+                                            !day.isSelected ? 'hover:bg-gray-200' : '',
 
-                                          // Font weight adjustments for selected or today
-                                          day.isSelected || day.isToday ? 'font-semibold' : '',
+                                            // Font weight adjustments for selected or today
+                                            day.isSelected || day.isToday ? 'font-semibold' : '',
 
-                                          day.isDisabled ? 'text-gray-400' : '',
+                                            day.isDisabled ? 'text-gray-400' : '',
 
-                                          // Common styling for the button
-                                          'mx-auto flex h-8 w-8 items-center justify-center rounded-full',
-                                        )}
-                                        onClick={() => onDateChange(day.date)}
-                                      >
-                                        <time dateTime={day.date}>{day.date.split('-').pop()?.replace(/^0/, '')}</time>
-                                      </button>
+                                            // Common styling for the button
+                                            'mx-auto flex h-8 w-8 items-center justify-center rounded-full',
+                                          )}
+                                          onClick={() => onDateChange(day.date)}
+                                        >
+                                          <time dateTime={day.date}>
+                                            {day.date.split('-').pop()?.replace(/^0/, '')}
+                                          </time>
+                                        </button>
+                                      )}
                                     </div>
                                   ))}
                               </div>
@@ -442,12 +465,12 @@ export default function Filter({
                         <div className="mt-2 grid grid-cols-7 text-sm">
                           {calendar
                             .filter(day => day.monthIndex === selectedMonth)
-                            .map((day, dayIdx) => {
-                              return (
-                                <div
-                                  key={day.date}
-                                  className={classNames(dayIdx > 6 ? 'border-t border-gray-200' : '', 'py-2')}
-                                >
+                            .map((day, dayIdx) => (
+                              <div
+                                key={day.date || `empty-${dayIdx}`}
+                                className={classNames(dayIdx > 6 ? 'border-t border-gray-200' : '', 'py-2')}
+                              >
+                                {!day.isEmpty && (
                                   <button
                                     type="button"
                                     className={classNames(
@@ -473,9 +496,9 @@ export default function Filter({
                                   >
                                     <time dateTime={day.date}>{day.date.split('-').pop()?.replace(/^0/, '')}</time>
                                   </button>
-                                </div>
-                              )
-                            })}
+                                )}
+                              </div>
+                            ))}
                         </div>
                       </div>
                     </div>

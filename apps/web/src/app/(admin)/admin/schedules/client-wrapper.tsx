@@ -7,7 +7,7 @@ import Filter from './filter'
 import { get } from '@utils/api'
 import { Button } from '@components/button'
 
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 150
 
 export default function ClientWrapper() {
   const [selectedInstructor, setSelectedInstructor] = useState('')

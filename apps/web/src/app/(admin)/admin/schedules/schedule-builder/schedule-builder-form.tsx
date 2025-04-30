@@ -149,7 +149,7 @@ export default function ScheduleBuilderForm() {
     const lastLesson = lessonForms[lessonForms.length - 1]
     const newLesson = {
       startTime: lastLesson?.endTime || '09:00',
-      endTime: format(new Date(`2000-01-01T${lastLesson?.endTime || '09:00'}`).getTime() + 15 * 60000, 'HH:mm'),
+      endTime: format(new Date(`2000-01-01T${lastLesson?.endTime || '09:00'}`).getTime() + 20 * 60000, 'HH:mm'),
       lessonType: 'private' as const,
       classSize: 1,
       isEditing: true,
@@ -160,14 +160,14 @@ export default function ScheduleBuilderForm() {
   const handleLessonChange = (index: number, field: keyof LessonFormData, value: string | number) => {
     const newForms = [...lessonForms]
     if (field === 'startTime') {
-      // Ensure time is in 15-minute increments
+      // Ensure time is in 20-minute increments
       const [hours, minutes] = (value as string).split(':')
-      const roundedMinutes = Math.round(parseInt(minutes) / 15) * 15
+      const roundedMinutes = Math.round(parseInt(minutes) / 20) * 20
       const roundedTime = `${hours}:${roundedMinutes.toString().padStart(2, '0')}`
 
-      // Calculate end time 15 minutes after start time
+      // Calculate end time 20 minutes after start time
       const startDate = new Date(`2000-01-01T${roundedTime}`)
-      const endDate = new Date(startDate.getTime() + 15 * 60000)
+      const endDate = new Date(startDate.getTime() + 20 * 60000)
       const endTime = format(endDate, 'HH:mm')
 
       newForms[index] = {

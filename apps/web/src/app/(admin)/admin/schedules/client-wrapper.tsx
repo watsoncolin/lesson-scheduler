@@ -6,6 +6,7 @@ import SchedulesList from './schedules-list'
 import Filter from './filter'
 import { get } from '@utils/api'
 import { Button } from '@components/button'
+import { format, parseISO, isSameDay } from 'date-fns'
 
 const ITEMS_PER_PAGE = 150
 
@@ -47,8 +48,10 @@ export default function ClientWrapper() {
 
       // Filter by date - only apply if a date is selected
       if (selectedDate) {
-        const scheduleDate = new Date(schedule.startDateTime).toISOString().split('T')[0]
-        if (scheduleDate !== selectedDate) {
+        const scheduleDate = parseISO(schedule.startDateTime)
+        const selectedDateObj = parseISO(selectedDate)
+
+        if (!isSameDay(scheduleDate, selectedDateObj)) {
           return false
         }
       }

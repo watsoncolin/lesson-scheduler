@@ -66,6 +66,7 @@ async function request(endpoint: string, method = 'GET', body = null, headers = 
   }
   const options = {
     method,
+    cache: 'no-store' as RequestCache,
     headers: {
       'Content-Type': 'application/json',
       ...headers,

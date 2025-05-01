@@ -6,6 +6,7 @@ import { Schedule } from './schedule'
 import { CreateScheduleDto } from './dto/create-schedule.dto'
 import { UpdateScheduleDto } from './dto/update-schedule.dto'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
+import { zonedTimeToUtc } from 'date-fns-tz'
 
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
@@ -101,31 +102,33 @@ export class ScheduleService {
       // Parse the date string
       const [year, month, day] = date.split('-').map(Number)
 
-      // Create date in the specified timezone
-      let startOfDay = new Date(year, month - 1, day, 0, 0, 0)
-      let endOfDay = new Date(year, month - 1, day, 23, 59, 59)
+      // Create start and end dates in the specified timezone
+      const startOfDay = new Date(year, month - 1, day, 0, 0, 0)
+      const endOfDay = new Date(year, month - 1, day, 23, 59, 59)
 
       // Convert to UTC if timezone is provided
       if (timezone) {
-        const startOffset = new Date(startOfDay.toLocaleString('en-US', { timeZone: timezone })).getTimezoneOffset()
-        const endOffset = new Date(endOfDay.toLocaleString('en-US', { timeZone: timezone })).getTimezoneOffset()
+        const startOfDayUTC = zonedTimeToUtc(startOfDay, timezone)
+        const endOfDayUTC = zonedTimeToUtc(endOfDay, timezone)
 
-        console.log('startOffset', startOffset)
-        console.log('endOffset', endOffset)
-        startOfDay = new Date(startOfDay.getTime() + startOffset * 60 * 1000)
-        endOfDay = new Date(endOfDay.getTime() + endOffset * 60 * 1000)
+        console.log('startOfDayUTC', startOfDayUTC)
+        console.log('endOfDayUTC', endOfDayUTC)
+        console.log('timezone', timezone)
+
+        filter.$and.push({
+          startDateTime: {
+            $gte: startOfDayUTC,
+            $lt: endOfDayUTC,
+          },
+        })
+      } else {
+        filter.$and.push({
+          startDateTime: {
+            $gte: startOfDay,
+            $lt: endOfDay,
+          },
+        })
       }
-
-      console.log('startOfDay', startOfDay)
-      console.log('endOfDay', endOfDay)
-      console.log('timezone', timezone)
-
-      filter.$and.push({
-        startDateTime: {
-          $gte: startOfDay,
-          $lt: endOfDay,
-        },
-      })
     }
 
     const entities = await this.model.find(filter)

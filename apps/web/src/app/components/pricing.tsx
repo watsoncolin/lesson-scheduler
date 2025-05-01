@@ -108,7 +108,7 @@ export default function Pricing() {
                 <p className="mt-4 text-sm leading-6 text-gray-600">{product.description}</p>
                 <p className="mt-6 flex items-baseline gap-x-1">
                   <span className="text-4xl font-bold tracking-tight text-gray-900">
-                    ${product.amount / product.credits} / lesson
+                    ${product.amount / product.credits} / {product.lessonType == 'group' ? 'session' : 'lesson'}
                   </span>
                 </p>
                 <a

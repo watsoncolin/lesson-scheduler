@@ -143,6 +143,10 @@ export class AuthenticationService {
         throw new UnauthorizedException('Invalid or expired reset token')
       }
 
+      if (user.resetToken !== token) {
+        throw new UnauthorizedException('Invalid or expired reset token')
+      }
+
       // Generate new salt and hash password with it
       const salt = randomBytes(16).toString('hex')
       const hashedPassword = await this.hashingService.hash(password + salt)

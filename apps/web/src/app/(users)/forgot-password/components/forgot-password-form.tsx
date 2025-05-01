@@ -16,7 +16,7 @@ export default function ForgotPasswordForm() {
     setSuccess(false)
 
     try {
-      const response = await post(`${API_BASE_URL}/auth/forgot-password`, {
+      const response = await post('/auth/forgot-password', {
         email,
       })
 

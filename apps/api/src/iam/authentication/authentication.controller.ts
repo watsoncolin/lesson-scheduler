@@ -63,12 +63,14 @@ export class AuthenticationController {
   }
 
   @Post('forgot-password')
-  async forgotPassword(@Body() { email }: { email: string }): Promise<void> {
-    return this.authService.forgotPassword(email)
+  async forgotPassword(@Body() { email }: { email: string }): Promise<{ success: boolean }> {
+    await this.authService.forgotPassword(email)
+    return { success: true }
   }
 
   @Post('reset-password')
-  async resetPassword(@Body() { token, password }: { token: string; password: string }): Promise<void> {
-    return this.authService.resetPassword(token, password)
+  async resetPassword(@Body() { token, password }: { token: string; password: string }): Promise<{ message: string }> {
+    await this.authService.resetPassword(token, password)
+    return { message: 'Password reset successfully' }
   }
 }

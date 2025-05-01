@@ -121,6 +121,7 @@ export class UserService {
         role: 1,
         failedLoginAttempts: 1,
         lastFailedLogin: 1,
+        resetToken: 1,
       },
     )
     if (!entity) {

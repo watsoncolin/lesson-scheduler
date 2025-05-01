@@ -31,7 +31,7 @@ export default function ResetPasswordForm() {
     }
 
     try {
-      const response = await post(`${API_BASE_URL}/auth/reset-password`, {
+      const response = await post(`/auth/reset-password`, {
         token,
         password,
       })

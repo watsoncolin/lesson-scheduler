@@ -418,7 +418,8 @@ export default function ScheduleBuilderForm() {
               className="flex items-center gap-2"
               disabled={!isFormEnabled || previousWeekLessons.length === 0}
             >
-              Copy Lessons from Last {format(new Date(selectedDate), 'EEEE')} ({previousWeekLessons.length})
+              Copy Lessons from Last {format(parse(selectedDate, 'yyyy-MM-dd', new Date()), 'EEEE')} (
+              {previousWeekLessons.length})
             </Button>
             <Button
               onClick={handleCopyPreviousDay}

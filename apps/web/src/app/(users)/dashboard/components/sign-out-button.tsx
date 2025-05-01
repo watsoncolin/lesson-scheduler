@@ -1,4 +1,5 @@
 import { removeAuthToken } from '@utils/api'
+import { googleLogout } from '@react-oauth/google'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -7,8 +8,11 @@ function classNames(...classes: string[]) {
 export default function SignOutButton() {
   async function handleSignOut(event: React.FormEvent) {
     event.preventDefault()
+    // Sign out of Google
+    googleLogout()
+    // Remove local auth token
     removeAuthToken()
-
+    // Redirect to home page
     window.location.href = '/'
   }
   return (

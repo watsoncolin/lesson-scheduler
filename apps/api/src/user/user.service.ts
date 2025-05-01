@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { InjectModel } from '@nestjs/mongoose'
@@ -65,7 +65,7 @@ export class UserService {
 
     const existingUser = await this.model.findOne({ email: signUpDto.email.toLowerCase() })
     if (existingUser) {
-      throw new Error('User already exists')
+      throw new ConflictException('User already exists')
     }
 
     await this.model.create({
@@ -88,7 +88,7 @@ export class UserService {
     return user
   }
 
-  async findAll(page = 1, limit = 10): Promise<{ users: User[]; total: number }> {
+  async findAll(page = 1, limit = 1000): Promise<{ users: User[]; total: number }> {
     const skip = (page - 1) * limit
     const [users, total] = await Promise.all([
       this.model.find().skip(skip).limit(limit).exec(),

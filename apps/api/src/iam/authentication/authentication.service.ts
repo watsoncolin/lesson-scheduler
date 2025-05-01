@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException, UnauthorizedException, Logger, BadRequestException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+  Logger,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common'
 import { HashingService } from '../hashing/hashing.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
@@ -35,6 +42,9 @@ export class AuthenticationService {
       const user = await this.userService.signUp(signUpDto, password, salt)
       return await this.generateTokens(user)
     } catch (err: any) {
+      if (err instanceof ConflictException) {
+        throw new ConflictException('User already exists')
+      }
       this.logger.error(`Failed to sign up user: ${err.message}`, err.stack)
       throw new BadRequestException('Failed to create user account')
     }

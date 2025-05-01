@@ -15,7 +15,7 @@ export default function UsersList() {
   const [users, setUsers] = useState<UserSearchResponseDto[]>([])
   const [total, setTotal] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
-  const [limit, setLimit] = useState(50)
+  const [limit, setLimit] = useState(1000)
 
   const totalPages = Math.ceil(total / limit)
 

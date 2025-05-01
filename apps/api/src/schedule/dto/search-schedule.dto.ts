@@ -1,4 +1,4 @@
-import { IsArray, IsDateString, IsOptional } from 'class-validator'
+import { IsArray, IsDateString, IsOptional, IsString } from 'class-validator'
 import { Transform } from 'class-transformer'
 
 export class SearchScheduleDto {
@@ -25,4 +25,8 @@ export class SearchScheduleDto {
   @IsDateString()
   @IsOptional()
   date?: string
+
+  @IsString()
+  @IsOptional()
+  timezone?: string
 }

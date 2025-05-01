@@ -146,7 +146,10 @@ export default function Schedule() {
     if (pools.length > 0) queryString.append('pools', pools.join(','))
     if (instructors.length > 0) queryString.append('instructors', instructors.join(','))
     if (selectedDays.length > 0) queryString.append('daysOfWeek', selectedDays.join(','))
-    if (selectedDate) queryString.append('date', selectedDate)
+    if (selectedDate) {
+      queryString.append('date', selectedDate)
+      queryString.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone)
+    }
 
     const schedules = await get<Schedule[]>('/schedules/search?' + queryString.toString())
     setSchedules(schedules.filter(s => s.lessonType == 'private'))

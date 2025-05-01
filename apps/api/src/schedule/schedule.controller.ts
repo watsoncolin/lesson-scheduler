@@ -56,7 +56,7 @@ export class ScheduleController {
 
   @Get('search')
   async search(@Query() query: SearchScheduleDto) {
-    const { pools, instructors, daysOfWeek, date } = query
+    const { pools, instructors, daysOfWeek, date, timezone } = query
     const daysOfWeekInt = daysOfWeek
       ?.map(day => {
         switch (day.toLowerCase()) {
@@ -79,7 +79,7 @@ export class ScheduleController {
         }
       })
       .filter(d => d != null)
-    const schedules = await this.scheduleService.search(pools, instructors, daysOfWeekInt, date)
+    const schedules = await this.scheduleService.search(pools, instructors, daysOfWeekInt, date, timezone)
     return schedules
   }
 

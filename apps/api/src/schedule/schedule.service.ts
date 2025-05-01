@@ -75,6 +75,7 @@ export class ScheduleService {
     instructorIds?: string[],
     daysOfWeek?: number[],
     date?: string,
+    timezone?: string,
   ): Promise<Schedule[]> {
     const filter: {
       $and?: any[]
@@ -97,18 +98,32 @@ export class ScheduleService {
     }
     if (date) {
       filter.$and = filter.$and || []
-      // Create date in local timezone
-      const searchDate = new Date(date)
-      // Get the timezone offset in minutes
-      const timezoneOffset = searchDate.getTimezoneOffset()
-      // Convert to UTC by adding the offset
-      const startOfDay = new Date(searchDate.getTime() + timezoneOffset * 60 * 1000)
-      const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
+      // Parse the date string
+      const [year, month, day] = date.split('-').map(Number)
+
+      // Create date in the specified timezone
+      let startOfDay = new Date(year, month - 1, day, 0, 0, 0)
+      let endOfDay = new Date(year, month - 1, day, 23, 59, 59)
+
+      // Convert to UTC if timezone is provided
+      if (timezone) {
+        const startOffset = new Date(startOfDay.toLocaleString('en-US', { timeZone: timezone })).getTimezoneOffset()
+        const endOffset = new Date(endOfDay.toLocaleString('en-US', { timeZone: timezone })).getTimezoneOffset()
+
+        console.log('startOffset', startOffset)
+        console.log('endOffset', endOffset)
+        startOfDay = new Date(startOfDay.getTime() + startOffset * 60 * 1000)
+        endOfDay = new Date(endOfDay.getTime() + endOffset * 60 * 1000)
+      }
+
+      console.log('startOfDay', startOfDay)
+      console.log('endOfDay', endOfDay)
+      console.log('timezone', timezone)
 
       filter.$and.push({
         startDateTime: {
-          $gte: startOfDay.toISOString(),
-          $lt: endOfDay.toISOString(),
+          $gte: startOfDay,
+          $lt: endOfDay,
         },
       })
     }

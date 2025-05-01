@@ -55,7 +55,8 @@ export default function ScheduleBuilderForm() {
     const queryString = new URLSearchParams()
     queryString.append('pools', poolId)
     queryString.append('instructors', instructorId)
-    queryString.append('date', date.toISOString())
+    queryString.append('date', date.toISOString().split('T')[0])
+    queryString.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone)
     if (daysOfWeek) {
       queryString.append('daysOfWeek', daysOfWeek)
     }

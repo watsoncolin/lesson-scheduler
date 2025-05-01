@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import { post } from '@/app/utils/api'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -15,15 +16,11 @@ export default function ForgotPasswordForm() {
     setSuccess(false)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
+      const response = await post(`${API_BASE_URL}/auth/forgot-password`, {
+        email,
       })
 
-      if (!response.ok) {
+      if (!response) {
         throw new Error('Failed to send reset password email')
       }
 

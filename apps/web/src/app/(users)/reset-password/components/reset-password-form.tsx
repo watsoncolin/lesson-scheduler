@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import { post } from '@/app/utils/server-api'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -30,15 +31,12 @@ export default function ResetPasswordForm() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token, password }),
+      const response = await post(`${API_BASE_URL}/auth/reset-password`, {
+        token,
+        password,
       })
 
-      if (!response.ok) {
+      if (!response) {
         throw new Error('Failed to reset password')
       }
 

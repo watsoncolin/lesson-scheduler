@@ -122,6 +122,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <ListBulletIcon />
                 <SidebarLabel>Waitlist</SidebarLabel>
               </SidebarItem>
+              <SidebarItem href="/admin/announcement" current={pathname.startsWith('/admin/announcement')}>
+                <LightBulbIcon />
+                <SidebarLabel>Announcement</SidebarLabel>
+              </SidebarItem>
             </SidebarSection>
 
             <SidebarSection className="max-lg:hidden">

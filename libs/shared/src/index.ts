@@ -18,6 +18,7 @@ export * from './interfaces/transaction'
 export * from './interfaces/product'
 export * from './interfaces/site-config'
 export * from './interfaces/waitlist'
+export * from './interfaces/announcement'
 
 // DTOs
 export * from './dtos/schedule'
@@ -31,3 +32,4 @@ export * from './dtos/product'
 export * from './dtos/pagination'
 export * from './dtos/user-search-request'
 export * from './dtos/user-search-response'
+export * from './dtos/create-announcement'

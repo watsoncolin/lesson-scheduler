@@ -16,7 +16,7 @@ import { PaymentModule } from 'payment/payment.module'
 import { SiteConfigModule } from 'site-config/site-config.module'
 import { WaitlistModule } from 'waitlist/waitlist.module'
 import { FileModule } from '../file/file.module'
-
+import { AnnouncementModule } from 'announcement/announcement.module'
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -42,6 +42,7 @@ import { FileModule } from '../file/file.module'
     SiteConfigModule,
     WaitlistModule,
     FileModule,
+    AnnouncementModule,
   ],
   controllers: [AppController],
   providers: [AppService],

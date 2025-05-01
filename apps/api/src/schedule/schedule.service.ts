@@ -6,7 +6,8 @@ import { Schedule } from './schedule'
 import { CreateScheduleDto } from './dto/create-schedule.dto'
 import { UpdateScheduleDto } from './dto/update-schedule.dto'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
-import { toZonedTime } from 'date-fns-tz'
+import { fromZonedTime, toZonedTime } from 'date-fns-tz'
+import { addDays } from 'date-fns'
 
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
@@ -100,28 +101,29 @@ export class ScheduleService {
     if (date) {
       filter.$and = filter.$and || []
       // Parse the date string
-      const [year, month, day] = date.split('-').map(Number)
 
-      // Create start and end dates in the specified timezone
-      const startOfDay = new Date(year, month - 1, day, 0, 0, 0)
-      const endOfDay = new Date(year, month - 1, day, 23, 59, 59)
-
-      // Convert to UTC if timezone is provided
       if (timezone) {
-        const startOfDayUTC = toZonedTime(startOfDay, timezone)
-        const endOfDayUTC = toZonedTime(endOfDay, timezone)
+        // Convert local dates to UTC for database query
+        const startOfDayOffset = fromZonedTime(date, timezone)
+        const endOfDayOffset = addDays(startOfDayOffset, 1)
 
-        console.log('startOfDayUTC', startOfDayUTC)
-        console.log('endOfDayUTC', endOfDayUTC)
+        console.log('date', date)
+        console.log('startOfDayOffset', startOfDayOffset)
+        console.log('endOfDayOffset', endOfDayOffset)
         console.log('timezone', timezone)
 
         filter.$and.push({
           startDateTime: {
-            $gte: startOfDayUTC,
-            $lt: endOfDayUTC,
+            $gte: startOfDayOffset,
+            $lt: endOfDayOffset,
           },
         })
       } else {
+        // If no timezone provided, use UTC dates
+        const [year, month, day] = date.split('-').map(Number)
+        const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0))
+        const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59))
+
         filter.$and.push({
           startDateTime: {
             $gte: startOfDay,

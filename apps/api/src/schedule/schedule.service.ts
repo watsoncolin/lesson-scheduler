@@ -97,15 +97,18 @@ export class ScheduleService {
     }
     if (date) {
       filter.$and = filter.$and || []
+      // Create date in local timezone
       const searchDate = new Date(date)
-      // Convert the search date to UTC start and end of day
-      const startOfDay = searchDate
-      const endOfDay = new Date(searchDate.getTime() + 24 * 60 * 60 * 1000)
+      // Get the timezone offset in minutes
+      const timezoneOffset = searchDate.getTimezoneOffset()
+      // Convert to UTC by adding the offset
+      const startOfDay = new Date(searchDate.getTime() + timezoneOffset * 60 * 1000)
+      const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
 
       filter.$and.push({
         startDateTime: {
           $gte: startOfDay.toISOString(),
-          $lte: endOfDay.toISOString(),
+          $lt: endOfDay.toISOString(),
         },
       })
     }

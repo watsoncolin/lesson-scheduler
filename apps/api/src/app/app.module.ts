@@ -25,11 +25,6 @@ import { FileModule } from '../file/file.module'
       inject: [ConfigService],
       useFactory: (configService: ConfigService): MongooseModuleFactoryOptions => {
         const uri = configService.get(ConfigEnum.MongoUri)
-        console.log('Environment variables loaded:', {
-          MONGO_URI: process.env.MONGO_URI,
-          configServiceUri: uri,
-          NODE_ENV: process.env.NODE_ENV,
-        })
         return {
           uri: configService.get(ConfigEnum.MongoUri),
           autoIndex: true,

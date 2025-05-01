@@ -1,4 +1,26 @@
+'use client'
+
+import { useState } from 'react'
+
+import { useEffect } from 'react'
+import { get } from '../utils/api'
+import { Announcement } from '@lesson-scheduler/shared'
+
 export default function Header() {
+  // fetch announcement from api
+  const [announcement, setAnnouncement] = useState<Announcement | null>(null)
+  useEffect(() => {
+    const fetchAnnouncement = async () => {
+      const response = await get('/announcement')
+      setAnnouncement(response as Announcement)
+    }
+    try {
+      fetchAnnouncement()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
+
   return (
     <div className="relative isolate px-6 pt-14 lg:px-8">
       <div
@@ -15,13 +37,15 @@ export default function Header() {
       </div>
       <div className="mx-auto max-w-2xl py-32">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-          <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-            Announcing parent and tot group lessons.{' '}
-            <a href="#parent-tot" className="font-semibold text-indigo-600">
-              <span className="absolute inset-0" aria-hidden="true" />
-              Read more <span aria-hidden="true">&rarr;</span>
-            </a>
-          </div>
+          {announcement && (
+            <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+              {announcement.title}
+              <a href="#announcement" className="font-semibold text-indigo-600 pl-2">
+                <span className="absolute inset-0" aria-hidden="true" />
+                Read more <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          )}
         </div>
         <div className="text-center">
           <img className="text-center" src="/images/logo.png" alt="Stansbury Swim" style={{ margin: 'auto' }} />

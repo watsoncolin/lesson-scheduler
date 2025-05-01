@@ -3,6 +3,7 @@ import React, { use, useEffect, useState } from 'react'
 import { useInstructors, usePools } from '@contexts/index'
 import { Schedule } from '@lib/schedule'
 import { get } from '@utils/api'
+import { Announcement } from '@lesson-scheduler/shared'
 
 export default function ParentTot() {
   const [schedules, setSchedules] = useState([] as Schedule[])
@@ -22,17 +23,27 @@ export default function ParentTot() {
     fetchSchedules()
   }, [])
 
+  const [announcement, setAnnouncement] = useState<Announcement | null>(null)
+  useEffect(() => {
+    const fetchAnnouncement = async () => {
+      const response = await get('/announcement')
+      setAnnouncement(response as Announcement)
+    }
+    try {
+      fetchAnnouncement()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
+
   return (
-    <div id="parent-tot" className="bg-white py-12 md:py-10 lg:py-10">
+    <div id="announcement" className="bg-white py-12 md:py-10 lg:py-10">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3">
         <div className="mx-auto max-w-2xl lg:mx-0">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Parent and Tot group lessons</h2>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            Group lessons for parents and tots. Parents will learn how to teach their children to swim and children will
-            learn basic water safety skills.
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{announcement?.heading}</h2>
+          <p className="mt-6 text-lg leading-8 text-gray-600">{announcement?.content}</p>
         </div>
-
+        {/* 
         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500">
           {schedules
             ? schedules.map(schedule => {
@@ -73,7 +84,7 @@ export default function ParentTot() {
                 )
               })
             : null}
-        </ol>
+        </ol> */}
       </div>
     </div>
   )

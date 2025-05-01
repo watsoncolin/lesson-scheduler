@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import clsx from 'clsx'
-import image1 from '../images/image1.png'
+import image1 from '../images/1swim.jpeg'
 import image2 from '../images/image2.png'
 import image3 from '../images/image3.png'
-import image4 from '../images/image1.png'
-import image5 from '../images/image2.png'
+import image4 from '../images/swim2.jpeg'
+import image5 from '../images/image1.png'
 
 export default function Photos() {
   const rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']

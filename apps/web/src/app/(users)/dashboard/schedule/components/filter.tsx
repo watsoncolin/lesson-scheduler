@@ -105,7 +105,7 @@ export default function Filter({
       baseDate.setDate(1) // Set to the first day of the month
 
       const daysInMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0).getDate() // Get correct number of days
-      const firstDayOfMonth = baseDate.getDay() // Get the day of week (0-6) for the first day of the month
+      const firstDayOfMonth = baseDate.getDay() // Get the day of week (0-6) for the first day of the month, where 0 is Sunday
 
       // Create an array that includes empty slots for days before the first of the month
       const days = Array.from({ length: 42 }, (_, j) => {
@@ -122,15 +122,15 @@ export default function Filter({
           }
         }
 
-        const date = new Date(baseDate)
-        date.setDate(dayNumber)
+        const date = new Date(baseDate.getFullYear(), baseDate.getMonth(), dayNumber)
+        const formattedDate = date.toISOString().split('T')[0]
 
         return {
-          date: date.toISOString().split('T')[0],
+          date: formattedDate,
           monthIndex: i,
           isCurrentMonth: i === 0,
           isToday: i === 0 && date.toDateString() === new Date().toDateString(),
-          isSelected: date.toISOString().split('T')[0] === selectedDate,
+          isSelected: formattedDate === selectedDate,
           isDisabled: date < new Date(),
           isEmpty: false,
         }
@@ -271,12 +271,12 @@ export default function Filter({
                                 </button>
                               </div>
                               <div className="mt-10 grid grid-cols-7 text-center text-xs leading-6 text-gray-500">
+                                <div>S</div>
                                 <div>M</div>
                                 <div>T</div>
                                 <div>W</div>
                                 <div>T</div>
                                 <div>F</div>
-                                <div>S</div>
                                 <div>S</div>
                               </div>
                               <div className="mt-2 grid grid-cols-7 text-sm">
@@ -454,12 +454,12 @@ export default function Filter({
                           </button>
                         </div>
                         <div className="mt-10 grid grid-cols-7 text-center text-xs leading-6 text-gray-500">
+                          <div>S</div>
                           <div>M</div>
                           <div>T</div>
                           <div>W</div>
                           <div>T</div>
                           <div>F</div>
-                          <div>S</div>
                           <div>S</div>
                         </div>
                         <div className="mt-2 grid grid-cols-7 text-sm">

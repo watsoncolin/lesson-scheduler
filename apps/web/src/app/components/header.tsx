@@ -48,7 +48,12 @@ export default function Header() {
           )}
         </div>
         <div className="text-center">
-          <img className="text-center" src="/images/logo.png" alt="Stansbury Swim" style={{ margin: 'auto' }} />
+          <img
+            className="text-center"
+            src="/images/logo.png"
+            alt="Stansbury Swim"
+            style={{ margin: 'auto', width: 250 }}
+          />
           {/* <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Stansbury swim</h1> */}
           <div className="mt-6 text-lg leading-8 text-gray-600">
             <ul className="list-none">

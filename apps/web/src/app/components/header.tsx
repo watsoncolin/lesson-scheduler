@@ -54,7 +54,7 @@ export default function Header() {
             <ul className="list-none">
               <li>Private One-On-One Instruction</li>
               <li>Flexible Scheduling</li>
-              <li>Warm 90 Degree Pool</li>
+              <li>Warm water</li>
             </ul>
           </div>
           <div className="mt-10 flex items-center justify-center gap-x-6">

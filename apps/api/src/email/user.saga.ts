@@ -1,0 +1,15 @@
+import { Injectable } from '@nestjs/common'
+import { Saga, ICommand, ofType } from '@nestjs/cqrs'
+import { Observable, filter, map, mergeMap } from 'rxjs'
+import { UserRegisterEvent } from 'user/events/user-register.event'
+import { SendWelcomeEmailCommand } from './commands/send-welcome-email.command'
+@Injectable()
+export class UserSaga {
+  @Saga()
+  onUserRegisterEvent = (events$: Observable<any>): Observable<ICommand> => {
+    return events$.pipe(
+      ofType(UserRegisterEvent),
+      map(event => new SendWelcomeEmailCommand(event.user)),
+    )
+  }
+}

@@ -7,6 +7,8 @@ import { Model, Types } from 'mongoose'
 import { User } from './user'
 import { SignUpDto } from '../iam/authentication/dto/sign-up.dto'
 import { UserForAuth } from './user-for-auth'
+import { EventBus } from '@nestjs/cqrs'
+import { UserRegisterEvent } from './events/user-register.event'
 
 const mapper = (entity: UserEntity): User => {
   return {
@@ -31,6 +33,7 @@ export class UserService {
   constructor(
     @InjectModel(UserEntity.name)
     private readonly model: Model<UserEntity>,
+    private readonly eventBus: EventBus,
   ) {}
   async create(createUserDto: CreateUserDto): Promise<User> {
     const _id = new Types.ObjectId()
@@ -57,8 +60,8 @@ export class UserService {
   async signUp(signUpDto: SignUpDto, hashedPassword: string, salt: string): Promise<User> {
     const _id = new Types.ObjectId()
 
-    const user = await this.model.findOne({ email: signUpDto.email.toLowerCase() })
-    if (user) {
+    const existingUser = await this.model.findOne({ email: signUpDto.email.toLowerCase() })
+    if (existingUser) {
       throw new Error('User already exists')
     }
 
@@ -77,7 +80,9 @@ export class UserService {
     if (!entity) {
       throw new Error('User not found')
     }
-    return mapper(entity)
+    const user = mapper(entity)
+    await this.eventBus.publish(new UserRegisterEvent(user))
+    return user
   }
 
   async findAll(page = 1, limit = 10): Promise<{ users: User[]; total: number }> {
@@ -180,7 +185,9 @@ export class UserService {
     if (!entity) {
       throw new Error('User not found')
     }
-    return mapper(entity)
+    const user = mapper(entity)
+    await this.eventBus.publish(new UserRegisterEvent(user))
+    return user
   }
   async saveGoogleId(
     email: string,
@@ -200,7 +207,9 @@ export class UserService {
     if (!entity) {
       throw new Error('User not found')
     }
-    return mapper(entity)
+    const user = mapper(entity)
+    await this.eventBus.publish(new UserRegisterEvent(user))
+    return user
   }
 
   public async updateResetToken(user: UserForAuth, token: string) {

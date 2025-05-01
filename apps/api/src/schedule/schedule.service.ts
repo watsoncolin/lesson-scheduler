@@ -6,7 +6,7 @@ import { Schedule } from './schedule'
 import { CreateScheduleDto } from './dto/create-schedule.dto'
 import { UpdateScheduleDto } from './dto/update-schedule.dto'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
-import { zonedTimeToUtc } from 'date-fns-tz'
+import { toZonedTime } from 'date-fns-tz'
 
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
@@ -108,8 +108,8 @@ export class ScheduleService {
 
       // Convert to UTC if timezone is provided
       if (timezone) {
-        const startOfDayUTC = zonedTimeToUtc(startOfDay, timezone)
-        const endOfDayUTC = zonedTimeToUtc(endOfDay, timezone)
+        const startOfDayUTC = toZonedTime(startOfDay, timezone)
+        const endOfDayUTC = toZonedTime(endOfDay, timezone)
 
         console.log('startOfDayUTC', startOfDayUTC)
         console.log('endOfDayUTC', endOfDayUTC)

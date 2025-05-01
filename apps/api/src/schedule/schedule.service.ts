@@ -133,7 +133,7 @@ export class ScheduleService {
       }
     }
 
-    const entities = await this.model.find(filter)
+    const entities = await this.model.find(filter).sort({ startDateTime: 1 })
     const results = entities.map(mapper)
     return results.filter(schedule => schedule.registrations.length < schedule.classSize)
   }

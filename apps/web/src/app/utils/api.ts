@@ -21,6 +21,7 @@ const setAuthToken = (token: string) => {
 // Remove token from cookies
 const removeAuthToken = () => {
   deleteCookie(AUTH_COOKIE_NAME)
+  removeUser()
 }
 
 const setUser = (user: any) => {

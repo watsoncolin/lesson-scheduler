@@ -8,7 +8,16 @@ import {
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/20/solid'
-import { Listbox, ListboxOption, ListboxOptions, Menu, Switch, Transition, ListboxButton } from '@headlessui/react'
+import {
+  Listbox,
+  ListboxOption,
+  ListboxOptions,
+  Menu,
+  Switch,
+  Transition,
+  ListboxButton,
+  Button,
+} from '@headlessui/react'
 import Filter from './components/filter'
 import { get, post } from '@utils/api'
 import React from 'react'
@@ -17,7 +26,7 @@ import { useUser } from '@contexts/user-context'
 import { usePools } from '@contexts/pools-context'
 import { useInstructors } from '@contexts/instructor-context'
 import { useCredits } from '@contexts/credits-context'
-
+import { SignWaiverButton } from './sign-waiver-button'
 export interface Option {
   value: string
   label: string
@@ -56,7 +65,7 @@ export default function Schedule() {
   const [selectedDate, setSelectedDate] = useState('')
   const [pendingSchedules, setPendingSchedules] = useState([] as PendingSchedules[])
 
-  const { user } = useUser()
+  const { user, refreshUser } = useUser()
   const { pools } = usePools()
   const { instructors } = useInstructors()
   const days = [
@@ -72,6 +81,14 @@ export default function Schedule() {
   const [selectedPools, setSelectedPools] = useState([] as Option[])
   const [selectedInstructors, setSelectedInstructors] = useState([] as Option[])
   const [selectedDays, setSelectedDays] = useState(days)
+
+  useEffect(() => {
+    if (!user?.signedWaiver) {
+      setError('You must sign the waiver before scheduling lessons')
+    } else {
+      setError('')
+    }
+  }, [user])
 
   const handlePoolsChange = (pools: Option[]) => {
     setSelectedPools(pools)
@@ -186,6 +203,11 @@ export default function Schedule() {
     }
   }, [instructors])
 
+  const handleWaiverClose = () => {
+    setError('')
+    refreshUser()
+  }
+
   return (
     <>
       <div className="py-10">
@@ -196,6 +218,21 @@ export default function Schedule() {
         </header>
         <main className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
+            {!user?.signedWaiver && (
+              <div className="mt-2 border-l-4 border-yellow-400 bg-yellow-50 p-4 mb-4">
+                <div className="flex">
+                  <div className="shrink-0">
+                    <ExclamationTriangleIcon aria-hidden="true" className="size-5 text-yellow-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-yellow-700">You must sign the waiver before scheduling lessons.</p>
+                    <div className="ml-auto pl-3 mt-2">
+                      <SignWaiverButton onClose={() => handleWaiverClose()} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
               {credits} available credit{credits > 1 ? 's' : ''}{' '}
               {pendingSchedules.length > 0 ? `(${pendingSchedules.length} pending)` : ''}

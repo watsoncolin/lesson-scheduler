@@ -11,4 +11,7 @@ export interface User {
   address2: string
   phone: string
   role: string
+  signedWaiver: boolean
+  waiverSignature: string | null
+  waiverSignatureDate: Date | null
 }

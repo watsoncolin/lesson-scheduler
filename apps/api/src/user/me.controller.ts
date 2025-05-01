@@ -18,6 +18,20 @@ export class MeController {
     return this.userService.update(user.sub, updateUserDto)
   }
 
+  @Post('waiver')
+  @HttpCode(200)
+  updateWaiver(
+    @ActiveUser() user: ActiveUserData,
+    @Body()
+    {
+      signedWaiver,
+      waiverSignature,
+      waiverSignatureDate,
+    }: { signedWaiver: boolean; waiverSignature: string; waiverSignatureDate: Date },
+  ) {
+    return this.userService.updateWaiver(user.sub, signedWaiver, waiverSignature, waiverSignatureDate)
+  }
+
   @Delete()
   @HttpCode(204)
   remove(@ActiveUser() user: ActiveUserData) {

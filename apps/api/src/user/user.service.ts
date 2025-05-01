@@ -26,6 +26,9 @@ const mapper = (entity: UserEntity): User => {
     role: entity.role,
     failedLoginAttempts: entity.failedLoginAttempts || 0,
     lastFailedLogin: entity.lastFailedLogin || null,
+    signedWaiver: entity.signedWaiver || false,
+    waiverSignature: entity.waiverSignature || null,
+    waiverSignatureDate: entity.waiverSignatureDate || null,
   }
 }
 @Injectable()
@@ -210,6 +213,25 @@ export class UserService {
     const user = mapper(entity)
     await this.eventBus.publish(new UserRegisterEvent(user))
     return user
+  }
+
+  async updateWaiver(
+    userId: string,
+    signedWaiver: boolean,
+    waiverSignature: string,
+    waiverSignatureDate: Date,
+  ): Promise<User> {
+    await this.model.updateOne(
+      { _id: new Types.ObjectId(userId) },
+      {
+        $set: {
+          signedWaiver,
+          waiverSignature,
+          waiverSignatureDate,
+        },
+      },
+    )
+    return this.findOne(userId)
   }
 
   public async updateResetToken(user: UserForAuth, token: string) {

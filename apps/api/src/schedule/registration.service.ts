@@ -9,6 +9,7 @@ import { TransactionService } from 'payment/transaction.service'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
 import { CreditTypesEnum } from 'shared/credit-types.enum'
 import { TransactionTypesEnum } from 'shared/transaction-types.enum'
+import { UserService } from 'user/user.service'
 
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
@@ -34,8 +35,18 @@ export class RegistrationService {
     @InjectModel(ScheduleEntity.name)
     private readonly model: Model<ScheduleEntity>,
     private readonly transactionService: TransactionService,
+    private readonly userService: UserService,
   ) {}
   async create(scheduleId: string, createRegistrationDto: CreateRegistrationDto): Promise<Schedule> {
+
+    const user = await this.userService.findOne(createRegistrationDto.userId)
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    if (!user.signedWaiver) {
+      throw new BadRequestException('User has not signed waiver')
+    }
     // Find schedule
     const schedule = await this.model.findById(new Types.ObjectId(scheduleId))
     if (!schedule) {

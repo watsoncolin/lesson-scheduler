@@ -23,4 +23,8 @@ export class UpdateUserDto {
   phone: string
   @IsOptional()
   privateRegistration: boolean
+  @IsOptional()
+  waiverSignature: string
+  @IsOptional()
+  waiverSignatureDate: Date
 }

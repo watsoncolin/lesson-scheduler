@@ -15,4 +15,7 @@ export class User {
   role: Role
   failedLoginAttempts: number
   lastFailedLogin: Date | null
+  signedWaiver: boolean
+  waiverSignature: string | null
+  waiverSignatureDate: Date | null
 }

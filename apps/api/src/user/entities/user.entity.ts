@@ -49,6 +49,15 @@ export class UserEntity {
 
   @Prop({ required: false })
   salt: string
+
+  @Prop({ required: true, default: false })
+  signedWaiver: boolean
+
+  @Prop({ required: false })
+  waiverSignature: string
+
+  @Prop({ required: false })
+  waiverSignatureDate: Date
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserEntity)

@@ -165,16 +165,46 @@ export default function ScheduleBuilderForm() {
       const roundedMinutes = Math.round(parseInt(minutes) / 20) * 20
       const roundedTime = `${hours}:${roundedMinutes.toString().padStart(2, '0')}`
 
+      // Validate time is between 7am and 8pm
+      const time = new Date(`2000-01-01T${roundedTime}`)
+      const minTime = new Date(`2000-01-01T07:00`)
+      const maxTime = new Date(`2000-01-01T21:00`)
+
+      if (time < minTime || time > maxTime) {
+        // If time is invalid, keep the previous value
+        return
+      }
+
       // Calculate end time 20 minutes after start time
       const startDate = new Date(`2000-01-01T${roundedTime}`)
       const endDate = new Date(startDate.getTime() + 20 * 60000)
       const endTime = format(endDate, 'HH:mm')
+
+      // Validate end time is also within bounds
+      if (endDate > maxTime) {
+        return
+      }
 
       newForms[index] = {
         ...newForms[index],
         [field]: roundedTime,
         endTime,
       }
+    } else if (field === 'endTime') {
+      // Validate end time is between 7am and 8pm
+      const [hours, minutes] = (value as string).split(':')
+      const roundedMinutes = Math.round(parseInt(minutes) / 20) * 20
+      const roundedTime = `${hours}:${roundedMinutes.toString().padStart(2, '0')}`
+
+      const time = new Date(`2000-01-01T${roundedTime}`)
+      const minTime = new Date(`2000-01-01T07:00`)
+      const maxTime = new Date(`2000-01-01T19:59`)
+
+      if (time < minTime || time > maxTime) {
+        return
+      }
+
+      newForms[index] = { ...newForms[index], [field]: roundedTime }
     } else if (field === 'lessonType') {
       // When changing to private, set class size to 1
       const lessonType = value as 'private' | 'group'
@@ -472,6 +502,8 @@ export default function ScheduleBuilderForm() {
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                         disabled={!isFormEnabled}
                         step="900"
+                        min="07:00"
+                        max="21:00"
                       />
                     ) : (
                       <span className="text-sm text-gray-900">{form.startTime}</span>
@@ -486,6 +518,8 @@ export default function ScheduleBuilderForm() {
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                         disabled={!isFormEnabled}
                         step="900"
+                        min="07:00"
+                        max="21:00"
                       />
                     ) : (
                       <span className="text-sm text-gray-900">{form.endTime}</span>

@@ -246,10 +246,10 @@ export default function Schedule() {
                               <time dateTime={startDateTime.toISOString()}>
                                 {startDateTime.toLocaleString('en-US', options)}
                               </time>
-                              -{' '}
-                              <time dateTime={endDateTime.toISOString()}>
+                              {/* -{' '} */}
+                              {/* <time dateTime={endDateTime.toISOString()}>
                                 {endDateTime.toLocaleString('en-US', options)}
-                              </time>
+                              </time> */}
                             </p>
                           </div>
                           <div className="flex-auto">

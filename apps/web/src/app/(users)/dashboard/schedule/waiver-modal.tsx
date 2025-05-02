@@ -34,7 +34,11 @@ export function WaiverModal({ isOpen, onClose }: WaiverModalProps) {
     }
 
     try {
-      if (signature.trim().toLowerCase() !== (user.firstName + ' ' + user.lastName).toLowerCase()) {
+      // remove spaces and lowercase
+      const signatureWithoutSpaces = signature.trim().toLowerCase().replace(/\s+/g, '')
+      const userName = (user.firstName + ' ' + user.lastName).toLowerCase().replace(/\s+/g, '')
+
+      if (signatureWithoutSpaces !== userName) {
         setError('Signature does not match')
         return
       }

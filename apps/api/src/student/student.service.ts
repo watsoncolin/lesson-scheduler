@@ -29,10 +29,10 @@ export class StudentService {
     const result = await this.model.create({
       _id,
       userId: new Types.ObjectId(createStudentDto.userId),
-      name: createStudentDto.name,
+      name: createStudentDto.name.trim(),
       birthday: new Date(createStudentDto.birthday),
-      ability: createStudentDto.ability,
-      notes: createStudentDto.notes,
+      ability: createStudentDto.ability.trim(),
+      notes: createStudentDto.notes.trim(),
     })
     const entity = await this.model.findById(result._id)
     if (!entity) {
@@ -60,16 +60,16 @@ export class StudentService {
   async update(updateStudentDto: UpdateStudentDto): Promise<Student> {
     const updates: any = {}
     if (updateStudentDto.name) {
-      updates['name'] = updateStudentDto.name
+      updates['name'] = updateStudentDto.name.trim()
     }
     if (updateStudentDto.birthday) {
       updates['birthday'] = new Date(updateStudentDto.birthday)
     }
     if (updateStudentDto.ability) {
-      updates['ability'] = updateStudentDto.ability
+      updates['ability'] = updateStudentDto.ability.trim()
     }
     if (updateStudentDto.notes) {
-      updates['notes'] = updateStudentDto.notes
+      updates['notes'] = updateStudentDto.notes.trim()
     }
 
     await this.model.updateOne(

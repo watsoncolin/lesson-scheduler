@@ -1,4 +1,4 @@
-import { CreditTypesEnum } from 'shared/credit-types.enum'
+import { CreditTypesEnum } from '../enums/credit-types.enum'
 
 export class CreditBalanceResponseDto {
   balances: Array<{

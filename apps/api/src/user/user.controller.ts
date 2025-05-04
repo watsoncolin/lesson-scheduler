@@ -55,6 +55,7 @@ export class UserController {
           userId: student.userId,
           name: student.name,
           birthday: student.birthday,
+          notes: student.notes || '',
         }))
 
       data.push({
@@ -65,7 +66,14 @@ export class UserController {
         phone: user.phone,
         unusedCredits: 0,
         totalCredits: 0,
-        students: students ?? [],
+        students:
+          students?.map(student => ({
+            id: student.id,
+            userId: student.userId,
+            name: student.name,
+            birthday: student.birthday,
+            notes: student.notes || '',
+          })) ?? [],
       })
     }
 
@@ -78,8 +86,14 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @ActiveUser() user: ActiveUserData) {
-    return this.userService.findOne(id)
+  async findOne(@Param('id') id: string, @ActiveUser() user: ActiveUserData) {
+    const foundUser = await this.userService.findOne(id)
+    const students = await this.studentService.findAllByUserId(foundUser.id)
+
+    return {
+      ...foundUser,
+      students,
+    }
   }
 
   @Patch(':id')

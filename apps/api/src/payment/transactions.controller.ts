@@ -1,8 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import { Controller, Get, Param, Post, Body } from '@nestjs/common'
 import { TransactionService } from './transaction.service'
 import { ActiveUser } from 'iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from 'iam/authentication/interfaces/active-user-data.interface'
-import { CreditBalanceResponseDto } from 'user/dto/credit-balance-response.dto'
+import { CreditBalanceResponseDto } from '@lesson-scheduler/shared'
+import { CreateTransactionDto, Role } from '@lesson-scheduler/shared'
+import { Roles } from 'iam/authentication/decorators/roles.decorator'
 
 @Controller('transactions')
 export class TransactionsController {
@@ -19,7 +21,7 @@ export class TransactionsController {
     }
   }
 
-  // TODO add role guard
+  @Roles(Role.Admin)
   @Get(':userId/credit-balance')
   async getCreditBalance(@Param('userId') userId: string): Promise<CreditBalanceResponseDto> {
     const balances = await this.transactionService.readCreditBalances(userId)
@@ -41,5 +43,18 @@ export class TransactionsController {
   async findMy(@ActiveUser() user: ActiveUserData) {
     const transactions = await this.transactionService.findByUserId(user.sub)
     return transactions
+  }
+
+  @Get(':userId')
+  async findByUserId(@Param('userId') userId: string) {
+    const transactions = await this.transactionService.findByUserId(userId)
+    return transactions
+  }
+
+  @Roles(Role.Admin)
+  @Post('')
+  async create(@Body() createTransactionDto: CreateTransactionDto) {
+    const transaction = await this.transactionService.create(createTransactionDto)
+    return transaction
   }
 }

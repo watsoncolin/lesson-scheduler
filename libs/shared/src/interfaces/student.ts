@@ -3,4 +3,5 @@ export interface IStudent {
   userId: string
   name: string
   birthday: Date
+  notes: string
 }

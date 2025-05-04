@@ -7,6 +7,7 @@ import Filter from './filter'
 import { get } from '@utils/api'
 import { Button } from '@components/button'
 import { format, parseISO, isSameDay } from 'date-fns'
+import { ScheduleDto } from '@lesson-scheduler/shared'
 
 const ITEMS_PER_PAGE = 150
 
@@ -14,13 +15,13 @@ export default function ClientWrapper() {
   const [selectedInstructor, setSelectedInstructor] = useState('')
   const [selectedPool, setSelectedPool] = useState('')
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
-  const [schedules, setSchedules] = useState<Schedule[]>([])
+  const [schedules, setSchedules] = useState<ScheduleDto[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
 
   const fetchSchedules = async () => {
     try {
-      const data = await get<Schedule[]>('/schedules')
+      const data = await get<ScheduleDto[]>('/schedules')
       setSchedules(data)
     } catch (error) {
       console.error('Failed to fetch schedules:', error)

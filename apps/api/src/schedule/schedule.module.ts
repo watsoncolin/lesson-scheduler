@@ -10,13 +10,14 @@ import { CreateReservationFromTransactionHandler } from './commands/create-reser
 import { ProductModule } from 'product/product.module'
 import { TransactionsSaga } from './transactions.saga'
 import { UserModule } from 'user/user.module'
-
+import { StudentModule } from 'student/student.module'
 @Module({
   imports: [
     PaymentModule,
     ProductModule,
     MongooseModule.forFeature([{ name: ScheduleEntity.name, schema: ScheduleSchema }]),
     UserModule,
+    StudentModule,
   ],
   controllers: [ScheduleController, RegistrationController],
   providers: [ScheduleService, RegistrationService, CreateReservationFromTransactionHandler, TransactionsSaga],

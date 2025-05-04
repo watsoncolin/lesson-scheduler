@@ -1,7 +1,8 @@
 import { IsArray, IsDateString, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
 import { Transform } from 'class-transformer'
 import { LessonTypesEnum } from '../enums/lesson-types.enum'
-
+import { StudentDto } from './student'
+import { UserDto } from './user'
 export class CreateScheduleDto {
   @IsString()
   poolId!: string
@@ -84,4 +85,23 @@ export class CreateRegistrationDto {
 
   @IsString()
   studentId!: string
+}
+
+export class RegistrationDto {
+  userId: string
+  studentId: string
+  createdAt: string
+  student: StudentDto
+  user: UserDto
+}
+
+export class ScheduleDto {
+  id: string
+  poolId: string
+  instructorId: string
+  classSize: number
+  lessonType: LessonTypesEnum
+  startDateTime: string
+  endDateTime: string
+  registrations: RegistrationDto[]
 }

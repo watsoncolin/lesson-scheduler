@@ -45,6 +45,10 @@ export class StudentService {
     return (await this.model.find()).map(mapper)
   }
 
+  async findAllByIds(ids: string[]): Promise<Student[]> {
+    return (await this.model.find({ _id: { $in: ids.map(id => new Types.ObjectId(id)) } })).map(mapper)
+  }
+
   async findAllByUserId(userId: string): Promise<Student[]> {
     return (await this.model.find({ userId: new Types.ObjectId(userId), deletedAt: { $exists: false } })).map(mapper)
   }

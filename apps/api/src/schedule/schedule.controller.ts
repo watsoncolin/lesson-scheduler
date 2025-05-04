@@ -20,21 +20,65 @@ import { ActiveUser } from 'iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from 'iam/authentication/interfaces/active-user-data.interface'
 import { Auth } from 'iam/authentication/decorators/auth.decorator'
 import { AuthType } from 'iam/authentication/enums/auth-type.enum'
-import { Role } from '@lesson-scheduler/shared'
+import { Role, ScheduleDto } from '@lesson-scheduler/shared'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
+import { Schedule } from './schedule'
+import { StudentService } from 'student/student.service'
+import { UserService } from 'user/user.service'
 @Controller('schedules')
 export class ScheduleController {
-  constructor(private readonly scheduleService: ScheduleService) {}
+  constructor(
+    private readonly scheduleService: ScheduleService,
+    private readonly studentService: StudentService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('')
   @Roles(Role.Admin)
-  async findAll(@Query() query: { scheduleIds?: string }) {
+  async findAll(@Query() query: { scheduleIds?: string }): Promise<ScheduleDto[]> {
     const scheduleIds = query.scheduleIds?.split(',').filter(id => id.length > 0)
     if (query.scheduleIds && scheduleIds?.length === 0) {
       return []
     }
     const schedules = await this.scheduleService.findAll(scheduleIds)
-    return schedules
+
+    const studentIds = schedules.flatMap(schedule => schedule.registrations.map(registration => registration.studentId))
+    const students = await this.studentService.findAllByIds(studentIds)
+
+    const userIds = schedules.flatMap(schedule => schedule.registrations.map(registration => registration.userId))
+    const users = await this.userService.findMany(userIds)
+
+    return schedules.map(schedule => {
+      const student = students.find(student => student.id === schedule.registrations.find(r => r.studentId)?.studentId)
+      const user = users.find(user => user.id === schedule.registrations.find(r => r.userId)?.userId)
+      return {
+        id: schedule.id,
+        poolId: schedule.poolId,
+        instructorId: schedule.instructorId,
+        classSize: schedule.classSize,
+        lessonType: schedule.lessonType,
+        startDateTime: schedule.startDateTime.toISOString(),
+        endDateTime: schedule.endDateTime.toISOString(),
+        registrations: schedule.registrations.map(registration => ({
+          studentId: registration.studentId,
+          userId: registration.userId,
+          createdAt: registration.createdAt.toISOString(),
+          student: {
+            id: student?.id ?? '',
+            name: student?.name ?? '',
+            birthDate: student?.birthday.toISOString() ?? '',
+            notes: student?.notes ?? '',
+          },
+          user: {
+            id: user?.id ?? '',
+            firstName: user?.firstName ?? '',
+            lastName: user?.lastName ?? '',
+            email: user?.email ?? '',
+            role: user?.role ?? Role.User,
+          },
+        })),
+      }
+    })
   }
 
   @Get('parent-tot')

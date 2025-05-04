@@ -89,3 +89,11 @@ export class RefreshTokenDto {
   @IsString()
   refreshToken!: string
 }
+
+export class UserDto {
+  id: string
+  email: string
+  firstName: string
+  lastName: string
+  role: Role
+}

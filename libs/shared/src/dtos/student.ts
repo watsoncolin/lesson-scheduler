@@ -27,3 +27,10 @@ export class UpdateStudentDto {
   @IsOptional()
   birthDate?: string
 }
+
+export class StudentDto {
+  id: string
+  name: string
+  birthDate: string
+  notes: string
+}

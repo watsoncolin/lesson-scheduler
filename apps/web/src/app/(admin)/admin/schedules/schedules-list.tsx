@@ -1,6 +1,6 @@
 'use client'
 
-import { Schedule } from '@lib/schedule'
+import { ScheduleDto } from '@lesson-scheduler/shared'
 import { useInstructors } from '@contexts/instructor-context'
 import { usePools } from '@contexts/pools-context'
 import { format } from 'date-fns'
@@ -9,14 +9,14 @@ import { del } from '@utils/api'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 interface SchedulesListProps {
-  schedules: Schedule[]
+  schedules: ScheduleDto[]
   onDelete?: () => void
 }
 
 export default function SchedulesList({ schedules, onDelete }: SchedulesListProps) {
   const { instructors } = useInstructors()
   const { pools } = usePools()
-  const [scheduleToDelete, setScheduleToDelete] = useState<Schedule | null>(null)
+  const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleDto | null>(null)
 
   const handleDelete = async (scheduleId: string) => {
     try {
@@ -81,7 +81,11 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                           {format(new Date(schedule.endDateTime), 'MMM d, yyyy h:mm a')}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {schedule.registrations.length} / {schedule.classSize}
+                          {schedule.registrations.length > 0 && (
+                            <span className="text-green-600">
+                              {schedule.registrations.map(r => r.student.name).join(', ')}
+                            </span>
+                          )}
                         </td>
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                           {schedule.registrations.length === 0 && (

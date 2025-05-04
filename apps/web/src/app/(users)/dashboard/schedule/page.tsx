@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { Fragment } from 'react'
 import {
   CheckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   ChevronUpDownIcon,
   ExclamationTriangleIcon,
   XCircleIcon,
@@ -64,6 +66,8 @@ export default function Schedule() {
   const { credits, refreshCredits } = useCredits()
   const [selectedDate, setSelectedDate] = useState('')
   const [pendingSchedules, setPendingSchedules] = useState([] as PendingSchedules[])
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
 
   const { user, refreshUser } = useUser()
   const { pools } = usePools()
@@ -208,6 +212,22 @@ export default function Schedule() {
     refreshUser()
   }
 
+  const paginatedSchedules = schedules.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
+  const totalPages = Math.ceil(schedules.length / itemsPerPage)
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
+
   return (
     <>
       <div className="py-10">
@@ -254,8 +274,8 @@ export default function Schedule() {
                 Available Classes ({schedules.length})
               </h2>
               <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500">
-                {schedules
-                  ? schedules.map(schedule => {
+                {paginatedSchedules
+                  ? paginatedSchedules.map(schedule => {
                       const instructor = instructors.find(instructor => instructor.id === schedule.instructorId)
                       const pool = pools.find(pool => pool.id === schedule.poolId)
                       const name = `${instructor?.name ?? 'Private instructor'} at ${pool?.name}`
@@ -364,6 +384,55 @@ export default function Schedule() {
                     })
                   : null}
               </ol>
+              {schedules.length > itemsPerPage && (
+                <div className="mt-4 flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6">
+                  <div className="flex flex-1 justify-between sm:hidden">
+                    <button
+                      onClick={handlePrevPage}
+                      disabled={currentPage === 1}
+                      className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages}
+                      className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Next
+                    </button>
+                  </div>
+                  <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm text-gray-700">
+                        Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                        <span className="font-medium">{Math.min(currentPage * itemsPerPage, schedules.length)}</span> of{' '}
+                        <span className="font-medium">{schedules.length}</span> results
+                      </p>
+                    </div>
+                    <div>
+                      <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                        <button
+                          onClick={handlePrevPage}
+                          disabled={currentPage === 1}
+                          className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                        >
+                          <span className="sr-only">Previous</span>
+                          <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                        </button>
+                        <button
+                          onClick={handleNextPage}
+                          disabled={currentPage === totalPages}
+                          className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                        >
+                          <span className="sr-only">Next</span>
+                          <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                        </button>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              )}
               {error == 'CREDITS' ? (
                 <div className="mt-10 border-l-4 border-yellow-400 bg-yellow-50 p-4">
                   <div className="flex">

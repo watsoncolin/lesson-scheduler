@@ -9,10 +9,9 @@ import { Transaction } from '@/app/lib/transaction'
 import { Table, TableHead, TableCell, TableRow, TableBody } from '@/app/components/table'
 import { CreateTransactionForm } from './create-transaction-form'
 
-interface PageProps {
-  params: {
-    id: string
-  }
+type PageProps = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
 }
 
 export default async function UserDetailPage({ params }: PageProps) {

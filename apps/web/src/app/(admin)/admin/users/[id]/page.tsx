@@ -8,7 +8,14 @@ import { DescriptionList, DescriptionTerm, DescriptionDetails } from '@/app/comp
 import { Transaction } from '@/app/lib/transaction'
 import { Table, TableHead, TableCell, TableRow, TableBody } from '@/app/components/table'
 import { CreateTransactionForm } from './create-transaction-form'
-export default async function UserDetailPage({ params }: { params: { id: string } }) {
+
+interface PageProps {
+  params: {
+    id: string
+  }
+}
+
+export default async function UserDetailPage({ params }: PageProps) {
   const user = await get<IUser>(`/users/${params.id}`)
   const transactions = await get<Transaction[]>(`/transactions/${params.id}`)
   const currentBalance = await get<CreditBalanceResponseDto>(`/transactions/${params.id}/credit-balance`)

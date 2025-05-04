@@ -8,13 +8,13 @@ import { DescriptionList, DescriptionTerm, DescriptionDetails } from '@/app/comp
 import { Transaction } from '@/app/lib/transaction'
 import { Table, TableHead, TableCell, TableRow, TableBody } from '@/app/components/table'
 import { CreateTransactionForm } from './create-transaction-form'
+import { Metadata } from 'next'
 
-type PageProps = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
+export const metadata: Metadata = {
+  title: 'User Details',
 }
 
-export default async function UserDetailPage({ params }: PageProps) {
+export default async function UserDetailPage({ params }: any) {
   const user = await get<IUser>(`/users/${params.id}`)
   const transactions = await get<Transaction[]>(`/transactions/${params.id}`)
   const currentBalance = await get<CreditBalanceResponseDto>(`/transactions/${params.id}/credit-balance`)

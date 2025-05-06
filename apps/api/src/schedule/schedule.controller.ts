@@ -123,9 +123,14 @@ export class ScheduleController {
         }
       })
       .filter(d => d != null)
-    console.log('search', pools, instructors, daysOfWeekInt, date, timezone)
     const schedules = await this.scheduleService.search(pools, instructors, daysOfWeekInt, date, timezone)
     return schedules
+  }
+
+  @Get('available-dates')
+  async findAvailableDates(@Query() query: { timezone?: string }) {
+    const { timezone } = query
+    return this.scheduleService.findAvailableDates(timezone)
   }
 
   // TODO add role guard
@@ -143,9 +148,8 @@ export class ScheduleController {
     return schedule
   }
 
-  // TODO add role guard
-  // TODO decide if we want to update schedules
   @Patch(':id')
+  @Roles(Role.Admin)
   async update(@Param('id') id: string, @Body() updateScheduleDto: UpdateScheduleDto) {
     const schedule = await this.scheduleService.findOne(id)
     if (!schedule) {

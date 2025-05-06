@@ -68,6 +68,15 @@ export default function Schedule() {
   const [pendingSchedules, setPendingSchedules] = useState([] as PendingSchedules[])
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
+  const [availableDates, setAvailableDates] = useState([] as string[])
+
+  useEffect(() => {
+    const fetchAvailableDates = async () => {
+      const dates = await get<string[]>('/schedules/available-dates')
+      setAvailableDates(dates)
+    }
+    fetchAvailableDates()
+  }, [])
 
   const { user, refreshUser } = useUser()
   const { pools } = usePools()
@@ -269,6 +278,7 @@ export default function Schedule() {
                   days={selectedDays}
                   selectedDate={selectedDate}
                   onDateChange={handleDateChange}
+                  availableDates={availableDates}
                 />
               </div>
               <h2 className="text-base font-semibold leading-6 text-gray-900">

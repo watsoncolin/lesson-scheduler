@@ -192,4 +192,31 @@ export class ScheduleService {
 
     return result.map(mapper)
   }
+
+  async findAvailableDates(timezone?: string): Promise<string[]> {
+    // Find all private lessons that have available spots
+    const availableLessons = await this.model
+      .find({
+        lessonType: LessonTypesEnum.PRIVATE,
+        $expr: { $lt: [{ $size: '$registrations' }, '$classSize'] },
+      })
+      .sort({ startDateTime: 1 })
+
+    // Extract unique dates from the available lessons
+    const uniqueDates = new Set<string>()
+
+    availableLessons.forEach(lesson => {
+      const date = lesson.startDateTime
+      if (timezone) {
+        // Convert UTC to local timezone
+        const localDate = toZonedTime(date, timezone)
+        uniqueDates.add(localDate.toISOString().split('T')[0])
+      } else {
+        // Use UTC date
+        uniqueDates.add(date.toISOString().split('T')[0])
+      }
+    })
+
+    return Array.from(uniqueDates)
+  }
 }

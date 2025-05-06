@@ -49,6 +49,7 @@ interface FilterProps {
   pools: Option[]
   instructors: Option[]
   days: Option[]
+  availableDates: string[]
 }
 
 export default function Filter({
@@ -60,6 +61,7 @@ export default function Filter({
   pools,
   instructors,
   days,
+  availableDates,
 }: FilterProps) {
   const [open, setOpen] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState(0)
@@ -298,8 +300,15 @@ export default function Filter({
                                             // Today but not selected
                                             !day.isSelected && day.isToday ? 'text-indigo-600 font-semibold' : '',
 
-                                            // Hover effect when not selected
-                                            !day.isSelected ? 'hover:bg-gray-200' : '',
+                                            // Available day styling
+                                            !day.isSelected && !day.isToday && availableDates.includes(day.date)
+                                              ? 'bg-blue-100 hover:bg-blue-200'
+                                              : '',
+
+                                            // Hover effect when not selected and not available
+                                            !day.isSelected && !availableDates.includes(day.date)
+                                              ? 'hover:bg-gray-200'
+                                              : '',
 
                                             // Font weight adjustments for selected or today
                                             day.isSelected || day.isToday ? 'font-semibold' : '',
@@ -481,8 +490,13 @@ export default function Filter({
                                       // Today but not selected
                                       !day.isSelected && day.isToday ? 'text-indigo-600 font-semibold' : '',
 
-                                      // Hover effect when not selected
-                                      !day.isSelected ? 'hover:bg-gray-200' : '',
+                                      // Available day styling
+                                      !day.isSelected && !day.isToday && availableDates.includes(day.date)
+                                        ? 'bg-blue-100 hover:bg-blue-200'
+                                        : '',
+
+                                      // Hover effect when not selected and not available
+                                      !day.isSelected && !availableDates.includes(day.date) ? 'hover:bg-gray-200' : '',
 
                                       // Font weight adjustments for selected or today
                                       day.isSelected || day.isToday ? 'font-semibold' : '',

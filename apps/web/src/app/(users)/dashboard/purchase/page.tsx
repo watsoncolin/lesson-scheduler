@@ -352,7 +352,7 @@ export default function Purchase() {
                         onChange={e => setSelectedScheduleId(e.target.value)}
                         disabled={isMissingContactInfo}
                       >
-                        <option>select a session</option>
+                        <option>select a parent and tot session</option>
                         {schedules
                           .filter(s => s.spotsAvailable && s.spotsAvailable > 0)
                           .map(schedule => {

@@ -80,37 +80,30 @@ export class ScheduleService {
     timezone?: string,
   ): Promise<Schedule[]> {
     const filter: {
-      $and?: any[]
-      $or: any[]
+      $and: any[]
     } = {
-      $or: [],
+      $and: [],
     }
-    if (poolIds) {
-      filter.$or.push({ poolId: { $in: poolIds.map(id => new Types.ObjectId(id)) } })
-    }
-    if (instructorIds) {
-      filter.$or.push({ instructorId: { $in: instructorIds.map(id => new Types.ObjectId(id)) } })
-    }
-    if (daysOfWeek) {
-      filter.$and = [
-        {
-          $or: daysOfWeek.map(dayOfWeek => ({ $expr: { $eq: [{ $dayOfWeek: '$startDateTime' }, dayOfWeek] } })),
-        },
-      ]
-    }
-    if (date) {
-      filter.$and = filter.$and || []
-      // Parse the date string
 
+    if (poolIds && poolIds.length > 0) {
+      filter.$and.push({ poolId: { $in: poolIds.map(id => new Types.ObjectId(id)) } })
+    }
+
+    if (instructorIds && instructorIds.length > 0) {
+      filter.$and.push({ instructorId: { $in: instructorIds.map(id => new Types.ObjectId(id)) } })
+    }
+
+    if (daysOfWeek && daysOfWeek.length > 0) {
+      filter.$and.push({
+        $or: daysOfWeek.map(dayOfWeek => ({ $expr: { $eq: [{ $dayOfWeek: '$startDateTime' }, dayOfWeek] } })),
+      })
+    }
+
+    if (date) {
       if (timezone) {
         // Convert local dates to UTC for database query
         const startOfDayOffset = fromZonedTime(date, timezone)
         const endOfDayOffset = addDays(startOfDayOffset, 1)
-
-        console.log('date', date)
-        console.log('startOfDayOffset', startOfDayOffset)
-        console.log('endOfDayOffset', endOfDayOffset)
-        console.log('timezone', timezone)
 
         filter.$and.push({
           startDateTime: {

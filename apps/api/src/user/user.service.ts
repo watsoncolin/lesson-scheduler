@@ -51,7 +51,7 @@ export class UserService {
       city: createUserDto.city,
       state: createUserDto.state,
       zip: createUserDto.zip,
-      phone: createUserDto.phone,
+      phone: createUserDto.phone.replace(/\D/g, ''),
       privateRegistration: createUserDto.privateRegistration,
     })
     const entity = await this.model.findById(_id)

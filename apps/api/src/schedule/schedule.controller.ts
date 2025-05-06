@@ -123,6 +123,7 @@ export class ScheduleController {
         }
       })
       .filter(d => d != null)
+    console.log('search', pools, instructors, daysOfWeekInt, date, timezone)
     const schedules = await this.scheduleService.search(pools, instructors, daysOfWeekInt, date, timezone)
     return schedules
   }

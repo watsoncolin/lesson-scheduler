@@ -57,7 +57,7 @@ export function CreateTransactionForm({ userId }: CreateTransactionFormProps) {
         <label htmlFor="credits" className="block text-sm font-medium text-gray-700">
           Credits
         </label>
-        <Input type="number" id="credits" name="credits" className="mt-1 block w-full" min="1" required />
+        <Input type="number" id="credits" name="credits" className="mt-1 block w-full" required />
       </div>
 
       <div>

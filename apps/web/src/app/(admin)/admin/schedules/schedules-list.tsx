@@ -66,7 +66,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                     const pool = pools.find(p => p.id === schedule.poolId)
 
                     return (
-                      <tr key={schedule.id}>
+                      <tr key={schedule.id} className={schedule.registrations.length > 0 ? 'bg-blue-50' : ''}>
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                           {instructor?.name ?? 'Unknown'}
                         </td>

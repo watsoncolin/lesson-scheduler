@@ -36,6 +36,7 @@ export class PaypalService {
 
     const PaypalClient = this.client()
     //This code is lifted from https://github.com/paypal/Checkout-NodeJS-SDK
+    const strippedPhone = user.phone.replace(/\D/g, '')
     const request = new OrdersCreateRequest()
     request.headers['prefer'] = 'return=representation'
     const payer: Payer = {
@@ -50,7 +51,7 @@ export class PaypalService {
       phone: {
         phone_type: 'MOBILE',
         phone_number: {
-          national_number: user.phone,
+          national_number: strippedPhone,
         },
       },
     } as Payer

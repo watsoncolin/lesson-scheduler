@@ -118,7 +118,6 @@ export class PaymentController {
     return product
   }
 
-  // TODO don't allow users to manually update payment status
   @Patch(':id')
   @Roles(Role.Admin)
   async update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {

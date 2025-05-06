@@ -22,7 +22,7 @@ export class StudentEntity extends Document {
   @Prop({ required: true })
   ability: string
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   notes: string
 
   @Prop({ required: false })

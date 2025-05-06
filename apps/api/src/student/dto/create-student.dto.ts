@@ -1,4 +1,4 @@
-import { IsDate, IsDateString, IsNotEmpty, IsString } from 'class-validator'
+import { IsDate, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 export class CreateStudentDto {
   userId: string
   @IsString()
@@ -8,5 +8,6 @@ export class CreateStudentDto {
   @IsString()
   ability: string
   @IsString()
+  @IsOptional()
   notes: string
 }

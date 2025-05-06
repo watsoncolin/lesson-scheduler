@@ -1,4 +1,4 @@
-import { AcademicCapIcon, CalendarIcon, ShieldCheckIcon, SparklesIcon } from '@heroicons/react/24/outline'
+import { AcademicCapIcon, CalendarIcon, ShieldCheckIcon, SparklesIcon, UserIcon } from '@heroicons/react/24/outline'
 
 const features = [
   {
@@ -53,6 +53,45 @@ export default function About() {
             ))}
           </dl>
         </div>
+
+        <div className="mx-auto max-w-2xl lg:text-center pt-20">
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">How to get started...</p>
+        </div>
+        <div className="mx-auto mt-8 max-w-2xl sm:mt-8 lg:mt-8 lg:max-w-4xl flex justify-center">
+          <ol className="space-y-6 text-lg w-full max-w-sm">
+            <li className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg hover:bg-white/10 transition-colors">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-semibold">
+                1
+              </span>
+              <span>Create an account</span>
+            </li>
+            <li className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg hover:bg-white/10 transition-colors">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-semibold">
+                2
+              </span>
+              <span>Add students to your profile</span>
+            </li>
+            <li className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg hover:bg-white/10 transition-colors">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-semibold">
+                3
+              </span>
+              <span>Purchase credit package</span>
+            </li>
+            <li className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg hover:bg-white/10 transition-colors">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-semibold">
+                4
+              </span>
+              <span>Schedule your lessons</span>
+            </li>
+            <li className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg hover:bg-white/10 transition-colors">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-semibold">
+                5
+              </span>
+              <span>Watch your little fish take off!</span>
+            </li>
+          </ol>
+        </div>
+
         <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-20">
           <div className="mx-auto max-w-2xl lg:text-center">
             <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Just watch Brilya go!</p>

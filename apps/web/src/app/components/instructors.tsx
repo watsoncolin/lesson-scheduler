@@ -10,7 +10,7 @@ export default function Instructors() {
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our team</h2>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            We're a dynamic group of individuals who are passionate about what we do and dedicated to delivering the
+            We have a dynamic group of instructors who are passionate about what they do and dedicated to delivering the
             best results for our students.
           </p>
         </div>

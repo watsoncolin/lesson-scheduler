@@ -86,7 +86,8 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @ActiveUser() user: ActiveUserData) {
+  @Roles(Role.Admin)
+  async findOne(@Param('id') id: string) {
     const foundUser = await this.userService.findOne(id)
     const students = await this.studentService.findAllByUserId(foundUser.id)
 

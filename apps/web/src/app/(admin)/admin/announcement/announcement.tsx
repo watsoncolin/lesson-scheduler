@@ -38,8 +38,6 @@ export default function AnnouncementList() {
     }
   }
 
-  console.log(announcement)
-
   return (
     <>
       <div className="mt-10">

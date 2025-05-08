@@ -186,7 +186,6 @@ export default function Schedule() {
   }
 
   useEffect(() => {
-    console.log('searching schedules')
     searchSchedules(
       selectedPools.filter(o => o.checked).map(o => o.value),
       selectedInstructors.filter(o => o.checked).map(o => o.value),

@@ -99,8 +99,6 @@ export class PaymentController {
       // agent: add custom agent to use cert and key once we have them
     })
 
-    console.log(response)
-
     return response.json()
   }
 

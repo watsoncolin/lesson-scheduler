@@ -7,6 +7,7 @@ import { format } from 'date-fns'
 import { useState, useEffect } from 'react'
 import { del } from '@utils/api'
 import { TrashIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
 
 interface SchedulesListProps {
   schedules: ScheduleDto[]
@@ -82,8 +83,19 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {schedule.registrations.length > 0 && (
-                            <span className="text-green-600">
-                              {schedule.registrations.map(r => r.student.name).join(', ')}
+                            <span className="text-green-600 underline">
+                              {schedule.registrations.map((r, index) => (
+                                <>
+                                  {index > 0 && ', '}
+                                  <Link
+                                    key={r.student.id}
+                                    href={`/admin/users/${r.user.id}`}
+                                    className="hover:underline"
+                                  >
+                                    {r.student.name}
+                                  </Link>
+                                </>
+                              ))}
                             </span>
                           )}
                         </td>

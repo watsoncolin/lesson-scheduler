@@ -42,7 +42,7 @@ export default function Purchase() {
 
   useEffect(() => {
     if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
-      setCanUseApplePay(true)
+      // setCanUseApplePay(true)
     }
   }, [])
 

@@ -7,10 +7,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-const userNavigation = [
-  { name: 'Your Profile', href: '/dashboard/profile' },
-  { name: 'Settings', href: '#' },
-]
+const userNavigation = [{ name: 'Your Profile', href: '/dashboard/profile' }]
 
 export default function ProfileDropdown() {
   const { user } = useUser()

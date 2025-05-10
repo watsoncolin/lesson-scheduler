@@ -1,6 +1,6 @@
 'use client'
 
-import { ScheduleDto } from '@lesson-scheduler/shared'
+import { Role, ScheduleDto } from '@lesson-scheduler/shared'
 import { useInstructors } from '@contexts/instructor-context'
 import { usePools } from '@contexts/pools-context'
 import { format } from 'date-fns'
@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import { del } from '@utils/api'
 import { TrashIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
+import { useUser } from '@/app/contexts/user-context'
 
 interface SchedulesListProps {
   schedules: ScheduleDto[]
@@ -19,6 +20,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
   const { pools } = usePools()
   const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleDto | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const { user } = useUser()
 
   const handleDelete = async (scheduleId: string) => {
     try {
@@ -84,9 +86,11 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Registrations
                     </th>
-                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                      <span className="sr-only">Actions</span>
-                    </th>
+                    {user?.role === Role.Admin && (
+                      <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                        <span className="sr-only">Actions</span>
+                      </th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -127,16 +131,18 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                             </span>
                           )}
                         </td>
-                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                          <button
-                            type="button"
-                            onClick={() => setScheduleToDelete(schedule)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                            <span className="sr-only">Delete</span>
-                          </button>
-                        </td>
+                        {user?.role === Role.Admin && (
+                          <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                            <button
+                              type="button"
+                              onClick={() => setScheduleToDelete(schedule)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              <TrashIcon className="h-5 w-5" />
+                              <span className="sr-only">Delete</span>
+                            </button>
+                          </td>
+                        )}
                       </tr>
                     )
                   })}

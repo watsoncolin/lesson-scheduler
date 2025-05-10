@@ -1,6 +1,6 @@
 import { Heading } from '@components/heading'
 import { get, post } from '@utils/server-api'
-import { CreditBalanceResponseDto, IUser } from '@lesson-scheduler/shared'
+import { CreditBalanceResponseDto, IInstructor, IUser } from '@lesson-scheduler/shared'
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/16/solid'
 import { Button } from '@/app/components/button'
 import Link from 'next/link'
@@ -9,6 +9,8 @@ import { Transaction } from '@/app/lib/transaction'
 import { Table, TableHead, TableCell, TableRow, TableBody } from '@/app/components/table'
 import { CreateTransactionForm } from './create-transaction-form'
 import { Metadata } from 'next'
+import { Divider } from '@/app/components/divider'
+import { RolesSection } from './roles-section'
 
 export const metadata: Metadata = {
   title: 'User Details',
@@ -18,6 +20,15 @@ export default async function UserDetailPage({ params }: any) {
   const user = await get<IUser>(`/users/${params.id}`)
   const transactions = await get<Transaction[]>(`/transactions/${params.id}`)
   const currentBalance = await get<CreditBalanceResponseDto>(`/transactions/${params.id}/credit-balance`)
+  const instructors = await get<IInstructor[]>('/instructors')
+
+  const assignInstructorRole = async (userId: string) => {
+    await post(`/users/${userId}/assign-instructor-role`, { instructorId: user.instructorId })
+  }
+
+  const removeInstructorRole = async (userId: string) => {
+    await post(`/users/${userId}/remove-instructor-role`, { instructorId: user.instructorId })
+  }
 
   return (
     <div className="space-y-6">
@@ -98,7 +109,7 @@ export default async function UserDetailPage({ params }: any) {
         </TableHead>
         <TableBody>
           {transactions.map(transaction => {
-            const typeLable =
+            const typeLabel =
               transaction.transactionType === 'PURCHASE_CREDITS'
                 ? 'Purchase Credits'
                 : transaction.transactionType === 'REGISTER'
@@ -106,7 +117,7 @@ export default async function UserDetailPage({ params }: any) {
                   : 'Cancel Registration'
             return (
               <TableRow key={transaction.id}>
-                <TableCell>{typeLable}</TableCell>
+                <TableCell>{typeLabel}</TableCell>
                 <TableCell>{transaction.creditType}</TableCell>
                 <TableCell>${transaction.amount}</TableCell>
                 <TableCell>{transaction.credits}</TableCell>
@@ -119,6 +130,9 @@ export default async function UserDetailPage({ params }: any) {
 
       <h2 className="text-2xl font-bold">Create Transaction</h2>
       <CreateTransactionForm userId={params.id} />
+      <Divider />
+      <h2 className="text-2xl font-bold">Roles</h2>
+      <RolesSection user={user} instructors={instructors} />
     </div>
   )
 }

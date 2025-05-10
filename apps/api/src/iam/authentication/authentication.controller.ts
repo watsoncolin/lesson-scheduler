@@ -36,7 +36,7 @@ export class AuthenticationController {
       secure: this.configService.get('NODE_ENV') === 'production',
       httpOnly: true,
       sameSite: 'lax',
-      domain: '.stansburyswim.com',
+      domain: process.env.NODE_ENV === 'production' ? '.stansburyswim.com' : 'localhost',
     })
     return result
   }

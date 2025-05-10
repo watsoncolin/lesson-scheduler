@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, HttpCode, Query } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  HttpCode,
+  Query,
+  ForbiddenException,
+} from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -74,6 +86,7 @@ export class UserController {
             birthday: student.birthday,
             notes: student.notes || '',
           })) ?? [],
+        instructorId: user.instructorId,
       })
     }
 
@@ -94,11 +107,16 @@ export class UserController {
     return {
       ...foundUser,
       students,
+      instructorId: foundUser.instructorId,
     }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @ActiveUser() user: ActiveUserData) {
+    if (user.role !== Role.Admin && (updateUserDto.instructorId || updateUserDto.role)) {
+      throw new ForbiddenException('You are not authorized to update this user')
+    }
+
     return this.userService.update(id, updateUserDto)
   }
 

@@ -19,4 +19,5 @@ export interface IUser {
   updatedAt: Date
   students: IStudent[]
   unusedCredits: number
+  instructorId?: string
 }

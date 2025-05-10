@@ -30,7 +30,7 @@ function classNames(...classes: string[]) {
 export default function Nav() {
   const { user } = useUser()
   const pathname = usePathname()
-  const isAdmin = user?.role === 'admin'
+  const isAdmin = user?.role === 'admin' || user?.role === 'instructor'
 
   if (isAdmin) {
     if (!navigation.some(item => item.name === 'Admin')) {

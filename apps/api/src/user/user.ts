@@ -18,4 +18,5 @@ export class User {
   signedWaiver: boolean
   waiverSignature: string | null
   waiverSignatureDate: Date | null
+  instructorId: string | null
 }

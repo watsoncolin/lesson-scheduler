@@ -1,5 +1,5 @@
 import { IsOptional } from 'class-validator'
-
+import { Role } from '@lesson-scheduler/shared'
 export class UpdateUserDto {
   @IsOptional()
   firstName: string
@@ -27,4 +27,8 @@ export class UpdateUserDto {
   waiverSignature: string
   @IsOptional()
   waiverSignatureDate: Date
+  @IsOptional()
+  instructorId: string
+  @IsOptional()
+  role: Role
 }

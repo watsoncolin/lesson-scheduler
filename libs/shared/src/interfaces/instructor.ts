@@ -1,9 +1,6 @@
 export interface IInstructor {
   id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
+  name: string
   bio: string
   active: boolean
   createdAt: Date

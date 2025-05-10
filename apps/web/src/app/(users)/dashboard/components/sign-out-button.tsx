@@ -11,7 +11,7 @@ export default function SignOutButton() {
     // Sign out of Google
     googleLogout()
     // Remove local auth token
-    removeAuthToken()
+    await removeAuthToken()
     // Redirect to home page
     window.location.href = '/'
   }

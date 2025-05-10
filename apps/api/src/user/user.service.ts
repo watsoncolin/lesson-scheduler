@@ -9,7 +9,7 @@ import { SignUpDto } from '../iam/authentication/dto/sign-up.dto'
 import { UserForAuth } from './user-for-auth'
 import { EventBus } from '@nestjs/cqrs'
 import { UserRegisterEvent } from './events/user-register.event'
-
+import { Role } from '@lesson-scheduler/shared'
 const mapper = (entity: UserEntity): User => {
   return {
     id: entity._id.toString(),
@@ -29,6 +29,7 @@ const mapper = (entity: UserEntity): User => {
     signedWaiver: entity.signedWaiver || false,
     waiverSignature: entity.waiverSignature || null,
     waiverSignatureDate: entity.waiverSignatureDate || null,
+    instructorId: entity.instructorId || null,
   }
 }
 @Injectable()
@@ -138,21 +139,56 @@ export class UserService {
   }
 
   async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const update: Partial<UserEntity> = {}
+    if (updateUserDto.email) {
+      update.email = updateUserDto.email.trim()
+    }
+    if (updateUserDto.firstName) {
+      update.firstName = updateUserDto.firstName.trim()
+    }
+    if (updateUserDto.lastName) {
+      update.lastName = updateUserDto.lastName.trim()
+    }
+    if (updateUserDto.address1) {
+      update.address1 = updateUserDto.address1.trim()
+    }
+    if (updateUserDto.address2) {
+      update.address2 = updateUserDto.address2.trim()
+    }
+    if (updateUserDto.city) {
+      update.city = updateUserDto.city.trim()
+    }
+    if (updateUserDto.state) {
+      update.state = updateUserDto.state.trim()
+    }
+    if (updateUserDto.zip) {
+      update.zip = updateUserDto.zip.trim()
+    }
+    if (updateUserDto.phone) {
+      update.phone = updateUserDto.phone.trim()
+    }
+    if (updateUserDto.privateRegistration) {
+      update.privateRegistration = updateUserDto.privateRegistration
+    }
+    if (updateUserDto.instructorId) {
+      update.instructorId = updateUserDto.instructorId
+    }
+    if (updateUserDto.role) {
+      update.role = updateUserDto.role
+
+      if (updateUserDto.role === Role.User) {
+        await this.model.updateOne(
+          { _id: new Types.ObjectId(userId) },
+          {
+            $unset: { instructorId: '' },
+          },
+        )
+      }
+    }
     await this.model.updateOne(
       { _id: new Types.ObjectId(userId) },
       {
-        $set: {
-          email: updateUserDto.email.trim(),
-          firstName: updateUserDto.firstName.trim(),
-          lastName: updateUserDto.lastName.trim(),
-          address1: updateUserDto.address1.trim(),
-          address2: updateUserDto.address2.trim(),
-          city: updateUserDto.city.trim(),
-          state: updateUserDto.state.trim(),
-          zip: updateUserDto.zip.trim(),
-          phone: updateUserDto.phone.trim(),
-          privateRegistration: updateUserDto.privateRegistration,
-        },
+        $set: update,
       },
     )
     const entity = await this.model.findById(new Types.ObjectId(userId))

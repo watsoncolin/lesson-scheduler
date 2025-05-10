@@ -19,9 +19,9 @@ const setAuthToken = (token: string) => {
 }
 
 // Remove token from cookies
-const removeAuthToken = () => {
+const removeAuthToken = async () => {
   deleteCookie(AUTH_COOKIE_NAME)
-  removeUser()
+  await removeUser()
 }
 
 const setUser = (user: any) => {
@@ -37,9 +37,10 @@ const getUser = () => {
   return null
 }
 
-const removeUser = () => {
+const removeUser = async () => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('user')
+    await new Promise(resolve => setTimeout(resolve, 50))
   }
 }
 

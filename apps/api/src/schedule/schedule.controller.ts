@@ -34,7 +34,7 @@ export class ScheduleController {
   ) {}
 
   @Get('')
-  @Roles(Role.Admin)
+  @Roles(Role.Admin, Role.Instructor)
   async findAll(@Query() query: { scheduleIds?: string }): Promise<ScheduleDto[]> {
     const scheduleIds = query.scheduleIds?.split(',').filter(id => id.length > 0)
     if (query.scheduleIds && scheduleIds?.length === 0) {

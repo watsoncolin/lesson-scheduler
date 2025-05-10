@@ -1,4 +1,4 @@
-import { IsArray, IsNumber } from 'class-validator'
+import { IsArray, IsNumber, IsOptional } from 'class-validator'
 import { IsString } from 'class-validator'
 import { IsNotEmpty } from 'class-validator'
 import { IStudent } from '../interfaces/student'
@@ -35,4 +35,8 @@ export class UserSearchResponseDto {
   @IsArray()
   @IsNotEmpty()
   students: IStudent[]
+
+  @IsString()
+  @IsOptional()
+  instructorId: string | null
 }

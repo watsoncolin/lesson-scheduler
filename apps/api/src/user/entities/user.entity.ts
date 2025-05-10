@@ -58,6 +58,9 @@ export class UserEntity {
 
   @Prop({ required: false })
   waiverSignatureDate: Date
+
+  @Prop({ required: false })
+  instructorId: string
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserEntity)

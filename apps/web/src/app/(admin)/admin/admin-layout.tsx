@@ -1,5 +1,6 @@
 'use client'
 
+import { useUser } from '@/app/contexts/user-context'
 import { Avatar } from '@components/avatar'
 import {
   Dropdown,
@@ -65,7 +66,7 @@ function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom end' })
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   let pathname = usePathname()
-
+  const { user } = useUser()
   const events: any[] = []
 
   return (
@@ -98,34 +99,56 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <HomeIcon />
                 <SidebarLabel>Dashboard</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="/admin/instructors" current={pathname.startsWith('/admin/instructors')}>
-                <UserGroupIcon />
-                <SidebarLabel>Instructors</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/admin/pools" current={pathname.startsWith('/admin/pools')}>
-                <TicketIcon />
-                <SidebarLabel>Pools</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/admin/schedules" current={pathname.startsWith('/admin/schedules')}>
-                <CalendarDaysIcon />
-                <SidebarLabel>Schedules</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/admin/users" current={pathname.startsWith('/admin/users')}>
-                <UserCircleIcon />
-                <SidebarLabel>Users</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/admin/products" current={pathname.startsWith('/admin/products')}>
-                <ShoppingCartIcon />
-                <SidebarLabel>Products</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/admin/waitlist" current={pathname.startsWith('/admin/waitlist')}>
-                <ListBulletIcon />
-                <SidebarLabel>Waitlist</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/admin/announcement" current={pathname.startsWith('/admin/announcement')}>
-                <LightBulbIcon />
-                <SidebarLabel>Announcement</SidebarLabel>
-              </SidebarItem>
+              {user?.role === 'admin' && (
+                <>
+                  <SidebarItem href="/admin/instructors" current={pathname.startsWith('/admin/instructors')}>
+                    <UserGroupIcon />
+                    <SidebarLabel>Instructors</SidebarLabel>
+                  </SidebarItem>
+                </>
+              )}
+              {user?.role === 'admin' && (
+                <SidebarItem href="/admin/pools" current={pathname.startsWith('/admin/pools')}>
+                  <TicketIcon />
+                  <SidebarLabel>Pools</SidebarLabel>
+                </SidebarItem>
+              )}
+              {user?.role === 'admin' && (
+                <SidebarItem href="/admin/schedules" current={pathname.startsWith('/admin/schedules')}>
+                  <CalendarDaysIcon />
+                  <SidebarLabel>Schedules</SidebarLabel>
+                </SidebarItem>
+              )}
+              {user?.role === 'instructor' && (
+                <SidebarItem href="/admin/my-schedule" current={pathname.startsWith('/admin/my-schedule')}>
+                  <CalendarDaysIcon />
+                  <SidebarLabel>My Schedule</SidebarLabel>
+                </SidebarItem>
+              )}
+              {user?.role === 'admin' && (
+                <SidebarItem href="/admin/users" current={pathname.startsWith('/admin/users')}>
+                  <UserCircleIcon />
+                  <SidebarLabel>Users</SidebarLabel>
+                </SidebarItem>
+              )}
+              {user?.role === 'admin' && (
+                <SidebarItem href="/admin/products" current={pathname.startsWith('/admin/products')}>
+                  <ShoppingCartIcon />
+                  <SidebarLabel>Products</SidebarLabel>
+                </SidebarItem>
+              )}
+              {user?.role === 'admin' && (
+                <SidebarItem href="/admin/waitlist" current={pathname.startsWith('/admin/waitlist')}>
+                  <ListBulletIcon />
+                  <SidebarLabel>Waitlist</SidebarLabel>
+                </SidebarItem>
+              )}
+              {user?.role === 'admin' && (
+                <SidebarItem href="/admin/announcement" current={pathname.startsWith('/admin/announcement')}>
+                  <LightBulbIcon />
+                  <SidebarLabel>Announcement</SidebarLabel>
+                </SidebarItem>
+              )}
             </SidebarSection>
 
             <SidebarSection className="max-lg:hidden">

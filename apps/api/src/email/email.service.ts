@@ -6,7 +6,9 @@ import { UserService } from '../user/user.service'
 import sgMail from '@sendgrid/mail'
 import { User } from 'user/user'
 import { ConfigEnum } from '../shared/config.enum'
-
+import { Student } from 'student/student'
+import { Schedule } from 'schedule/schedule'
+import { format } from 'date-fns'
 @Injectable()
 export class EmailService {
   constructor(
@@ -112,5 +114,39 @@ export class EmailService {
       .catch(error => {
         console.error(error)
       })
+  }
+
+  public async sendCancellationEmail(user: User, student: Student, schedule: Schedule): Promise<void> {
+    const formattedDateTime = format(schedule.startDateTime, 'MM/dd/yyyy hh:mm a')
+    const msg = {
+      to: user.email,
+      from: 'no-reply@stansburyswim.com',
+      subject: 'Lesson Cancellation Confirmation',
+      html: `<html>
+<body>
+<p><strong>Lesson Cancellation Confirmation</strong></p>
+<p>Your lesson scheduled for ${formattedDateTime} has been cancelled and your credit has been restored to your account.  Reserve your next lesson <a href='https://stansburyswim.com/dashboard'>here</a>.</p>
+<p>See you soon! </br>The Stansbury Swim Team</p>
+
+<p>Policies and Tips:</p>
+<ul>
+<li>Pool addresses:  103 Lakeview, Stansbury Park, 5446 Lanyard Lane, Stansbury Park, and 180 E Durfee St, Grantsville.  When you schedule, be sure to note the location as well as date/time/instructor.</li>
+<li>All lessons are private, with one-on-one instruction customized to the student's goals and skill level.</li>
+<li>Lessons start and end promptly.  We advise arriving at least 5 minutes early to be ready for the lesson.</li>
+<li>Please be considerate when parking.  Do not block driveways or mailboxes.</li>
+<li>All lesson credits MUST be used in the season purchased.  All unused lesson credits will be forfeited with no refund.  Seasons typically end July 31.</li>
+<li>Text "@stansswim1" to 81010 or visit remind.com/join/stansswim1 to receive text updates (including new schedule offerings and cancellations due to weather).</li>
+<li>24-hour cancellation notice is required.  There is no charge to reschedule any lesson, if done more that 24 hours ahead of time.  Within 24 hours of lesson time, there will be a full charge on all lessons.  You are welcome to send a replacement student if the scheduled student is unavailable.  </li>
+<li>Instructors are subject to change without notice.</li>
+<li>We strongly prefer reusable swim diapers over disposable and sunscreen lotion over aerosol.</li>
+<li>Recommended: Ages 3-5 20-40 Lessons, Ages 5+10-20 Lessons + Maintenance Program 1-3 times/week. </li>
+<li>Give your child lots of love and encouragement between lessons.  Recognize his/her bravery and achievements.  Take pictures and video during the lesson.  Children love to watch themselves and gain confidence as they do so.</li>
+</ul>
+<p>See you soon! </br>The Stansbury Swim Team</p>
+</body>
+</html>
+</html>`,
+    }
+    return this.sendMail(msg)
   }
 }

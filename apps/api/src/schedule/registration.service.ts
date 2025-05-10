@@ -10,7 +10,9 @@ import { LessonTypesEnum } from 'shared/lesson-types.enum'
 import { CreditTypesEnum } from 'shared/credit-types.enum'
 import { TransactionTypesEnum } from 'shared/transaction-types.enum'
 import { UserService } from 'user/user.service'
-
+import { RegistrationCanceledEvent } from './events/registration-canceled.event'
+import { EventBus } from '@nestjs/cqrs'
+import { differenceInHours } from 'date-fns'
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
     id: entity._id.toString(),
@@ -36,9 +38,10 @@ export class RegistrationService {
     private readonly model: Model<ScheduleEntity>,
     private readonly transactionService: TransactionService,
     private readonly userService: UserService,
+    private readonly eventBus: EventBus,
   ) {}
-  async create(scheduleId: string, createRegistrationDto: CreateRegistrationDto): Promise<Schedule> {
 
+  async create(scheduleId: string, createRegistrationDto: CreateRegistrationDto): Promise<Schedule> {
     const user = await this.userService.findOne(createRegistrationDto.userId)
     if (!user) {
       throw new NotFoundException('User not found')
@@ -126,6 +129,14 @@ export class RegistrationService {
       throw new NotFoundException('Registration not found')
     }
 
+    // If the registration is within 24 hours, do not cancel
+    const registration = schedule.registrations[registrationIndex]
+    const startDateTime = new Date(registration.createdAt)
+    const now = new Date()
+    const diffInHours = differenceInHours(startDateTime, now)
+    if (diffInHours < 24) {
+      throw new BadRequestException('Registration is within 24 hours')
+    }
     const userId = schedule.registrations[registrationIndex].userId.toString()
 
     schedule.registrations.splice(registrationIndex, 1)
@@ -148,5 +159,7 @@ export class RegistrationService {
       scheduleId,
       studentId,
     })
+
+    this.eventBus.publish(new RegistrationCanceledEvent(userId, scheduleId, studentId))
   }
 }

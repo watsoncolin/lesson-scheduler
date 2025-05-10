@@ -2,6 +2,7 @@ import { Logger, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app/app.module'
 import cookieParser from 'cookie-parser'
+import { HttpExceptionFilter } from './logger/http-exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -17,6 +18,9 @@ async function bootstrap() {
 
   // Enable cookie-parser middleware
   app.use(cookieParser())
+
+  // Apply global exception filter
+  app.useGlobalFilters(new HttpExceptionFilter())
 
   // Get allowed origins from environment variable or use defaults
   const allowedOrigins = process.env.ALLOWED_ORIGINS

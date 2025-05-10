@@ -3,6 +3,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types, Document } from 'mongoose'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
 
+export enum ScheduleStatusEnum {
+  ACTIVE = 'ACTIVE',
+  CANCELED = 'CANCELED',
+}
+
 @Schema({
   timestamps: true,
 })
@@ -41,6 +46,8 @@ export class ScheduleEntity extends Document {
   startDateTime: Date
   @Prop({ required: true })
   endDateTime: Date
+  @Prop({ type: String, required: true, enum: ScheduleStatusEnum, default: ScheduleStatusEnum.ACTIVE })
+  status: ScheduleStatusEnum
 }
 
 export const ScheduleSchema = SchemaFactory.createForClass(ScheduleEntity)

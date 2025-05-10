@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
-import { ScheduleEntity } from './entities/schedule.entity'
+import { ScheduleEntity, ScheduleStatusEnum } from './entities/schedule.entity'
 import { Schedule } from './schedule'
 import { CreateScheduleDto } from './dto/create-schedule.dto'
 import { UpdateScheduleDto } from './dto/update-schedule.dto'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { addDays } from 'date-fns'
+import { RegistrationService } from './registration.service'
 
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
@@ -32,6 +33,7 @@ export class ScheduleService {
   constructor(
     @InjectModel(ScheduleEntity.name)
     private readonly model: Model<ScheduleEntity>,
+    private readonly registrationService: RegistrationService,
   ) {}
   async create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
     const _id = new Types.ObjectId()
@@ -56,7 +58,9 @@ export class ScheduleService {
   }
 
   async findAll(scheduleIds?: string[]): Promise<Schedule[]> {
-    const filter: any = {}
+    const filter: any = {
+      status: ScheduleStatusEnum.ACTIVE,
+    }
     if (scheduleIds) {
       filter['_id'] = { $in: scheduleIds.map(id => new Types.ObjectId(id)) }
     }
@@ -68,6 +72,7 @@ export class ScheduleService {
     return (
       await this.model.find({
         'registrations.userId': new Types.ObjectId(userId),
+        status: ScheduleStatusEnum.ACTIVE,
       })
     ).map(mapper)
   }
@@ -81,8 +86,10 @@ export class ScheduleService {
     includeReserved?: boolean,
   ): Promise<Schedule[]> {
     const filter: {
+      status: ScheduleStatusEnum
       $and: any[]
     } = {
+      status: ScheduleStatusEnum.ACTIVE,
       $and: [],
     }
 
@@ -135,8 +142,16 @@ export class ScheduleService {
     return results.filter(schedule => schedule.registrations.length < schedule.classSize)
   }
 
-  async findOne(id: string): Promise<Schedule> {
-    const entity = await this.model.findById(new Types.ObjectId(id))
+  async findOne(id: string, includeCancelled?: boolean): Promise<Schedule> {
+    const filter: any = {
+      _id: new Types.ObjectId(id),
+    }
+
+    if (!includeCancelled) {
+      filter.status = { $ne: ScheduleStatusEnum.CANCELED }
+    }
+
+    const entity = await this.model.findOne(filter)
     if (!entity) {
       throw new Error('Schedule not found')
     }
@@ -186,12 +201,13 @@ export class ScheduleService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.model.deleteOne({ _id: new Types.ObjectId(id) })
+    await this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { status: ScheduleStatusEnum.CANCELED } })
   }
 
   async findAllParentTot() {
     const result = await this.model.find({
       lessonType: LessonTypesEnum.GROUP,
+      status: ScheduleStatusEnum.ACTIVE,
     })
 
     return result.map(mapper)
@@ -202,6 +218,7 @@ export class ScheduleService {
     const availableLessons = await this.model
       .find({
         lessonType: LessonTypesEnum.PRIVATE,
+        status: ScheduleStatusEnum.ACTIVE,
         $expr: { $lt: [{ $size: '$registrations' }, '$classSize'] },
       })
       .sort({ startDateTime: 1 })
@@ -222,5 +239,18 @@ export class ScheduleService {
     })
 
     return Array.from(uniqueDates)
+  }
+
+  async cancel(id: string) {
+    const schedule = await this.findOne(id)
+    if (!schedule) {
+      throw new NotFoundException('Schedule not found')
+    }
+
+    for (const registration of schedule.registrations) {
+      await this.registrationService.remove(id, registration.studentId)
+    }
+
+    await this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { status: ScheduleStatusEnum.CANCELED } })
   }
 }

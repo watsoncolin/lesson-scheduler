@@ -11,11 +11,13 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "api:build",
+        "watch": true,
         "inspect": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "api:build:development"
+          "buildTarget": "api:build:development",
+          "watch": true
         },
         "production": {
           "buildTarget": "api:build:production"

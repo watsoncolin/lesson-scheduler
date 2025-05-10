@@ -1,6 +1,6 @@
 'use client'
 import { Fragment, useEffect, useState } from 'react'
-import { CalendarIcon, EllipsisHorizontalIcon, MapPinIcon } from '@heroicons/react/20/solid'
+import { CalendarIcon, EllipsisHorizontalIcon, MapPinIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import { del, get } from '@utils/api'
 import { Student, Pool, Instructor, Schedule } from '@lib/index'
@@ -8,6 +8,13 @@ import { useUser, usePools, useInstructors, useCredits, PoolContextType, Instruc
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ')
+}
+
+const isWithin24Hours = (date: string) => {
+  const lessonTime = new Date(date)
+  const now = new Date()
+  const hoursUntilLesson = (lessonTime.getTime() - now.getTime()) / (1000 * 60 * 60)
+  return hoursUntilLesson <= 24
 }
 
 export default function UpcomingLessons() {
@@ -65,6 +72,30 @@ export default function UpcomingLessons() {
   return (
     <div className="py-5">
       <h3 className="text-base font-semibold leading-6 text-gray-900">Upcoming lessons</h3>
+      {error && (
+        <div className="mt-4 rounded-md bg-red-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">{error}</h3>
+            </div>
+            <div className="ml-auto pl-3">
+              <div className="-mx-1.5 -my-1.5">
+                <button
+                  type="button"
+                  className="inline-flex rounded-md bg-red-50 p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50"
+                  onClick={() => setError('')}
+                >
+                  <span className="sr-only">Dismiss</span>
+                  <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-16">
         <ol className="mt-4 divide-y divide-gray-100 text-sm leading-6 lg:col-span-7 xl:col-span-8">
           {schedules.length > 0 ? (
@@ -151,18 +182,24 @@ export default function UpcomingLessons() {
                             )}
                           </MenuItem> */}
                           <MenuItem>
-                            {({ active }) => (
-                              <button
-                                className={classNames(
-                                  active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                  'block px-4 py-2 text-sm',
-                                  'w-full text-left',
-                                )}
-                                onClick={e => handleCancel(e, schedule, student)}
-                              >
-                                Cancel
-                              </button>
-                            )}
+                            {({ active }) => {
+                              const isDisabled = isWithin24Hours(schedule.startDateTime)
+                              return (
+                                <button
+                                  className={classNames(
+                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                    'block px-4 py-2 text-sm',
+                                    'w-full text-left',
+                                    isDisabled && 'opacity-50 cursor-not-allowed',
+                                  )}
+                                  onClick={e => !isDisabled && handleCancel(e, schedule, student)}
+                                  disabled={isDisabled}
+                                  title={isDisabled ? 'Cannot cancel lessons within 24 hours' : 'Cancel lesson'}
+                                >
+                                  Cancel
+                                </button>
+                              )
+                            }}
                           </MenuItem>
                         </div>
                       </MenuItems>

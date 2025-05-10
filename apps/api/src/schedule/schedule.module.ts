@@ -11,6 +11,7 @@ import { ProductModule } from 'product/product.module'
 import { TransactionsSaga } from './transactions.saga'
 import { UserModule } from 'user/user.module'
 import { StudentModule } from 'student/student.module'
+import { CqrsModule } from '@nestjs/cqrs'
 @Module({
   imports: [
     PaymentModule,
@@ -18,9 +19,10 @@ import { StudentModule } from 'student/student.module'
     MongooseModule.forFeature([{ name: ScheduleEntity.name, schema: ScheduleSchema }]),
     UserModule,
     StudentModule,
+    CqrsModule,
   ],
   controllers: [ScheduleController, RegistrationController],
   providers: [ScheduleService, RegistrationService, CreateReservationFromTransactionHandler, TransactionsSaga],
-  exports: [RegistrationService],
+  exports: [ScheduleService, RegistrationService],
 })
 export class ScheduleModule {}

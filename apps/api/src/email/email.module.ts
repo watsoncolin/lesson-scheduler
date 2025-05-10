@@ -6,10 +6,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ConfigEnum } from '../shared/config.enum'
 import { LoggerModule } from '../logger/logger.module'
 import { CqrsModule } from '@nestjs/cqrs'
-import { SendWelcomeEmailHandler } from './commands/send-welcome-email.handler'
+import { SendCancellationEmailHandler } from './commands/send-cancellation-email/send-cancellation-email.handler'
+import { SendWelcomeEmailHandler } from './commands/send-welcome-email/send-welcome-email.handler'
+import { ScheduleSaga } from './schedule.saga'
 import { UserSaga } from './user.saga'
-const COMMAND_HANDLERS = [SendWelcomeEmailHandler]
-const SAGAS = [UserSaga]
+import { StudentModule } from 'student/student.module'
+import { ScheduleModule } from 'schedule/schedule.module'
+const COMMAND_HANDLERS = [SendCancellationEmailHandler, SendWelcomeEmailHandler]
+const SAGAS = [UserSaga, ScheduleSaga]
 
 @Module({
   imports: [
@@ -17,6 +21,8 @@ const SAGAS = [UserSaga]
     LoggerModule,
     UserModule,
     ConfigModule,
+    StudentModule,
+    ScheduleModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

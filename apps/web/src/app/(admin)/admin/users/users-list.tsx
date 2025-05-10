@@ -11,7 +11,15 @@ import { Button } from '@components/button'
 import { Pagination } from '@components/pagination'
 import { get } from '@/app/utils/api'
 
-export default function UsersList() {
+export default function UsersList({
+  searchQuery = '',
+  sortBy = 'name',
+  phone = '',
+}: {
+  searchQuery?: string
+  sortBy?: string
+  phone?: string
+}) {
   const [users, setUsers] = useState<UserSearchResponseDto[]>([])
   const [total, setTotal] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
@@ -22,13 +30,13 @@ export default function UsersList() {
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await get<PaginatedResponseDto<UserSearchResponseDto>>(
-        `/users?page=${currentPage}&limit=${limit}`,
+        `/users?page=${currentPage}&limit=${limit}&name=${searchQuery}&phone=${phone}&sortBy=${sortBy}`,
       )
       setUsers(response.data)
       setTotal(response.total)
     }
     fetchUsers()
-  }, [currentPage, limit])
+  }, [currentPage, limit, searchQuery, sortBy, phone])
 
   return (
     <>
@@ -46,7 +54,9 @@ export default function UsersList() {
           <TableBody>
             {users.map(user => (
               <TableRow key={user.id} title={`User #${user.id}`} href={`/admin/users/${user.id}`}>
-                <TableCell>{user.firstName}</TableCell>
+                <TableCell>
+                  {user.firstName} {user.lastName}
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <span>{user.email}</span>

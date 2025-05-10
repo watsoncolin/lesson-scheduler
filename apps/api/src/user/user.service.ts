@@ -89,11 +89,18 @@ export class UserService {
     return user
   }
 
-  async findAll(page = 1, limit = 1000): Promise<{ users: User[]; total: number }> {
+  async findAll(page = 1, limit = 1000, search?: string, phone?: string): Promise<{ users: User[]; total: number }> {
     const skip = (page - 1) * limit
+    const filter: any = {}
+    if (search) {
+      filter.$or = [{ firstName: { $regex: search, $options: 'i' } }, { lastName: { $regex: search, $options: 'i' } }]
+    }
+    if (phone) {
+      filter.phone = { $regex: phone, $options: 'i' }
+    }
     const [users, total] = await Promise.all([
-      this.model.find().skip(skip).limit(limit).exec(),
-      this.model.countDocuments(),
+      this.model.find(filter).skip(skip).limit(limit).exec(),
+      this.model.countDocuments(filter),
     ])
     return {
       users: users.map(mapper),

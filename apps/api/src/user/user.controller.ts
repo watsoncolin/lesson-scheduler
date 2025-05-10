@@ -43,9 +43,13 @@ export class UserController {
   @Get()
   async findAll(
     @Query() userSearchRequestDto: UserSearchRequestDto,
-    @ActiveUser() user: ActiveUserData,
   ): Promise<PaginatedResponseDto<UserSearchResponseDto>> {
-    const { users, total } = await this.userService.findAll(userSearchRequestDto.page, userSearchRequestDto.limit)
+    const { users, total } = await this.userService.findAll(
+      userSearchRequestDto.page,
+      userSearchRequestDto.limit,
+      userSearchRequestDto.name,
+      userSearchRequestDto.phone,
+    )
 
     const allStudents = await Promise.all(
       users.map(async user => {

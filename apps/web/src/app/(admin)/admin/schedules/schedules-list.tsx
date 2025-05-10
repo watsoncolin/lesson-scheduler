@@ -79,9 +79,6 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                       Start Time
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      End Time
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Registrations
                     </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -105,9 +102,6 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {format(new Date(schedule.startDateTime), 'MMM d, yyyy h:mm a')}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {format(new Date(schedule.endDateTime), 'MMM d, yyyy h:mm a')}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {schedule.registrations.length > 0 && (

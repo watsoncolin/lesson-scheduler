@@ -248,7 +248,7 @@ export class ScheduleService {
     }
 
     for (const registration of schedule.registrations) {
-      await this.registrationService.remove(id, registration.studentId)
+      await this.registrationService.remove(id, registration.studentId, true)
     }
 
     await this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { status: ScheduleStatusEnum.CANCELED } })

@@ -6,7 +6,7 @@ import { usePools } from '@contexts/pools-context'
 import { format } from 'date-fns'
 import { useState, useEffect } from 'react'
 import { del } from '@utils/api'
-import { TrashIcon } from '@heroicons/react/24/outline'
+import { TrashIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 
 interface SchedulesListProps {
@@ -18,19 +18,47 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
   const { instructors } = useInstructors()
   const { pools } = usePools()
   const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleDto | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleDelete = async (scheduleId: string) => {
     try {
       await del(`/schedules/${scheduleId}`)
       onDelete?.()
       setScheduleToDelete(null)
+      setError(null)
     } catch (error) {
       console.error('Error deleting schedule:', error)
+      setError(`Error deleting schedule. ${error instanceof Error ? error.message : 'Unknown error'}`)
+      setScheduleToDelete(null)
     }
   }
 
   return (
     <>
+      {error && (
+        <div className="mt-4 rounded-md bg-red-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">{error}</h3>
+            </div>
+            <div className="ml-auto pl-3">
+              <div className="-mx-1.5 -my-1.5">
+                <button
+                  type="button"
+                  className="inline-flex rounded-md bg-red-50 p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50"
+                  onClick={() => setError('')}
+                >
+                  <span className="sr-only">Dismiss</span>
+                  <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -100,16 +128,14 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                           )}
                         </td>
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                          {schedule.registrations.length === 0 && (
-                            <button
-                              type="button"
-                              onClick={() => setScheduleToDelete(schedule)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              <TrashIcon className="h-5 w-5" />
-                              <span className="sr-only">Delete</span>
-                            </button>
-                          )}
+                          <button
+                            type="button"
+                            onClick={() => setScheduleToDelete(schedule)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            <TrashIcon className="h-5 w-5" />
+                            <span className="sr-only">Delete</span>
+                          </button>
                         </td>
                       </tr>
                     )
@@ -139,7 +165,9 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                     </h3>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        Are you sure you want to delete this schedule? This action cannot be undone.
+                        Are you sure you want to delete this schedule? This action cannot be undone. If there are
+                        registrations, the schedule will be canceled and the credits will be restored to the account and
+                        the user notified.
                       </p>
                     </div>
                   </div>
@@ -155,7 +183,10 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                    onClick={() => setScheduleToDelete(null)}
+                    onClick={() => {
+                      setScheduleToDelete(null)
+                      setError(null)
+                    }}
                   >
                     Cancel
                   </button>

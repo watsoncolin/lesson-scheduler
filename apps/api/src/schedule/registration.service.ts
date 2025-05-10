@@ -116,7 +116,7 @@ export class RegistrationService {
     }))
   }
 
-  async remove(scheduleId: string, studentId: string): Promise<void> {
+  async remove(scheduleId: string, studentId: string, allowWithin24Hours = false): Promise<void> {
     const schedule = await this.model.findById(new Types.ObjectId(scheduleId))
     if (!schedule) {
       throw new NotFoundException('Schedule not found')
@@ -134,7 +134,7 @@ export class RegistrationService {
     const startDateTime = new Date(registration.createdAt)
     const now = new Date()
     const diffInHours = differenceInHours(startDateTime, now)
-    if (diffInHours < 24) {
+    if (!allowWithin24Hours && diffInHours < 24) {
       throw new BadRequestException('Registration is within 24 hours')
     }
     const userId = schedule.registrations[registrationIndex].userId.toString()

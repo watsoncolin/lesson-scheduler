@@ -179,6 +179,10 @@ export class ScheduleController {
     if (!schedule) {
       throw new NotFoundException()
     }
-    return this.scheduleService.remove(id)
+    if (schedule.registrations.length > 0) {
+      await this.scheduleService.cancel(id)
+    } else {
+      await this.scheduleService.remove(id)
+    }
   }
 }

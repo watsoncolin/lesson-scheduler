@@ -78,6 +78,7 @@ export class ScheduleService {
     daysOfWeek?: number[],
     date?: string,
     timezone?: string,
+    includeReserved?: boolean,
   ): Promise<Schedule[]> {
     const filter: {
       $and: any[]
@@ -128,6 +129,9 @@ export class ScheduleService {
 
     const entities = await this.model.find(filter).sort({ startDateTime: 1 })
     const results = entities.map(mapper)
+    if (includeReserved) {
+      return results
+    }
     return results.filter(schedule => schedule.registrations.length < schedule.classSize)
   }
 

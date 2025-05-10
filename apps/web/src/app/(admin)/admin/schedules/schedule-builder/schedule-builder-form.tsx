@@ -60,7 +60,7 @@ export default function ScheduleBuilderForm() {
     if (daysOfWeek) {
       queryString.append('daysOfWeek', daysOfWeek)
     }
-
+    queryString.append('includeReserved', 'true')
     const lessons = await get<Schedule[]>(`/schedules/search?${queryString.toString()}`)
     // Filter for exact pool and instructor match and sort by start time
     return lessons
@@ -508,7 +508,9 @@ export default function ScheduleBuilderForm() {
                         max="21:00"
                       />
                     ) : (
-                      <span className="text-sm text-gray-900">{form.startTime}</span>
+                      <span className="text-sm text-gray-900">
+                        {format(parse(form.startTime, 'HH:mm', new Date()), 'hh:mm a')}
+                      </span>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -524,7 +526,9 @@ export default function ScheduleBuilderForm() {
                         max="21:00"
                       />
                     ) : (
-                      <span className="text-sm text-gray-900">{form.endTime}</span>
+                      <span className="text-sm text-gray-900">
+                        {format(parse(form.endTime, 'HH:mm', new Date()), 'hh:mm a')}
+                      </span>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -594,6 +598,18 @@ export default function ScheduleBuilderForm() {
                               'Save'
                             )}
                           </Button>
+                          {!currentDayLessons.find(lesson => lesson.id === form.id)?.registrations?.length && (
+                            <Button
+                              onClick={() => handleRemoveLesson(index)}
+                              className="bg-red-600 hover:bg-red-700 text-white p-2 disabled:bg-gray-400 disabled:hover:bg-gray-400"
+                              disabled={!isFormEnabled || (isSavingAll && currentSavingIndex === index)}
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </>
+                      ) : (
+                        !currentDayLessons.find(lesson => lesson.id === form.id)?.registrations?.length && (
                           <Button
                             onClick={() => handleRemoveLesson(index)}
                             className="bg-red-600 hover:bg-red-700 text-white p-2 disabled:bg-gray-400 disabled:hover:bg-gray-400"
@@ -601,15 +617,7 @@ export default function ScheduleBuilderForm() {
                           >
                             <TrashIcon className="h-4 w-4" />
                           </Button>
-                        </>
-                      ) : (
-                        <Button
-                          onClick={() => handleRemoveLesson(index)}
-                          className="bg-red-600 hover:bg-red-700 text-white p-2 disabled:bg-gray-400 disabled:hover:bg-gray-400"
-                          disabled={!isFormEnabled || (isSavingAll && currentSavingIndex === index)}
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </Button>
+                        )
                       )}
                     </div>
                   </td>

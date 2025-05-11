@@ -15,7 +15,8 @@
     "e2e": "nx e2e",
     "start:web": "npx nx run web:dev",
     "deploy": "gcloud builds submit --config=cloudbuild.yaml",
-    "clean": "rm -rf node_modules && rm -rf dist && rm -rf .nx"
+    "clean": "rm -rf node_modules && rm -rf dist && rm -rf .nx",
+    "generate-api-client": "npx openapi-typescript-codegen --input ./openapi.json --output ./apps/web/src/api"
   },
   "private": true,
   "dependencies": {
@@ -113,6 +114,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-environment-node": "^29.7.0",
     "nx": "20.3.2",
+    "openapi-typescript-codegen": "^0.29.0",
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
     "tailwindcss": "^4.1.4",

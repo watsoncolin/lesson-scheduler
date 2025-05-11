@@ -3,26 +3,25 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app/app.module'
 import cookieParser from 'cookie-parser'
 import { HttpExceptionFilter } from './logger/http-exception.filter'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import * as fs from 'fs'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   const globalPrefix = 'api'
   app.setGlobalPrefix(globalPrefix)
+
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true, // Automatically transforms plain objects into class instances
-      whitelist: true, // Strips properties that do not belong to the DTO class
-      forbidNonWhitelisted: false, // Throws an error if non-whitelisted properties are found
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: false,
     }),
   )
 
-  // Enable cookie-parser middleware
   app.use(cookieParser())
-
-  // Apply global exception filter
   app.useGlobalFilters(new HttpExceptionFilter())
 
-  // Get allowed origins from environment variable or use defaults
   const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',')
     : ['https://stansburyswim.com', 'https://www.stansburyswim.com', 'http://localhost:3000']
@@ -36,9 +35,31 @@ async function bootstrap() {
     preflightContinue: false,
     optionsSuccessStatus: 204,
   })
+
+  // 🔹 Swagger setup
+  const config = new DocumentBuilder()
+    .setTitle('Stansbury Swim API')
+    .setDescription('API documentation for Stansbury Swim backend')
+    .setVersion('1.0')
+    .addBearerAuth() // optional, include if using Authorization headers
+    .build()
+
+  const document = SwaggerModule.createDocument(app, config)
+
+  // Serve raw JSON at /api-json
+  app.use('/api-json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    res.send(document)
+  })
+
+  // Optional: write to file for local codegen
+  fs.writeFileSync('./openapi.json', JSON.stringify(document, null, 2))
+
   const port = process.env.PORT || 3001
   await app.listen(port)
+
   Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`)
+  Logger.log(`📘 Swagger docs available at: http://localhost:${port}/${globalPrefix}/docs`)
 }
 
 bootstrap()

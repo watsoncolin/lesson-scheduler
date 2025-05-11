@@ -3,6 +3,8 @@ import { AnnouncementService } from './announcement.service'
 import { Role } from '../../../../libs/shared/src/enums/role.enum'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
 import { CreateAnnouncementDto } from '@lesson-scheduler/shared'
+import { Auth } from 'iam/authentication/decorators/auth.decorator'
+import { AuthType } from 'iam/authentication/enums/auth-type.enum'
 
 @Controller('announcement')
 export class AnnouncementController {
@@ -15,6 +17,7 @@ export class AnnouncementController {
   }
 
   @Get()
+  @Auth(AuthType.None)
   async findOne() {
     const announcement = await this.announcementService.findOne()
     if (!announcement) {

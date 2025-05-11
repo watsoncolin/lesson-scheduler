@@ -29,7 +29,7 @@ export const getCookie = (name: string) => {
 export const deleteCookie = (name: string) => {
   if (typeof window === 'undefined') return // Skip if running on server
 
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure`
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; ${COOKIE_SETTINGS}`
 }
 
 // Server-side cookie functions

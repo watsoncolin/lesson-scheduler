@@ -1,65 +1,64 @@
 'use client'
-import React, { useState } from 'react'
 
+import React from 'react'
 import { useRouter } from 'next/navigation'
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { AuthService } from '@/services/api/shared/authService'
 import { setUser } from '@utils/api'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+})
+
+type LoginFormData = z.infer<typeof loginSchema>
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
   const router = useRouter()
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  })
+
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true)
     setError(null)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Invalid credentials')
-      }
-
-      const data = await response.json()
-      // The token is now set in cookies by the server, so we don't need to set it here
-      // Just store the user info if needed
-      setUser(data)
-
-      // Redirect to a protected page after successful login
+      const response = await AuthService.signIn(data)
+      setUser(response)
       router.push('/dashboard')
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || 'Failed to sign in')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit} method="POST">
+    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
       <div>
         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
           Email address
         </label>
         <div className="mt-2">
           <input
-            value={email}
+            {...register('email')}
             id="email"
-            name="email"
             type="email"
             autoComplete="email"
-            required
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            onChange={e => setEmail(e.target.value)}
           />
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
         </div>
       </div>
 
@@ -76,30 +75,29 @@ export default function LoginForm() {
         </div>
         <div className="mt-2">
           <input
+            {...register('password')}
             id="password"
-            value={password}
-            name="password"
             type="password"
             autoComplete="current-password"
-            required
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            onChange={e => setPassword(e.target.value)}
           />
+          {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
         </div>
       </div>
 
       <div>
         <button
           type="submit"
-          className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          disabled={isLoading}
+          className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Sign in
+          {isLoading ? 'Signing in...' : 'Sign in'}
         </button>
         {error && (
-          <>
-            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-            <p className="text-sm text-red-500">{error}</p>
-          </>
+          <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
+            <ExclamationCircleIcon className="h-5 w-5" />
+            <p>{error}</p>
+          </div>
         )}
       </div>
     </form>

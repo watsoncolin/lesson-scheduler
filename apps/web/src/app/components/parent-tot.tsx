@@ -1,40 +1,15 @@
-'use client'
-import React, { use, useEffect, useState } from 'react'
-import { useInstructors, usePools } from '@contexts/index'
-import { Schedule } from '@lib/schedule'
-import { get } from '@utils/api'
-import { Announcement } from '@lesson-scheduler/shared'
+import { AnnouncementService } from '@/services/api/shared/announcementService'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
+import { InstructorService } from '@/services/api/shared/instructorService'
+import { PoolService } from '@/services/api/shared/poolService'
 
-export default function ParentTot() {
-  const [schedules, setSchedules] = useState([] as Schedule[])
-  const { pools } = usePools()
-  const { instructors } = useInstructors()
-
-  const fetchSchedules = async () => {
-    try {
-      const schedules = await get<Schedule[]>('/schedules/parent-tot')
-      setSchedules(schedules)
-    } catch (err: any) {
-      console.error(err)
-    }
-  }
-
-  useEffect(() => {
-    fetchSchedules()
-  }, [])
-
-  const [announcement, setAnnouncement] = useState<Announcement | null>(null)
-  useEffect(() => {
-    const fetchAnnouncement = async () => {
-      const response = await get('/announcement')
-      setAnnouncement(response as Announcement)
-    }
-    try {
-      fetchAnnouncement()
-    } catch (error) {
-      console.error(error)
-    }
-  }, [])
+export default async function ParentTot() {
+  const [announcement, schedules, instructors, pools] = await Promise.all([
+    AnnouncementService.findOne(),
+    ScheduleService.findParentTot(),
+    InstructorService.findAll(),
+    PoolService.findAll(),
+  ])
 
   return (
     <div id="announcement" className="bg-white py-12 md:py-10 lg:py-10">
@@ -43,7 +18,6 @@ export default function ParentTot() {
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{announcement?.heading}</h2>
           <p className="mt-6 text-lg leading-8 text-gray-600">{announcement?.content}</p>
         </div>
-        {/* 
         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500">
           {schedules
             ? schedules.map(schedule => {
@@ -84,7 +58,7 @@ export default function ParentTot() {
                 )
               })
             : null}
-        </ol> */}
+        </ol>
       </div>
     </div>
   )

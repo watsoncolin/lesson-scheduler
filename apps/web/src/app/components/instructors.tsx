@@ -1,9 +1,8 @@
-'use client'
-import React from 'react'
-import { useInstructors } from '@contexts/instructor-context'
+import { InstructorService } from '@/services/api/shared/instructorService'
 
-export default function Instructors() {
-  const { instructors } = useInstructors()
+export default async function Instructors() {
+  const instructors = await InstructorService.findAll()
+
   return (
     <div id="team" className="bg-white py-12 md:py-10 lg:py-10">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3">

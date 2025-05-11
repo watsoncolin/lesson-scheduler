@@ -1,9 +1,7 @@
-'use client'
-import React from 'react'
-import { usePools } from '@contexts/pools-context'
+import { PoolService } from '@/services/api/shared/poolService'
 
-export default function Pools() {
-  const { pools } = usePools()
+export default async function Pools() {
+  const pools = await PoolService.findAll()
 
   return (
     <div id="pools" className="bg-white py-12 md:py-10 lg:py-10">

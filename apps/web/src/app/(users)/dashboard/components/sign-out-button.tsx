@@ -1,4 +1,4 @@
-import { removeAuthToken } from '@utils/api'
+import { removeAuthToken, logout } from '@utils/api'
 import { googleLogout } from '@react-oauth/google'
 
 function classNames(...classes: string[]) {
@@ -8,12 +8,19 @@ function classNames(...classes: string[]) {
 export default function SignOutButton() {
   async function handleSignOut(event: React.FormEvent) {
     event.preventDefault()
-    // Sign out of Google
-    googleLogout()
-    // Remove local auth token
-    await removeAuthToken()
-    // Redirect to home page
-    window.location.href = '/'
+    try {
+      // Sign out of Google
+      googleLogout()
+      // Call backend logout endpoint and remove local auth token
+      await logout()
+      // Redirect to home page
+      window.location.href = '/'
+    } catch (error) {
+      console.error('Error during sign out:', error)
+      // Even if the backend call fails, try to clear local state
+      await removeAuthToken()
+      window.location.href = '/'
+    }
   }
   return (
     <form onSubmit={handleSignOut}>

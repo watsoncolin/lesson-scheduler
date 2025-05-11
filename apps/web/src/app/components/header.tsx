@@ -1,25 +1,7 @@
-'use client'
+import { AnnouncementService } from '@/services/api/shared/announcementService'
 
-import { useState } from 'react'
-
-import { useEffect } from 'react'
-import { get } from '../utils/api'
-import { Announcement } from '@lesson-scheduler/shared'
-
-export default function Header() {
-  // fetch announcement from api
-  const [announcement, setAnnouncement] = useState<Announcement | null>(null)
-  useEffect(() => {
-    const fetchAnnouncement = async () => {
-      const response = await get('/announcement')
-      setAnnouncement(response as Announcement)
-    }
-    try {
-      fetchAnnouncement()
-    } catch (error) {
-      console.error(error)
-    }
-  }, [])
+export default async function Header() {
+  const announcement = await AnnouncementService.findOne()
 
   return (
     <div className="relative isolate px-6 pt-14 lg:px-8">

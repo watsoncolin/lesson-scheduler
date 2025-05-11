@@ -1,7 +1,13 @@
 import { AnnouncementService } from '@/services/api/shared/announcementService'
+import { Announcement } from '@lesson-scheduler/shared'
 
 export default async function Header() {
-  const announcement = await AnnouncementService.findOne()
+  let announcement: Announcement | null = null
+  try {
+    announcement = await AnnouncementService.findOne()
+  } catch (error) {
+    console.error('Failed to fetch announcement:', error)
+  }
 
   return (
     <div className="relative isolate px-6 pt-14 lg:px-8">

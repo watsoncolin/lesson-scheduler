@@ -7,10 +7,13 @@ import { get } from '@utils/api'
 import { IPool } from '@lesson-scheduler/shared'
 import PoolsList from './pools-list'
 import PoolModalWrapper from './pool-modal-wrapper'
+import { PoolService } from '@/services/api/shared/poolService'
 
 export const metadata: Metadata = {
   title: 'Pools',
 }
+
+export const revalidate = 3600 // Revalidate every hour
 
 // Server-side data fetching
 async function getPools() {
@@ -24,8 +27,7 @@ async function getPools() {
 }
 
 export default async function PoolsPage() {
-  // Fetch pools on the server
-  const pools = await getPools()
+  const pools = await PoolService.findAll()
 
   return (
     <>

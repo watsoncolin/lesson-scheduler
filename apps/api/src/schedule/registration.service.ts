@@ -130,8 +130,7 @@ export class RegistrationService {
     }
 
     // If the registration is within 24 hours, do not cancel
-    const registration = schedule.registrations[registrationIndex]
-    const startDateTime = new Date(registration.createdAt)
+    const startDateTime = new Date(schedule.startDateTime)
     const now = new Date()
     const diffInHours = differenceInHours(startDateTime, now)
     if (!allowWithin24Hours && diffInHours < 24) {

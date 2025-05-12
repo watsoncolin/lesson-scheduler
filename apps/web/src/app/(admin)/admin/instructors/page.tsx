@@ -11,8 +11,6 @@ export const metadata: Metadata = {
   title: 'Instructors',
 }
 
-export const revalidate = 3600 // Revalidate every hour
-
 export default async function InstructorsPage() {
   const instructors = await InstructorService.findAll()
 

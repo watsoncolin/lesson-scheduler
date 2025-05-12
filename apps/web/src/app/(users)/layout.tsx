@@ -1,7 +1,8 @@
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import '../global.css'
 import Footer from '../components/footer'
-
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 export const metadata = {
   title: 'Stansbury Swim',
   description: '',
@@ -10,6 +11,8 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <GoogleOAuthProvider clientId="472605745668-v91hb1ig5c6sv9unnc8r0ddi7h0vvnu8.apps.googleusercontent.com">
+      <Analytics />
+      <SpeedInsights />
       <html className="h-full bg-white">
         <head>
           <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />

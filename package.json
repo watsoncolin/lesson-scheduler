@@ -48,6 +48,8 @@
     "@types/paypal__checkout-server-sdk": "^1.0.8",
     "@types/react-signature-canvas": "^1.0.7",
     "@types/uuid": "^10.0.0",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "apple-pay-server-client": "^1.0.9",
     "avatar-initials": "^6.0.0",
     "axios": "^1.7.9",

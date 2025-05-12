@@ -2,7 +2,8 @@ import '@/app/global.css'
 import type { Metadata } from 'next'
 import AdminLayout from './admin-layout'
 import { ClientWrapper } from './client-wrapper'
-
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from '@vercel/analytics/next'
 export const metadata: Metadata = {
   title: {
     template: '%s - Stansbury Swim',
@@ -23,6 +24,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ClientWrapper>
+          <SpeedInsights />
+          <Analytics />
           <div className="min-h-full">
             <AdminLayout>{children}</AdminLayout>
           </div>

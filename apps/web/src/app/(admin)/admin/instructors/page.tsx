@@ -3,11 +3,9 @@ import { Input, InputGroup } from '@components/input'
 import { Select } from '@components/select'
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid'
 import type { Metadata } from 'next'
-import { get } from '@utils/api'
-import { Instructor } from '@lib/instructor'
+import { InstructorService } from '@/services/api/shared/instructorService'
 import InstructorsList from './instructors-list'
 import InstructorModalWrapper from './instructor-modal-wrapper'
-import { InstructorService } from '@/services/api/shared/instructorService'
 
 export const metadata: Metadata = {
   title: 'Instructors',
@@ -15,19 +13,7 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600 // Revalidate every hour
 
-// Server-side data fetching
-async function getInstructors() {
-  try {
-    const instructors = await get<Instructor[]>('/instructors')
-    return instructors
-  } catch (error) {
-    console.error('Failed to fetch instructors:', error)
-    return []
-  }
-}
-
 export default async function InstructorsPage() {
-  // Fetch instructors on the server
   const instructors = await InstructorService.findAll()
 
   return (

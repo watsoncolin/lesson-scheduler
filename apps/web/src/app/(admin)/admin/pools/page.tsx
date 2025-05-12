@@ -3,28 +3,15 @@ import { Input, InputGroup } from '@components/input'
 import { Select } from '@components/select'
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid'
 import type { Metadata } from 'next'
-import { get } from '@utils/api'
-import { IPool } from '@lesson-scheduler/shared'
+import { PoolService } from '@/services/api/shared/poolService'
 import PoolsList from './pools-list'
 import PoolModalWrapper from './pool-modal-wrapper'
-import { PoolService } from '@/services/api/shared/poolService'
 
 export const metadata: Metadata = {
   title: 'Pools',
 }
 
 export const revalidate = 3600 // Revalidate every hour
-
-// Server-side data fetching
-async function getPools() {
-  try {
-    const pools = await get<IPool[]>('/pools')
-    return pools
-  } catch (error) {
-    console.error('Failed to fetch pools:', error)
-    return []
-  }
-}
 
 export default async function PoolsPage() {
   const pools = await PoolService.findAll()

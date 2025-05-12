@@ -48,9 +48,10 @@ export class ScheduleController {
     const userIds = schedules.flatMap(schedule => schedule.registrations.map(registration => registration.userId))
     const users = await this.userService.findMany(userIds)
 
+    // sort schedules by startDateTime
+    schedules.sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime())
+
     return schedules.map(schedule => {
-      const student = students.find(student => student.id === schedule.registrations.find(r => r.studentId)?.studentId)
-      const user = users.find(user => user.id === schedule.registrations.find(r => r.userId)?.userId)
       return {
         id: schedule.id,
         poolId: schedule.poolId,
@@ -59,24 +60,28 @@ export class ScheduleController {
         lessonType: schedule.lessonType,
         startDateTime: schedule.startDateTime.toISOString(),
         endDateTime: schedule.endDateTime.toISOString(),
-        registrations: schedule.registrations.map(registration => ({
-          studentId: registration.studentId,
-          userId: registration.userId,
-          createdAt: registration.createdAt.toISOString(),
-          student: {
-            id: student?.id ?? '',
-            name: student?.name ?? '',
-            birthDate: student?.birthday.toISOString() ?? '',
-            notes: student?.notes ?? '',
-          },
-          user: {
-            id: user?.id ?? '',
-            firstName: user?.firstName ?? '',
-            lastName: user?.lastName ?? '',
-            email: user?.email ?? '',
-            role: user?.role ?? Role.User,
-          },
-        })),
+        registrations: schedule.registrations.map(registration => {
+          const student = students.find(student => student.id === registration.studentId)
+          const user = users.find(user => user.id === registration.userId)
+          return {
+            studentId: registration.studentId,
+            userId: registration.userId,
+            createdAt: registration.createdAt.toISOString(),
+            student: {
+              id: student?.id ?? '',
+              name: student?.name ?? '',
+              birthDate: student?.birthday.toISOString() ?? '',
+              notes: student?.notes ?? '',
+            },
+            user: {
+              id: user?.id ?? '',
+              firstName: user?.firstName ?? '',
+              lastName: user?.lastName ?? '',
+              email: user?.email ?? '',
+              role: user?.role ?? Role.User,
+            },
+          }
+        }),
       }
     })
   }

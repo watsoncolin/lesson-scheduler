@@ -18,6 +18,7 @@ export default function ClientWrapper() {
   const [schedules, setSchedules] = useState<ScheduleDto[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedLessonType, setSelectedLessonType] = useState('')
 
   const fetchSchedules = async () => {
     try {
@@ -57,9 +58,13 @@ export default function ClientWrapper() {
         }
       }
 
+      if (selectedLessonType && schedule.lessonType !== selectedLessonType) {
+        return false
+      }
+
       return true
     })
-  }, [schedules, selectedPool, selectedInstructor, selectedDate])
+  }, [schedules, selectedPool, selectedInstructor, selectedDate, selectedLessonType])
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredSchedules.length / ITEMS_PER_PAGE)
@@ -84,9 +89,11 @@ export default function ClientWrapper() {
           onInstructorChange={setSelectedInstructor}
           onPoolChange={setSelectedPool}
           onDateChange={setSelectedDate}
+          onLessonTypeChange={setSelectedLessonType}
           selectedInstructor={selectedInstructor}
           selectedPool={selectedPool}
           selectedDate={selectedDate}
+          selectedLessonType={selectedLessonType}
         />
       </div>
 

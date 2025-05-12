@@ -36,30 +36,34 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   })
 
-  // 🔹 Swagger setup
-  const config = new DocumentBuilder()
-    .setTitle('Stansbury Swim API')
-    .setDescription('API documentation for Stansbury Swim backend')
-    .setVersion('1.0')
-    .addBearerAuth() // optional, include if using Authorization headers
-    .build()
-
-  const document = SwaggerModule.createDocument(app, config)
-
-  // Serve raw JSON at /api-json
-  app.use('/api-json', (req, res) => {
-    res.setHeader('Content-Type', 'application/json')
-    res.send(document)
-  })
-
-  // Optional: write to file for local codegen
-  fs.writeFileSync('./openapi.json', JSON.stringify(document, null, 2))
-
   const port = process.env.PORT || 3001
-  await app.listen(port)
 
+  // Only enable Swagger in non-production environments
+  if (process.env.NODE_ENV !== 'production') {
+    // 🔹 Swagger setup
+    const config = new DocumentBuilder()
+      .setTitle('Stansbury Swim API')
+      .setDescription('API documentation for Stansbury Swim backend')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build()
+
+    const document = SwaggerModule.createDocument(app, config)
+
+    // Serve raw JSON at /api-json
+    app.use('/api-json', (req, res) => {
+      res.setHeader('Content-Type', 'application/json')
+      res.send(document)
+    })
+
+    // Optional: write to file for local codegen
+    fs.writeFileSync('./openapi.json', JSON.stringify(document, null, 2))
+
+    Logger.log(`📘 Swagger docs available at: http://localhost:${port}/${globalPrefix}/docs`)
+  }
+
+  await app.listen(port)
   Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`)
-  Logger.log(`📘 Swagger docs available at: http://localhost:${port}/${globalPrefix}/docs`)
 }
 
 bootstrap()

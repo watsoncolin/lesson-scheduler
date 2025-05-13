@@ -1,7 +1,8 @@
 import { ScheduleService as GeneratedScheduleService } from '@/api/services/ScheduleService'
 import type { CreateScheduleDto, UpdateScheduleDto } from '@/api'
-import { BaseService } from './baseService'
+import { BaseService, WithConfig } from './baseService'
 
+@WithConfig()
 export class ScheduleService extends BaseService {
   static async findAll() {
     return GeneratedScheduleService.scheduleControllerFindAll()

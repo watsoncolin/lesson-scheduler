@@ -1,12 +1,8 @@
-'use client'
-import { useState } from 'react'
 import React from 'react'
-import { useUser } from '@contexts/user-context'
+import { StatsService } from '@/services/api/shared/statsService'
 
-export default function Admin() {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+export default async function Admin() {
+  const stats = await StatsService.findAll()
 
   return (
     <>
@@ -26,11 +22,11 @@ export default function Admin() {
                   <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">Stats</h3>
                   <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3 dark:text-white">
                     {[
-                      { name: 'Private lesson credits purchased', stat: 1302 },
-                      { name: 'Group lesson credits purchased', stat: 55 },
-                      { name: 'Purchased and unscheduled', stat: 321 },
-                      { name: 'Total available lessons', stat: 63 },
-                      { name: 'Active users', stat: 175 },
+                      { name: 'Private lesson credits purchased', stat: stats.privateLessons },
+                      { name: 'Group lesson credits purchased', stat: stats.groupLessons },
+                      { name: 'Purchased and unscheduled', stat: stats.unscheduledPrivateLessons },
+                      { name: 'Total available lessons', stat: stats.availableLessons },
+                      { name: 'Active users', stat: stats.activeUsers },
                     ].map(item => (
                       <div
                         key={item.name}

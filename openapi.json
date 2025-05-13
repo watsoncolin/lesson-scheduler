@@ -1527,6 +1527,57 @@
           "Announcement"
         ]
       }
+    },
+    "/api/stats/instructor/{instructorId}": {
+      "get": {
+        "operationId": "StatsController_findInstructorStats",
+        "parameters": [
+          {
+            "name": "instructorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The stats for the instructor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Stats"
+        ]
+      }
+    },
+    "/api/stats": {
+      "get": {
+        "operationId": "StatsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The stats for the site",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Stats"
+        ]
+      }
     }
   },
   "info": {
@@ -1633,6 +1684,48 @@
       "CreateAnnouncementDto": {
         "type": "object",
         "properties": {}
+      },
+      "StatsResponseDto": {
+        "type": "object",
+        "properties": {
+          "privateLessons": {
+            "type": "number",
+            "description": "The number of private lessons purchased"
+          },
+          "groupLessons": {
+            "type": "number",
+            "description": "The number of group lessons purchased"
+          },
+          "availableLessons": {
+            "type": "number",
+            "description": "The number of available lessons"
+          },
+          "scheduledLessons": {
+            "type": "number",
+            "description": "The number of scheduled lessons"
+          },
+          "unscheduledPrivateLessons": {
+            "type": "number",
+            "description": "The number of unscheduled private lessons"
+          },
+          "unscheduledGroupLessons": {
+            "type": "number",
+            "description": "The number of unscheduled group lessons"
+          },
+          "activeUsers": {
+            "type": "number",
+            "description": "The number of active users"
+          }
+        },
+        "required": [
+          "privateLessons",
+          "groupLessons",
+          "availableLessons",
+          "scheduledLessons",
+          "unscheduledPrivateLessons",
+          "unscheduledGroupLessons",
+          "activeUsers"
+        ]
       }
     }
   }

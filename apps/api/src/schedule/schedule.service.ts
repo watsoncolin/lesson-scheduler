@@ -253,4 +253,22 @@ export class ScheduleService {
 
     await this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { status: ScheduleStatusEnum.CANCELED } })
   }
+
+  async countAvailablePrivateLessons(): Promise<number> {
+    return await this.model.countDocuments({
+      lessonType: LessonTypesEnum.PRIVATE,
+      status: ScheduleStatusEnum.ACTIVE,
+      $expr: { $lt: [{ $size: '$registrations' }, '$classSize'] },
+      startDateTime: { $gt: new Date() },
+    })
+  }
+
+  async countAvailableGroupLessons(): Promise<number> {
+    return await this.model.countDocuments({
+      lessonType: LessonTypesEnum.GROUP,
+      status: ScheduleStatusEnum.ACTIVE,
+      $expr: { $lt: [{ $size: '$registrations' }, '$classSize'] },
+      startDateTime: { $gt: new Date() },
+    })
+  }
 }

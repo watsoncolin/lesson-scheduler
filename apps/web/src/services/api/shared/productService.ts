@@ -1,7 +1,8 @@
 import { ProductService as GeneratedProductService } from '@/api/services/ProductService'
 import type { CreateProductDto, UpdateProductDto } from '@/api'
-import { BaseService } from './baseService'
+import { BaseService, WithConfig } from './baseService'
 
+@WithConfig()
 export class ProductService extends BaseService {
   static async findAll() {
     return GeneratedProductService.productControllerFindAll()

@@ -1,7 +1,8 @@
 import { InstructorService as GeneratedInstructorService } from '@/api/services/InstructorService'
 import type { CreateInstructorDto, UpdateInstructorDto } from '@/api'
-import { BaseService } from './baseService'
+import { BaseService, WithConfig } from './baseService'
 
+@WithConfig()
 export class InstructorService extends BaseService {
   static async findAll() {
     return GeneratedInstructorService.instructorControllerFindAll()

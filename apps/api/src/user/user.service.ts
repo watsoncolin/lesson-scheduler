@@ -330,4 +330,8 @@ export class UserService {
     const entities = await this.model.find({ _id: { $in: ids.map(id => new Types.ObjectId(id)) } })
     return entities.map(mapper)
   }
+
+  async countActiveUsers(): Promise<number> {
+    return await this.model.countDocuments({ role: Role.User })
+  }
 }

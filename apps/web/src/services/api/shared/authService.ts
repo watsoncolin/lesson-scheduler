@@ -1,9 +1,7 @@
-import { BaseService } from './baseService'
+import { BaseService, WithConfig } from './baseService'
 import { AuthenticationService, SignInDto, SignUpDto, RefreshTokenDto } from '@/api'
 
-// Configure OpenAPI once when the service is initialized
-BaseService.configure()
-
+@WithConfig() 
 export class AuthService extends BaseService {
   static async signUp(data: SignUpDto) {
     return AuthenticationService.authenticationControllerSignUp(data)

@@ -1,7 +1,8 @@
 import { PoolService as GeneratedPoolService } from '@/api/services/PoolService'
 import type { CreatePoolDto, UpdatePoolDto } from '@/api'
-import { BaseService } from './baseService'
+import { BaseService, WithConfig } from './baseService'
 
+@WithConfig()
 export class PoolService extends BaseService {
   static async findAll() {
     return GeneratedPoolService.poolControllerFindAll()

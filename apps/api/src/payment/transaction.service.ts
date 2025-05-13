@@ -8,6 +8,7 @@ import { CreditBalanceDto } from './dto/credit-balance.dto'
 import { CreditTypesEnum } from 'shared/credit-types.enum'
 import { EventBus } from '@nestjs/cqrs'
 import { TransactionCreatedEvent } from './events'
+import { TransactionTypesEnum } from 'shared/transaction-types.enum'
 
 const mapper = (entity: TransactionEntity): Transaction => {
   return {
@@ -92,5 +93,10 @@ export class TransactionService {
 
   async findByUserId(userId: string): Promise<Transaction[]> {
     return (await this.model.find({ userId: new Types.ObjectId(userId) })).map(mapper)
+  }
+
+  async countCredits(query: { transactionType: TransactionTypesEnum; creditType: CreditTypesEnum }): Promise<number> {
+    const transactions = await this.model.find(query)
+    return transactions.reduce((acc, transaction) => acc + transaction.credits, 0)
   }
 }

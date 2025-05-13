@@ -17,6 +17,7 @@ import { SiteConfigModule } from 'site-config/site-config.module'
 import { WaitlistModule } from 'waitlist/waitlist.module'
 import { FileModule } from '../file/file.module'
 import { AnnouncementModule } from 'announcement/announcement.module'
+import { StatsModule } from 'stats/stats.module'
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -43,6 +44,7 @@ import { AnnouncementModule } from 'announcement/announcement.module'
     WaitlistModule,
     FileModule,
     AnnouncementModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

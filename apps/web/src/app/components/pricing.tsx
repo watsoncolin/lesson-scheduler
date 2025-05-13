@@ -24,7 +24,7 @@ export default async function Pricing() {
         <div className="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-8 md:max-w-2xl md:grid-cols-2 lg:max-w-4xl xl:mx-0 xl:max-w-none xl:grid-cols-4">
           {products.map(product => {
             const button = product.lessonType == 'group' ? 'View schedule' : 'Buy now'
-            const href = product.lessonType == 'group' ? '#parent-tot' : '/dashboard/purchase'
+            const href = product.lessonType == 'group' ? '#announcement' : '/dashboard/purchase'
             return (
               <div
                 key={product.id}

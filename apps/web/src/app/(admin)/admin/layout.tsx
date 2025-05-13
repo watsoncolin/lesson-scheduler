@@ -4,6 +4,7 @@ import AdminLayout from './admin-layout'
 import { ClientWrapper } from './client-wrapper'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
+
 export const metadata: Metadata = {
   title: {
     template: '%s - Stansbury Swim',
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
   },
   description: '',
 }
+
+export const dynamic = 'force-dynamic'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

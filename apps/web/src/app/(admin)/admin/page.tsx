@@ -1,6 +1,8 @@
 import React from 'react'
 import { StatsService } from '@/services/api/shared/statsService'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Admin() {
   const stats = await StatsService.findAll()
 

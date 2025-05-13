@@ -1,22 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Req,
-  NotFoundException,
-  HttpCode,
-  Query,
-} from '@nestjs/common'
+import { Controller, Get, Param } from '@nestjs/common'
 
-import { ActiveUser } from 'iam/authentication/decorators/active-user.decorator'
-import { ActiveUserData } from 'iam/authentication/interfaces/active-user-data.interface'
-import { Auth } from 'iam/authentication/decorators/auth.decorator'
-import { AuthType } from 'iam/authentication/enums/auth-type.enum'
-import { Role, ScheduleDto } from '@lesson-scheduler/shared'
+import { Role } from '@lesson-scheduler/shared'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
 import { StatsService } from './stats.service'
 import { StatsResponseDto } from './dto/stats-response.dto'

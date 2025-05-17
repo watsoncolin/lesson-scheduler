@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { setUser } from '@/app/utils/api'
 import { AuthService } from '@/services/api/shared/authService'
+import { ApiError } from '@/api'
 
 const registerSchema = z
   .object({
@@ -48,8 +49,13 @@ export default function RegisterForm() {
       const response = await AuthService.signUp(submitData)
       setUser(response)
       router.push('/dashboard')
-    } catch (err: any) {
-      setError(err.message || 'Registration failed')
+    } catch (err: unknown) {
+      if (err instanceof ApiError) {
+        console.log(JSON.stringify(err.body, null, 2))
+        setError(err.body.message || 'Registration failed')
+      } else {
+        setError('Registration failed')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -164,19 +170,19 @@ export default function RegisterForm() {
             {isLoading ? 'Registering...' : 'Register'}
           </button>
           {error && (
-            <p className="mt-2 text-sm text-red-600" role="alert">
+            <div className="mt-[--spacing(5)] text-sm text-red-600" role="alert">
               {error}
-            </p>
+            </div>
           )}
         </div>
       </form>
 
-      <p className="mt-10 text-center text-sm text-gray-500">
+      <div className="mt-[--spacing(10)] text-center text-sm text-gray-500">
         Already have an account?{' '}
         <Link href="/sign-in" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
           Sign in
         </Link>
-      </p>
+      </div>
     </div>
   )
 }

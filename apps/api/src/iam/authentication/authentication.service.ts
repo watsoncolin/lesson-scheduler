@@ -43,7 +43,7 @@ export class AuthenticationService {
       return await this.generateTokens(user)
     } catch (err: any) {
       if (err instanceof ConflictException) {
-        throw new ConflictException('User already exists')
+        throw new ConflictException('The email address you entered is already in use.')
       }
       this.logger.error(`Failed to sign up user: ${err.message}`, err.stack)
       throw new BadRequestException('Failed to create user account')

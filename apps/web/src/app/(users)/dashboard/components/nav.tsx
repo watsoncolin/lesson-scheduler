@@ -18,10 +18,7 @@ const navigation = [
   { name: 'Pools', href: '/dashboard/pools' },
 ]
 
-const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-]
+const userNavigation = [{ name: 'Your Profile', href: '/dashboard/profile' }]
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -118,9 +115,7 @@ export default function Nav() {
                   </DisclosureButton>
                 )
               })}
-              <DisclosureButton>
-                <SignOutButton />
-              </DisclosureButton>
+              <SignOutButton />
             </div>
             <div className="border-t border-gray-200 pb-3 pt-4">
               <div className="flex items-center px-4">

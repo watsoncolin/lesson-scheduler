@@ -18,6 +18,7 @@ export default function ClientWrapper() {
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const { user } = useUser()
+  const [showMySchedule, setShowMySchedule] = useState(true)
 
   const fetchSchedules = async () => {
     try {
@@ -42,8 +43,8 @@ export default function ClientWrapper() {
         return false
       }
 
-      // Filter by instructor
-      if (schedule.instructorId !== user?.instructorId) {
+      // Filter by instructor only if showMySchedule is true
+      if (showMySchedule && schedule.instructorId !== user?.instructorId) {
         return false
       }
 
@@ -59,7 +60,7 @@ export default function ClientWrapper() {
 
       return true
     })
-  }, [schedules, selectedPool, selectedDate, user])
+  }, [schedules, selectedPool, selectedDate, user, showMySchedule])
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredSchedules.length / ITEMS_PER_PAGE)
@@ -85,6 +86,8 @@ export default function ClientWrapper() {
           onDateChange={setSelectedDate}
           selectedPool={selectedPool}
           selectedDate={selectedDate}
+          showMySchedule={showMySchedule}
+          onShowMyScheduleChange={setShowMySchedule}
         />
       </div>
 

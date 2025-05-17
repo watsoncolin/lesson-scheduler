@@ -10,9 +10,18 @@ interface FilterProps {
   onDateChange: (date: string) => void
   selectedPool: string
   selectedDate: string
+  showMySchedule: boolean
+  onShowMyScheduleChange: (checked: boolean) => void
 }
 
-export default function Filter({ onPoolChange, onDateChange, selectedPool, selectedDate }: FilterProps) {
+export default function Filter({
+  onPoolChange,
+  onDateChange,
+  selectedPool,
+  selectedDate,
+  showMySchedule,
+  onShowMyScheduleChange,
+}: FilterProps) {
   const { pools } = usePools()
   const [date, setDate] = useState(selectedDate)
 
@@ -23,7 +32,7 @@ export default function Filter({ onPoolChange, onDateChange, selectedPool, selec
   }
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-4 items-center">
       <div className="w-64">
         <Listbox value={selectedPool} onChange={onPoolChange}>
           <div className="relative">
@@ -99,6 +108,16 @@ export default function Filter({ onPoolChange, onDateChange, selectedPool, selec
           onChange={handleDateChange}
           className="w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
         />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="my-schedule"
+          checked={showMySchedule}
+          onChange={e => onShowMyScheduleChange(e.target.checked)}
+        />
+        <label htmlFor="my-schedule">My Schedule</label>
       </div>
     </div>
   )

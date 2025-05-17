@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["Jssdk", "onpaymentauthorized", "onvalidatemerchant"]
+  "cSpell.words": ["Jssdk", "onpaymentauthorized", "onvalidatemerchant"],
+  "nxConsole.generateAiAgentRules": true
 }

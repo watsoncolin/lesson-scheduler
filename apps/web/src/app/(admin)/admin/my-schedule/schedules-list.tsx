@@ -4,7 +4,7 @@ import { Role, ScheduleDto } from '@lesson-scheduler/shared'
 import { useInstructors } from '@contexts/instructor-context'
 import { usePools } from '@contexts/pools-context'
 import { format } from 'date-fns'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { del } from '@utils/api'
 import { TrashIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
@@ -111,7 +111,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                           {schedule.registrations.length > 0 && (
                             <span className="text-green-600 underline">
                               {schedule.registrations.map((r, index) => (
-                                <>
+                                <Fragment key={r.student.id}>
                                   {index > 0 && ', '}
                                   <Link
                                     key={r.student.id}
@@ -120,7 +120,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                                   >
                                     {r.student.name}
                                   </Link>
-                                </>
+                                </Fragment>
                               ))}
                             </span>
                           )}

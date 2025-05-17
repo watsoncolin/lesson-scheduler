@@ -72,7 +72,7 @@ export default function ClientWrapper() {
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1)
-  }, [selectedPool, selectedDate, user])
+  }, [selectedPool, selectedDate, user, showMySchedule])
 
   if (isLoading) {
     return <div>Loading...</div>

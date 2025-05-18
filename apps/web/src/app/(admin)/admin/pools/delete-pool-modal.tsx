@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Pool } from '@lib/pool'
-import { del } from '@utils/api'
+import { PoolService } from '@/services/api/shared/poolService'
 
 interface DeletePoolModalProps {
   isOpen: boolean
@@ -22,7 +22,7 @@ export default function DeletePoolModal({ isOpen, onClose, onSuccess, pool }: De
     setError(null)
 
     try {
-      await del(`/pools/${pool.id}`)
+      await PoolService.remove(pool.id)
       onSuccess()
       onClose()
     } catch (err) {

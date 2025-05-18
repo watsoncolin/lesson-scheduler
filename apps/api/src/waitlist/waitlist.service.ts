@@ -2,9 +2,9 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
 import { WaitlistEntity } from './entities/waitlist.entity'
-import { Waitlist } from '@lesson-scheduler/shared'
 import { User } from 'user/user'
 import { UserService } from 'user/user.service'
+import { Waitlist } from './waitlist'
 
 const mapper = (entity: WaitlistEntity, user: User): Waitlist => {
   return {

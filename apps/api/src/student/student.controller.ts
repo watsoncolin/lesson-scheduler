@@ -3,7 +3,6 @@ import { StudentService } from './student.service'
 import { CreateStudentDto } from './dto/create-student.dto'
 import { UpdateStudentDto } from './dto/update-student.dto'
 
-// TODO add role guard
 @Controller('students')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}

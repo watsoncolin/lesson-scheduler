@@ -31,9 +31,10 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "User registered successfully"
           }
         },
+        "summary": "Register a new user",
         "tags": [
           "Authentication"
         ]
@@ -55,9 +56,10 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "User logged in successfully"
           }
         },
+        "summary": "Login a user",
         "tags": [
           "Authentication"
         ]
@@ -79,9 +81,10 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "Tokens refreshed successfully"
           }
         },
+        "summary": "Refresh authentication tokens",
         "tags": [
           "Authentication"
         ]
@@ -93,9 +96,10 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "User logged out successfully"
           }
         },
+        "summary": "Logout the current user",
         "tags": [
           "Authentication"
         ]
@@ -105,11 +109,22 @@
       "post": {
         "operationId": "AuthenticationController_forgotPassword",
         "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Password reset email sent"
+          }
+        },
+        "summary": "Request a password reset email",
         "tags": [
           "Authentication"
         ]
@@ -119,11 +134,22 @@
       "post": {
         "operationId": "AuthenticationController_resetPassword",
         "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Password reset successfully"
+          }
+        },
+        "summary": "Reset user password",
         "tags": [
           "Authentication"
         ]
@@ -203,13 +229,25 @@
     },
     "/api/users/me/waiver": {
       "post": {
+        "description": "Updates the waiver information for the current user.",
         "operationId": "MeController_updateWaiver",
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaiverDto"
+              }
+            }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Waiver updated successfully."
+          }
+        },
+        "summary": "Update the user waiver",
         "tags": [
           "Me"
         ]
@@ -231,23 +269,72 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
-          "User"
+          "Users"
         ]
       },
       "get": {
         "operationId": "UserController_findAll",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phone",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
-          "User"
+          "Users"
         ]
       }
     },
@@ -266,11 +353,18 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
-          "User"
+          "Users"
         ]
       },
       "patch": {
@@ -297,11 +391,18 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
-          "User"
+          "Users"
         ]
       },
       "delete": {
@@ -322,7 +423,7 @@
           }
         },
         "tags": [
-          "User"
+          "Users"
         ]
       }
     },
@@ -548,15 +649,71 @@
         ]
       }
     },
-    "/api/schedules": {
+    "/api/users/{userId}/students": {
       "get": {
-        "operationId": "ScheduleController_findAll",
-        "parameters": [],
+        "operationId": "UserStudentController_findAllByUserId",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get all students for a user",
+        "tags": [
+          "Student"
+        ]
+      }
+    },
+    "/api/schedules": {
+      "get": {
+        "description": "Returns all schedules, optionally filtered by scheduleIds.",
+        "operationId": "ScheduleController_findAll",
+        "parameters": [
+          {
+            "name": "scheduleIds",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated list of schedule IDs to filter by",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindAllSchedulesResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all schedules",
         "tags": [
           "Schedule"
         ]
@@ -614,13 +771,89 @@
     },
     "/api/schedules/search": {
       "get": {
+        "description": "Search for schedules by pools, instructors, days of week, date, timezone, and includeReserved.",
         "operationId": "ScheduleController_search",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "pools",
+            "required": false,
+            "in": "query",
+            "description": "List of pool IDs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "instructors",
+            "required": false,
+            "in": "query",
+            "description": "List of instructor IDs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "daysOfWeek",
+            "required": false,
+            "in": "query",
+            "description": "List of days of the week",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Date to search for (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timezone",
+            "required": false,
+            "in": "query",
+            "description": "Timezone",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeReserved",
+            "required": false,
+            "in": "query",
+            "description": "Include reserved schedules",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SearchScheduleResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Search schedules",
         "tags": [
           "Schedule"
         ]
@@ -806,11 +1039,22 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get all payments",
         "tags": [
-          "Payment"
+          "payments"
         ]
       },
       "post": {
@@ -827,12 +1071,20 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Create a payment",
         "tags": [
-          "Payment"
+          "payments"
         ]
       }
     },
@@ -855,8 +1107,9 @@
             "description": ""
           }
         },
+        "summary": "Create a PayPal order",
         "tags": [
-          "Payment"
+          "payments"
         ]
       }
     },
@@ -864,13 +1117,28 @@
       "post": {
         "operationId": "PaymentController_captureOrder",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "orderId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "204": {
             "description": ""
           }
         },
+        "summary": "Capture a PayPal order",
         "tags": [
-          "Payment"
+          "payments"
         ]
       }
     },
@@ -878,13 +1146,28 @@
       "post": {
         "operationId": "PaymentController_appleValidateMerchant",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "validationUrl": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
           }
         },
+        "summary": "Validate Apple Pay merchant",
         "tags": [
-          "Payment"
+          "payments"
         ]
       }
     },
@@ -903,11 +1186,19 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Get a payment by ID",
         "tags": [
-          "Payment"
+          "payments"
         ]
       },
       "patch": {
@@ -934,11 +1225,19 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Update a payment",
         "tags": [
-          "Payment"
+          "payments"
         ]
       }
     },
@@ -948,9 +1247,21 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditBalanceResponseDto"
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
           "Transactions"
         ]
@@ -971,9 +1282,21 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditBalanceResponseDto"
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
           "Transactions"
         ]
@@ -985,9 +1308,24 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
           "Transactions"
         ]
@@ -1007,9 +1345,21 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponseDto"
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
           "Transactions"
         ]
@@ -1021,9 +1371,24 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
           "Transactions"
         ]
@@ -1044,9 +1409,24 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
           "Transactions"
         ]
@@ -1197,11 +1577,22 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaitlistResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get all waitlist entries",
         "tags": [
-          "Waitlist"
+          "waitlist"
         ]
       }
     },
@@ -1211,11 +1602,19 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitlistResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Get waitlist entry for current user",
         "tags": [
-          "Waitlist"
+          "waitlist"
         ]
       }
     },
@@ -1224,12 +1623,20 @@
         "operationId": "WaitlistController_join",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitlistResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Join the waitlist as the current user",
         "tags": [
-          "Waitlist"
+          "waitlist"
         ]
       }
     },
@@ -1248,11 +1655,19 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitlistResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Allow a user to purchase from the waitlist",
         "tags": [
-          "Waitlist"
+          "waitlist"
         ]
       }
     },
@@ -1373,11 +1788,22 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of pools",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PoolDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get all pools",
         "tags": [
-          "Pool"
+          "Pools"
         ]
       },
       "post": {
@@ -1395,11 +1821,19 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Pool created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoolDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Create a new pool",
         "tags": [
-          "Pool"
+          "Pools"
         ]
       }
     },
@@ -1418,11 +1852,22 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Pool found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoolDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pool not found"
           }
         },
+        "summary": "Get a pool by ID",
         "tags": [
-          "Pool"
+          "Pools"
         ]
       },
       "patch": {
@@ -1449,11 +1894,22 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "Pool updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoolDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pool not found"
           }
         },
+        "summary": "Update a pool by ID",
         "tags": [
-          "Pool"
+          "Pools"
         ]
       },
       "delete": {
@@ -1470,11 +1926,15 @@
         ],
         "responses": {
           "204": {
-            "description": ""
+            "description": "Pool deleted"
+          },
+          "404": {
+            "description": "Pool not found"
           }
         },
+        "summary": "Delete a pool by ID",
         "tags": [
-          "Pool"
+          "Pools"
         ]
       }
     },
@@ -1482,13 +1942,41 @@
       "post": {
         "operationId": "FileController_uploadFile",
         "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The file to upload"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
           }
         },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadFileResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Upload a file",
         "tags": [
-          "File"
+          "files"
         ]
       }
     },
@@ -1599,15 +2087,104 @@
     "schemas": {
       "SignUpDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "User email address"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "description": "User password"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John",
+            "description": "First name"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe",
+            "description": "Last name"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "(555) 555-5555",
+            "description": "User phone number"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "firstName",
+          "lastName",
+          "phoneNumber"
+        ]
       },
       "SignInDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "User email address"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "description": "User password"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
       },
       "RefreshTokenDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "example": "refresh-token-value",
+            "description": "Refresh token"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "ForgotPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "User email address"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "reset-token-value",
+            "description": "Password reset token"
+          },
+          "password": {
+            "type": "string",
+            "example": "newPassword123",
+            "description": "New password"
+          }
+        },
+        "required": [
+          "token",
+          "password"
+        ]
       },
       "GoogleTokenDto": {
         "type": "object",
@@ -1615,11 +2192,201 @@
       },
       "UpdateUserDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "privateRegistration": {
+            "type": "boolean"
+          },
+          "waiverSignature": {
+            "type": "string"
+          },
+          "waiverSignatureDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "instructorId": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "admin",
+              "instructor"
+            ]
+          }
+        }
+      },
+      "WaiverDto": {
+        "type": "object",
+        "properties": {
+          "signedWaiver": {
+            "type": "boolean",
+            "description": "Whether the user has signed the waiver"
+          },
+          "waiverSignature": {
+            "type": "string",
+            "description": "Signature of the user for the waiver"
+          },
+          "waiverSignatureDate": {
+            "type": "string",
+            "description": "Date the waiver was signed",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "signedWaiver",
+          "waiverSignature",
+          "waiverSignatureDate"
+        ]
       },
       "CreateUserDto": {
         "type": "object",
         "properties": {}
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "privateRegistration": {
+            "type": "boolean"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "admin",
+              "instructor"
+            ]
+          },
+          "failedLoginAttempts": {
+            "type": "number"
+          },
+          "lastFailedLogin": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "signedWaiver": {
+            "type": "boolean"
+          },
+          "waiverSignature": {
+            "type": "string"
+          },
+          "waiverSignatureDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "instructorId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "firstName",
+          "lastName",
+          "address1",
+          "address2",
+          "city",
+          "state",
+          "zip",
+          "phone",
+          "privateRegistration",
+          "role",
+          "failedLoginAttempts"
+        ]
+      },
+      "PaginatedResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          },
+          "total": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "page",
+          "limit"
+        ]
       },
       "CreateStudentDto": {
         "type": "object",
@@ -1628,6 +2395,293 @@
       "UpdateStudentDto": {
         "type": "object",
         "properties": {}
+      },
+      "StudentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string"
+          },
+          "ability": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "name",
+          "birthday",
+          "ability",
+          "notes"
+        ]
+      },
+      "FindAllSchedulesStudentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "birthDate",
+          "notes"
+        ]
+      },
+      "FindAllSchedulesUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "admin",
+              "instructor"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "role"
+        ]
+      },
+      "FindAllSchedulesRegistrationDto": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "student": {
+            "$ref": "#/components/schemas/FindAllSchedulesStudentDto"
+          },
+          "user": {
+            "$ref": "#/components/schemas/FindAllSchedulesUserDto"
+          }
+        },
+        "required": [
+          "studentId",
+          "userId",
+          "createdAt",
+          "student",
+          "user"
+        ]
+      },
+      "FindAllSchedulesResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "poolId": {
+            "type": "string"
+          },
+          "instructorId": {
+            "type": "string"
+          },
+          "classSize": {
+            "type": "number"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ]
+          },
+          "startDateTime": {
+            "type": "string"
+          },
+          "endDateTime": {
+            "type": "string"
+          },
+          "registrations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FindAllSchedulesRegistrationDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "poolId",
+          "instructorId",
+          "classSize",
+          "lessonType",
+          "startDateTime",
+          "endDateTime",
+          "registrations"
+        ]
+      },
+      "SearchScheduleStudentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "birthDate",
+          "notes"
+        ]
+      },
+      "SearchScheduleUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "admin",
+              "instructor"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "role"
+        ]
+      },
+      "SearchScheduleRegistrationDto": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "student": {
+            "$ref": "#/components/schemas/SearchScheduleStudentDto"
+          },
+          "user": {
+            "$ref": "#/components/schemas/SearchScheduleUserDto"
+          }
+        },
+        "required": [
+          "studentId",
+          "userId",
+          "createdAt",
+          "student",
+          "user"
+        ]
+      },
+      "SearchScheduleResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "poolId": {
+            "type": "string"
+          },
+          "instructorId": {
+            "type": "string"
+          },
+          "classSize": {
+            "type": "number"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ]
+          },
+          "startDateTime": {
+            "type": "string"
+          },
+          "endDateTime": {
+            "type": "string"
+          },
+          "registrations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchScheduleRegistrationDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "poolId",
+          "instructorId",
+          "classSize",
+          "lessonType",
+          "startDateTime",
+          "endDateTime",
+          "registrations"
+        ]
       },
       "CreateScheduleDto": {
         "type": "object",
@@ -1641,21 +2695,274 @@
         "type": "object",
         "properties": {}
       },
+      "PaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "paymentGateway": {
+            "type": "object"
+          },
+          "paymentGatewayId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "status": {
+            "type": "object"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "userId",
+          "productId",
+          "paymentGateway",
+          "paymentGatewayId",
+          "amount",
+          "quantity",
+          "status"
+        ]
+      },
       "CreatePaypalOrderDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "productId",
+          "quantity"
+        ]
       },
       "CreatePaymentDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "paymentGateway": {
+            "type": "string",
+            "enum": [
+              "PAYPAL",
+              "APPLE_PAY"
+            ]
+          },
+          "paymentGatewayId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "SUCCESS",
+              "FAILED"
+            ],
+            "default": "PENDING"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "productId",
+          "quantity",
+          "paymentGateway",
+          "paymentGatewayId",
+          "status"
+        ]
       },
       "UpdatePaymentDto": {
         "type": "object",
         "properties": {}
       },
+      "CreditBalanceDto": {
+        "type": "object",
+        "properties": {
+          "creditType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ]
+          },
+          "balance": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "creditType",
+          "balance"
+        ]
+      },
+      "CreditBalanceResponseDto": {
+        "type": "object",
+        "properties": {
+          "balances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditBalanceDto"
+            }
+          }
+        },
+        "required": [
+          "balances"
+        ]
+      },
+      "TransactionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "transactionType": {
+            "type": "string",
+            "enum": [
+              "PURCHASE_CREDITS",
+              "REGISTER",
+              "CANCEL_REGISTRATION"
+            ]
+          },
+          "creditType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ]
+          },
+          "amount": {
+            "type": "number"
+          },
+          "credits": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "transactionType",
+          "creditType",
+          "credits",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
       "CreateTransactionDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "transactionType": {
+            "type": "string",
+            "enum": [
+              "PURCHASE_CREDITS",
+              "REGISTER",
+              "CANCEL_REGISTRATION"
+            ]
+          },
+          "creditType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ]
+          },
+          "credits": {
+            "type": "number"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "paymentId": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "transactionType",
+          "creditType",
+          "credits"
+        ]
       },
       "CreateProductDto": {
         "type": "object",
@@ -1665,6 +2972,54 @@
         "type": "object",
         "properties": {}
       },
+      "WaitlistResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "allowed": {
+            "type": "boolean"
+          },
+          "allowedOn": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "firstName",
+          "lastName",
+          "email",
+          "phone",
+          "allowed",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
       "CreateInstructorDto": {
         "type": "object",
         "properties": {}
@@ -1673,17 +3028,137 @@
         "type": "object",
         "properties": {}
       },
+      "PoolDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "poolId123",
+            "description": "ID of the pool"
+          },
+          "name": {
+            "type": "string",
+            "example": "Stansbury Pool",
+            "description": "Name of the pool"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, Stansbury",
+            "description": "Address of the pool"
+          },
+          "details": {
+            "type": "string",
+            "example": "Outdoor pool with 8 lanes",
+            "description": "Details about the pool"
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https://example.com/pool.jpg",
+            "description": "Image URL of the pool"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "address",
+          "details",
+          "imageUrl"
+        ]
+      },
       "CreatePoolDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Stansbury Pool",
+            "description": "Name of the pool"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, Stansbury",
+            "description": "Address of the pool"
+          },
+          "details": {
+            "type": "string",
+            "example": "Outdoor pool with 8 lanes",
+            "description": "Details about the pool"
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https://example.com/pool.jpg",
+            "description": "Image URL of the pool"
+          }
+        },
+        "required": [
+          "name",
+          "address",
+          "details",
+          "imageUrl"
+        ]
       },
       "UpdatePoolDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "poolId123",
+            "description": "ID of the pool"
+          },
+          "name": {
+            "type": "string",
+            "example": "Stansbury Pool",
+            "description": "Name of the pool"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, Stansbury",
+            "description": "Address of the pool"
+          },
+          "details": {
+            "type": "string",
+            "example": "Outdoor pool with 8 lanes",
+            "description": "Details about the pool"
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https://example.com/pool.jpg",
+            "description": "Image URL of the pool"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "UploadFileResponseDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL of the uploaded file"
+          }
+        },
+        "required": [
+          "url"
+        ]
       },
       "CreateAnnouncementDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "heading": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "heading",
+          "content",
+          "title"
+        ]
       },
       "StatsResponseDto": {
         "type": "object",

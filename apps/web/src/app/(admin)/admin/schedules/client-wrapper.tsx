@@ -1,13 +1,12 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { Schedule } from '@lib/schedule'
 import SchedulesList from './schedules-list'
 import Filter from './filter'
-import { get } from '@utils/api'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { Button } from '@components/button'
-import { format, parseISO, isSameDay } from 'date-fns'
-import { ScheduleDto } from '@lesson-scheduler/shared'
+import { parseISO, isSameDay } from 'date-fns'
+import { FindAllSchedulesResponseDto } from '@/api/models/FindAllSchedulesResponseDto'
 
 const ITEMS_PER_PAGE = 150
 
@@ -15,14 +14,14 @@ export default function ClientWrapper() {
   const [selectedInstructor, setSelectedInstructor] = useState('')
   const [selectedPool, setSelectedPool] = useState('')
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
-  const [schedules, setSchedules] = useState<ScheduleDto[]>([])
+  const [schedules, setSchedules] = useState<FindAllSchedulesResponseDto[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedLessonType, setSelectedLessonType] = useState('')
 
   const fetchSchedules = async () => {
     try {
-      const data = await get<ScheduleDto[]>('/schedules')
+      const data = await ScheduleService.findAll()
       setSchedules(data)
     } catch (error) {
       console.error('Failed to fetch schedules:', error)

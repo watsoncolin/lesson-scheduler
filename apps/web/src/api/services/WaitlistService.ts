@@ -2,48 +2,53 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { WaitlistResponseDto } from '../models/WaitlistResponseDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class WaitlistService {
     /**
-     * @returns any
+     * Get all waitlist entries
+     * @returns WaitlistResponseDto
      * @throws ApiError
      */
-    public static waitlistControllerFindAll(): CancelablePromise<any> {
+    public static waitlistControllerFindAll(): CancelablePromise<Array<WaitlistResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/waitlist',
         });
     }
     /**
-     * @returns any
+     * Get waitlist entry for current user
+     * @returns WaitlistResponseDto
      * @throws ApiError
      */
-    public static waitlistControllerMe(): CancelablePromise<any> {
+    public static waitlistControllerMe(): CancelablePromise<WaitlistResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/waitlist/me',
         });
     }
     /**
-     * @returns any
+     * Join the waitlist as the current user
+     * @returns WaitlistResponseDto
      * @throws ApiError
      */
-    public static waitlistControllerJoin(): CancelablePromise<any> {
+    public static waitlistControllerJoin(): CancelablePromise<WaitlistResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/waitlist/join',
         });
     }
     /**
+     * Allow a user to purchase from the waitlist
      * @param userId
-     * @returns any
+     * @returns WaitlistResponseDto
      * @throws ApiError
      */
     public static waitlistControllerUpdate(
         userId: string,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<WaitlistResponseDto> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/waitlist/{userId}/allow-purchase',

@@ -1,28 +1,28 @@
 'use client'
 
-import { ScheduleDto } from '@lesson-scheduler/shared'
 import { useInstructors } from '@contexts/instructor-context'
 import { usePools } from '@contexts/pools-context'
 import { format } from 'date-fns'
-import { useState, useEffect } from 'react'
-import { del } from '@utils/api'
+import { Fragment, useState } from 'react'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { TrashIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
+import { FindAllSchedulesResponseDto } from '@/api/models/FindAllSchedulesResponseDto'
 
 interface SchedulesListProps {
-  schedules: ScheduleDto[]
+  schedules: FindAllSchedulesResponseDto[]
   onDelete?: () => void
 }
 
 export default function SchedulesList({ schedules, onDelete }: SchedulesListProps) {
   const { instructors } = useInstructors()
   const { pools } = usePools()
-  const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleDto | null>(null)
+  const [scheduleToDelete, setScheduleToDelete] = useState<FindAllSchedulesResponseDto | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const handleDelete = async (scheduleId: string) => {
     try {
-      await del(`/schedules/${scheduleId}`)
+      await ScheduleService.remove(scheduleId)
       onDelete?.()
       setScheduleToDelete(null)
       setError(null)
@@ -113,7 +113,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                               )}
                               <span className="text-green-600 underline">
                                 {schedule.registrations.map((r, index) => (
-                                  <>
+                                  <Fragment key={r.student.id}>
                                     {index > 0 && ', '}
                                     <Link
                                       key={r.student.id}
@@ -122,7 +122,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                                     >
                                       {r.student.name}
                                     </Link>
-                                  </>
+                                  </Fragment>
                                 ))}
                               </span>
                             </>

@@ -1,30 +1,31 @@
 'use client'
 
-import { Role, ScheduleDto } from '@lesson-scheduler/shared'
 import { useInstructors } from '@contexts/instructor-context'
 import { usePools } from '@contexts/pools-context'
 import { format } from 'date-fns'
-import { useState, useEffect, Fragment } from 'react'
-import { del } from '@utils/api'
+import { useState, Fragment } from 'react'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { TrashIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useUser } from '@/app/contexts/user-context'
+import { FindAllSchedulesResponseDto } from '@/api/models/FindAllSchedulesResponseDto'
+import { UserResponseDto } from '@/api'
 
 interface SchedulesListProps {
-  schedules: ScheduleDto[]
+  schedules: FindAllSchedulesResponseDto[]
   onDelete?: () => void
 }
 
 export default function SchedulesList({ schedules, onDelete }: SchedulesListProps) {
   const { instructors } = useInstructors()
   const { pools } = usePools()
-  const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleDto | null>(null)
+  const [scheduleToDelete, setScheduleToDelete] = useState<FindAllSchedulesResponseDto | null>(null)
   const [error, setError] = useState<string | null>(null)
   const { user } = useUser()
 
   const handleDelete = async (scheduleId: string) => {
     try {
-      await del(`/schedules/${scheduleId}`)
+      await ScheduleService.remove(scheduleId)
       onDelete?.()
       setScheduleToDelete(null)
       setError(null)
@@ -83,7 +84,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Registrations
                     </th>
-                    {user?.role === Role.Admin && (
+                    {user?.role === UserResponseDto.role.ADMIN && (
                       <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                         <span className="sr-only">Actions</span>
                       </th>
@@ -125,7 +126,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                             </span>
                           )}
                         </td>
-                        {user?.role === Role.Admin && (
+                        {user?.role === UserResponseDto.role.ADMIN && (
                           <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                             <button
                               type="button"

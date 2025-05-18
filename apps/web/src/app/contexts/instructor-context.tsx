@@ -1,7 +1,7 @@
 'use client'
 import React, { createContext, useContext } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { get } from '../utils/api'
+import { InstructorService } from '@/services/api/shared/instructorService'
 import { ReactNode } from 'react'
 import { Instructor } from '../lib'
 
@@ -26,7 +26,7 @@ export const InstructorsProvider = ({ children }: InstructorsProviderProps) => {
     refetch,
   } = useQuery<Instructor[]>({
     queryKey: ['instructors'],
-    queryFn: () => get('/instructors'),
+    queryFn: () => InstructorService.findAll(),
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   })
 

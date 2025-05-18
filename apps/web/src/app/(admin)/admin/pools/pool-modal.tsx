@@ -5,7 +5,8 @@ import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
 import { Textarea } from '@components/textarea'
-import { post, upload } from '@utils/api'
+import { PoolService } from '@/services/api/shared/poolService'
+import { FileService } from '@/services/api/shared/fileService'
 import Image from 'next/image'
 
 interface PoolModalProps {
@@ -33,7 +34,7 @@ export default function PoolModal({ isOpen, onClose, onSuccess }: PoolModalProps
     setError(null)
 
     try {
-      await post('/pools', formData)
+      await PoolService.create(formData)
       onSuccess()
       onClose()
     } catch (err) {
@@ -62,7 +63,7 @@ export default function PoolModal({ isOpen, onClose, onSuccess }: PoolModalProps
     setPreviewUrl(objectUrl)
 
     try {
-      const data = await upload('/files/upload', file)
+      const data = await FileService.uploadFile(file)
       setFormData(prev => ({ ...prev, imageUrl: data.url }))
     } catch (err) {
       setError('Failed to upload image. Please try again.')

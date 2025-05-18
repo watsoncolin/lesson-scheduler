@@ -1,16 +1,24 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common'
+import { ApiTags, ApiResponse, ApiBearerAuth } from '@nestjs/swagger'
 import { TransactionService } from './transaction.service'
 import { ActiveUser } from 'iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from 'iam/authentication/interfaces/active-user-data.interface'
-import { CreditBalanceResponseDto } from '@lesson-scheduler/shared'
-import { CreateTransactionDto, Role } from '@lesson-scheduler/shared'
+import { Role } from '@lesson-scheduler/shared'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
+import { TransactionResponseDto } from './dto/transaction-response.dto'
+import { CreditBalanceResponseDto } from './dto/credit-balance-response.dto'
+import { CreateTransactionDto } from './dto/create-transaction.dto'
+import { IsString, IsEnum, IsNumber } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 
+@ApiTags('Transactions')
+@ApiBearerAuth()
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Get('me/credit-balance')
+  @ApiResponse({ status: 200, type: CreditBalanceResponseDto })
   async getMyCreditBalance(@ActiveUser() user: ActiveUserData): Promise<CreditBalanceResponseDto> {
     const balances = await this.transactionService.readCreditBalances(user.sub)
     return {
@@ -23,6 +31,7 @@ export class TransactionsController {
 
   @Roles(Role.Admin)
   @Get(':userId/credit-balance')
+  @ApiResponse({ status: 200, type: CreditBalanceResponseDto })
   async getCreditBalance(@Param('userId') userId: string): Promise<CreditBalanceResponseDto> {
     const balances = await this.transactionService.readCreditBalances(userId)
     return {
@@ -34,26 +43,31 @@ export class TransactionsController {
   }
 
   @Get('')
-  async findAll() {
+  @ApiResponse({ status: 200, type: [TransactionResponseDto] })
+  async findAll(): Promise<TransactionResponseDto[]> {
     const products = await this.transactionService.findAll()
     return products
   }
 
   @Get('me')
-  async findMy(@ActiveUser() user: ActiveUserData) {
+  @ApiResponse({ status: 200, type: [TransactionResponseDto] })
+  async findMy(@ActiveUser() user: ActiveUserData): Promise<TransactionResponseDto[]> {
     const transactions = await this.transactionService.findByUserId(user.sub)
     return transactions
   }
 
   @Get(':userId')
-  async findByUserId(@Param('userId') userId: string) {
+  @ApiResponse({ status: 200, type: [TransactionResponseDto] })
+  async findByUserId(@Param('userId') userId: string): Promise<TransactionResponseDto[]> {
     const transactions = await this.transactionService.findByUserId(userId)
     return transactions
   }
 
   @Roles(Role.Admin)
   @Post('')
-  async create(@Body() createTransactionDto: CreateTransactionDto) {
+  @ApiResponse({ status: 201, type: TransactionResponseDto })
+  async create(@Body() createTransactionDto: CreateTransactionDto): Promise<TransactionResponseDto> {
+    console.log('createTransactionDto', JSON.stringify(createTransactionDto, null, 2))
     const transaction = await this.transactionService.create(createTransactionDto)
     return transaction
   }

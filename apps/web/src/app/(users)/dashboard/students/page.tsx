@@ -1,7 +1,7 @@
 'use client'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { useState, useEffect } from 'react'
-import { del, get, patch, post } from '@utils/api'
+import { StudentService } from '@/services/api/shared/studentService'
 import StudentModal from './components/student-modal'
 import { Student } from '@lib/student'
 import React from 'react'
@@ -23,11 +23,11 @@ export default function Students() {
   const handleSave = async (student: Student) => {
     if (student.id) {
       // Edit existing student
-      await patch(`/users/me/students/${student.id}`, student)
+      await StudentService.update(student.id, student)
       setStudents(prev => prev.map(s => (s.id === student.id ? student : s)))
     } else {
       // Add new student
-      await post(`/users/me/students`, student)
+      await StudentService.create(student)
       setStudents(prev => [...prev, { ...student }])
     }
     setIsModalOpen(false)
@@ -48,7 +48,7 @@ export default function Students() {
 
   const handleDelete = async (student: Student) => {
     if (student.id) {
-      await del(`/users/me/students/${student.id}`)
+      await StudentService.remove(student.id)
       setStudents(prev => prev.filter(s => s.id !== student.id))
     }
     setIsModalOpen(false)
@@ -56,7 +56,7 @@ export default function Students() {
   }
   const fetchStudents = async () => {
     try {
-      const students = await get<Student[]>('/users/me/students')
+      const students = await StudentService.findMyStudents()
       setStudents(students)
     } catch (err: any) {
       setError(err.message)

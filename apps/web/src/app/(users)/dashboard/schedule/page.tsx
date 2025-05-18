@@ -21,7 +21,9 @@ import {
   Button,
 } from '@headlessui/react'
 import Filter from './components/filter'
-import { get, post } from '@utils/api'
+import { StudentService } from '@/services/api/shared/studentService'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
+import { RegistrationService } from '@/services/api/shared/registrationService'
 import React from 'react'
 import { Student } from '@lib/student'
 import { useUser } from '@contexts/user-context'
@@ -29,6 +31,7 @@ import { usePools } from '@contexts/pools-context'
 import { useInstructors } from '@contexts/instructor-context'
 import { useCredits } from '@contexts/credits-context'
 import { SignWaiverButton } from './sign-waiver-button'
+import { SearchScheduleResponseDto } from '@/api/models/SearchScheduleResponseDto'
 export interface Option {
   value: string
   label: string
@@ -58,8 +61,7 @@ function classNames(...classes: (string | boolean | undefined)[]) {
 }
 
 export default function Schedule() {
-  const [enabled, setEnabled] = useState(false)
-  const [schedules, setSchedules] = useState([] as Schedule[])
+  const [schedules, setSchedules] = useState([] as SearchScheduleResponseDto[])
   const [students, setStudents] = useState([] as Student[])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -72,7 +74,7 @@ export default function Schedule() {
 
   useEffect(() => {
     const fetchAvailableDates = async () => {
-      const dates = await get<string[]>('/schedules/available-dates')
+      const dates = await ScheduleService.findAvailableDates()
       setAvailableDates(dates)
     }
     fetchAvailableDates()
@@ -127,7 +129,7 @@ export default function Schedule() {
     Promise.all(
       pendingSchedules.map(async pendingSchedule => {
         try {
-          await post(`/schedules/${pendingSchedule.scheduleId}/registrations`, {
+          await RegistrationService.create(pendingSchedule.scheduleId, {
             userId: user?.id,
             studentId: pendingSchedule.studentId,
           })
@@ -157,7 +159,7 @@ export default function Schedule() {
 
   const fetchStudents = async () => {
     try {
-      const students = await get<Student[]>('/users/me/students')
+      const students = await StudentService.findMyStudents()
       setStudents(students)
     } catch (err: any) {
       setError(err.message)
@@ -166,32 +168,23 @@ export default function Schedule() {
     }
   }
 
-  const searchSchedules = async (
-    pools: string[],
-    instructors: string[],
-    selectedDays: string[],
-    selectedDate: string,
-  ) => {
-    const queryString = new URLSearchParams()
-    if (pools.length > 0) queryString.append('pools', pools.join(','))
-    if (instructors.length > 0) queryString.append('instructors', instructors.join(','))
-    if (selectedDays.length > 0) queryString.append('daysOfWeek', selectedDays.join(','))
-    if (selectedDate) {
-      queryString.append('date', selectedDate)
-      queryString.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone)
+  const searchSchedules = async () => {
+    let schedules: SearchScheduleResponseDto[] = []
+    try {
+      schedules = await ScheduleService.search({
+        pools: selectedPools.filter(o => o.checked).map(o => o.value),
+        instructors: selectedInstructors.filter(o => o.checked).map(o => o.value),
+        daysOfWeek: selectedDays.filter(o => o.checked).map(o => o.value),
+        date: selectedDate,
+      })
+    } catch {
+      schedules = (await ScheduleService.findAll()) as unknown as SearchScheduleResponseDto[]
     }
-
-    const schedules = await get<Schedule[]>('/schedules/search?' + queryString.toString())
     setSchedules(schedules.filter(s => s.lessonType == 'private'))
   }
 
   useEffect(() => {
-    searchSchedules(
-      selectedPools.filter(o => o.checked).map(o => o.value),
-      selectedInstructors.filter(o => o.checked).map(o => o.value),
-      selectedDays.filter(o => o.checked).map(o => o.value),
-      selectedDate,
-    )
+    searchSchedules()
   }, [selectedPools, selectedInstructors, selectedDays, selectedDate, pendingSchedules])
 
   useEffect(() => {

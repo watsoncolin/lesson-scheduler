@@ -5,9 +5,11 @@ import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
 import { Textarea } from '@components/textarea'
-import { post, put, upload } from '@utils/api'
+import { InstructorService } from '@/services/api/shared/instructorService'
+import { FileService } from '@/services/api/shared/fileService'
 import Image from 'next/image'
 import { Instructor } from '@lib/instructor'
+
 interface InstructorModalProps {
   isOpen: boolean
   onClose: () => void
@@ -34,9 +36,9 @@ export default function InstructorModal({ isOpen, onClose, onSuccess, instructor
 
     try {
       if (instructor) {
-        await put(`/instructors/${instructor.id}`, formData)
+        await InstructorService.update(instructor.id, formData)
       } else {
-        await post('/instructors', formData)
+        await InstructorService.create(formData)
       }
       onSuccess()
       onClose()
@@ -66,7 +68,7 @@ export default function InstructorModal({ isOpen, onClose, onSuccess, instructor
     setPreviewUrl(objectUrl)
 
     try {
-      const data = await upload('/files/upload', file)
+      const data = await FileService.uploadFile(file)
       setFormData(prev => ({ ...prev, imageUrl: data.url }))
     } catch (err) {
       setError('Failed to upload image. Please try again.')

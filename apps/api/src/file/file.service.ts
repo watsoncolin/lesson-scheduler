@@ -45,7 +45,6 @@ export class FileService {
           reject(err)
         })
         .on('finish', () => {
-          console.log('Upload finished.')
           resolve()
         })
     })

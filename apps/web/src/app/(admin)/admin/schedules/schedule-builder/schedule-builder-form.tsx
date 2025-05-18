@@ -5,35 +5,35 @@ import { Select } from '@components/select'
 import { useInstructors } from '@contexts/instructor-context'
 import { usePools } from '@contexts/pools-context'
 import { format, subWeeks, subDays, parse } from 'date-fns'
-import { del, get, post } from '@utils/api'
-import { Schedule } from '@/app/lib/schedule'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { Button } from '@components/button'
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { SearchScheduleResponseDto } from '@/api/models/SearchScheduleResponseDto'
+import { LessonTypesEnum } from '@lesson-scheduler/shared'
 
 interface LessonFormData {
   id?: string
   startTime: string
   endTime: string
-  lessonType: 'private' | 'group'
+  lessonType: SearchScheduleResponseDto.lessonType
   classSize: number
   isEditing: boolean
   error?: string
 }
-
 export default function ScheduleBuilderForm() {
   const { instructors } = useInstructors()
   const { pools } = usePools()
   const [selectedPool, setSelectedPool] = useState('')
   const [selectedInstructor, setSelectedInstructor] = useState('')
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
-  const [currentDayLessons, setCurrentDayLessons] = useState<Schedule[]>([])
-  const [previousWeekLessons, setPreviousWeekLessons] = useState<Schedule[]>([])
-  const [previousDayLessons, setPreviousDayLessons] = useState<Schedule[]>([])
+  const [currentDayLessons, setCurrentDayLessons] = useState<SearchScheduleResponseDto[]>([])
+  const [previousWeekLessons, setPreviousWeekLessons] = useState<SearchScheduleResponseDto[]>([])
+  const [previousDayLessons, setPreviousDayLessons] = useState<SearchScheduleResponseDto[]>([])
   const [lessonForms, setLessonForms] = useState<LessonFormData[]>([
     {
       startTime: '09:00',
       endTime: '09:30',
-      lessonType: 'private',
+      lessonType: SearchScheduleResponseDto.lessonType.PRIVATE,
       classSize: 1,
       isEditing: true,
     },
@@ -61,9 +61,16 @@ export default function ScheduleBuilderForm() {
       queryString.append('daysOfWeek', daysOfWeek)
     }
     queryString.append('includeReserved', 'true')
-    const lessons = await get<Schedule[]>(`/schedules/search?${queryString.toString()}`)
+    const apiLessons = await ScheduleService.search({
+      pools: [poolId],
+      instructors: [instructorId],
+      date: date.toISOString().split('T')[0],
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      daysOfWeek: daysOfWeek ? [daysOfWeek] : undefined,
+      includeReserved: true,
+    })
     // Filter for exact pool and instructor match and sort by start time
-    return lessons
+    return apiLessons
       .filter(lesson => lesson.poolId === poolId && lesson.instructorId === instructorId)
       .sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime())
   }
@@ -75,7 +82,7 @@ export default function ScheduleBuilderForm() {
           {
             startTime: '09:00',
             endTime: '09:30',
-            lessonType: 'private',
+            lessonType: SearchScheduleResponseDto.lessonType.PRIVATE,
             classSize: 1,
             isEditing: true,
           },
@@ -110,7 +117,7 @@ export default function ScheduleBuilderForm() {
           currentLessonForms.push({
             startTime: '09:00',
             endTime: '09:30',
-            lessonType: 'private',
+            lessonType: SearchScheduleResponseDto.lessonType.PRIVATE,
             classSize: 1,
             isEditing: true,
           })
@@ -134,7 +141,7 @@ export default function ScheduleBuilderForm() {
           {
             startTime: '09:00',
             endTime: '09:30',
-            lessonType: 'private',
+            lessonType: SearchScheduleResponseDto.lessonType.PRIVATE,
             classSize: 1,
             isEditing: true,
             error: 'Failed to load lessons. Please try again.',
@@ -151,7 +158,7 @@ export default function ScheduleBuilderForm() {
     const newLesson = {
       startTime: lastLesson?.endTime || '09:00',
       endTime: format(new Date(`2000-01-01T${lastLesson?.endTime || '09:00'}`).getTime() + 20 * 60000, 'HH:mm'),
-      lessonType: 'private' as const,
+      lessonType: SearchScheduleResponseDto.lessonType.PRIVATE,
       classSize: 1,
       isEditing: true,
     }
@@ -208,7 +215,7 @@ export default function ScheduleBuilderForm() {
       newForms[index] = { ...newForms[index], [field]: roundedTime }
     } else if (field === 'lessonType') {
       // When changing to private, set class size to 1
-      const lessonType = value as 'private' | 'group'
+      const lessonType = value as SearchScheduleResponseDto.lessonType
       newForms[index] = {
         ...newForms[index],
         [field]: lessonType,
@@ -251,19 +258,19 @@ export default function ScheduleBuilderForm() {
         const endDateTimeString = endDateTime.toISOString()
 
         try {
-          const savedLesson = (await post('/schedules', {
+          const apiSavedLesson = await ScheduleService.create({
             poolId: selectedPool,
             instructorId: selectedInstructor,
             lessonType: form.lessonType,
             classSize: form.classSize,
             startDateTime: startDateTimeString,
             endDateTime: endDateTimeString,
-          })) as Schedule
+          })
 
           // Update the form with the saved lesson's ID
           currentForms[formIndex] = {
             ...currentForms[formIndex],
-            id: savedLesson.id,
+            id: apiSavedLesson.id,
             isEditing: false,
             error: undefined,
           }
@@ -295,7 +302,7 @@ export default function ScheduleBuilderForm() {
     const form = lessonForms[index]
     if (form.id) {
       try {
-        await del(`/schedules/${form.id}`)
+        await ScheduleService.remove(form.id)
         // Refresh current day's lessons after deletion
         const selectedDateObj = new Date(`${selectedDate}T00:00:00.000`)
         const currentLessons = await searchLessons(selectedPool, selectedInstructor, selectedDateObj)

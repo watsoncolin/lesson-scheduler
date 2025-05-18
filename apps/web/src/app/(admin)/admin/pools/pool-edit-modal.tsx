@@ -5,15 +5,16 @@ import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
 import { Textarea } from '@components/textarea'
-import { patch, upload } from '@utils/api'
+import { PoolService } from '@/services/api/shared/poolService'
+import { FileService } from '@/services/api/shared/fileService'
 import Image from 'next/image'
-import { Pool } from '@lib/pool'
+import { PoolDto } from '@/api'
 
 interface PoolEditModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
-  pool: Pool
+  pool: PoolDto
 }
 
 export default function PoolEditModal({ isOpen, onClose, onSuccess, pool }: PoolEditModalProps) {
@@ -45,7 +46,13 @@ export default function PoolEditModal({ isOpen, onClose, onSuccess, pool }: Pool
     setError(null)
 
     try {
-      await patch(`/pools/${pool.id}`, formData)
+      await PoolService.update(pool.id, {
+        id: pool.id,
+        name: formData.name,
+        address: formData.address,
+        details: formData.details,
+        imageUrl: formData.imageUrl,
+      })
       onSuccess()
       onClose()
     } catch (err) {
@@ -74,7 +81,7 @@ export default function PoolEditModal({ isOpen, onClose, onSuccess, pool }: Pool
     setPreviewUrl(objectUrl)
 
     try {
-      const data = await upload('/files/upload', file)
+      const data = await FileService.uploadFile(file)
       setFormData(prev => ({ ...prev, imageUrl: data.url }))
     } catch (err) {
       setError('Failed to upload image. Please try again.')

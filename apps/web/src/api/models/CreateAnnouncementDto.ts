@@ -3,5 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type CreateAnnouncementDto = {
+    heading: string;
+    content: string;
+    title: string;
 };
 

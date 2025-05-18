@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { format } from 'date-fns'
-import { post } from '@utils/api'
+import { MeService } from '@/services/api/shared/meService'
 import { useUser } from '@contexts/user-context'
 
 interface WaiverModalProps {
@@ -34,7 +34,6 @@ export function WaiverModal({ isOpen, onClose }: WaiverModalProps) {
     }
 
     try {
-      // remove spaces and lowercase
       const signatureWithoutSpaces = signature.trim().toLowerCase().replace(/\s+/g, '')
       const userName = (user.firstName + ' ' + user.lastName).toLowerCase().replace(/\s+/g, '')
 
@@ -43,10 +42,11 @@ export function WaiverModal({ isOpen, onClose }: WaiverModalProps) {
         return
       }
 
-      const response = await post('/users/me/waiver', {
+      // Use MeService.updateWaiver for submitting the waiver
+      const response = await MeService.updateWaiver({
         signedWaiver: true,
         waiverSignature: signature,
-        waiverSignatureDate: currentDate,
+        waiverSignatureDate: currentDate.toISOString(),
       })
 
       if (response.signedWaiver) {

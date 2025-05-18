@@ -3,7 +3,8 @@
 import { Button } from '@/app/components/button'
 import { Input } from '@/app/components/input'
 import { Select } from '@/app/components/select'
-import { post } from '@/app/utils/api'
+import { TransactionsService } from '@/services/api/shared/transactionsService'
+import { CreateTransactionDto } from '@/api'
 import { useRouter } from 'next/navigation'
 
 interface CreateTransactionFormProps {
@@ -17,10 +18,10 @@ export function CreateTransactionForm({ userId }: CreateTransactionFormProps) {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
 
-    const response = await post(`/transactions`, {
+    const response = await TransactionsService.create({
       userId,
-      transactionType: formData.get('transactionType'),
-      creditType: formData.get('creditType'),
+      transactionType: formData.get('transactionType') as CreateTransactionDto.transactionType,
+      creditType: formData.get('creditType') as CreateTransactionDto.creditType,
       credits: Number(formData.get('credits')),
       amount: formData.get('amount') ? Number(formData.get('amount')) : undefined,
     })

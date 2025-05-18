@@ -1,7 +1,6 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { CreditBalance } from '../lib'
-import { get } from '../utils/api'
+import { TransactionsService } from '@/services/api/shared/transactionsService'
 
 interface CreditsContextType {
   credits: number
@@ -18,7 +17,7 @@ export const CreditsProvider = ({ children }: { children: React.ReactNode }) => 
   }, [])
 
   const fetchCredits = async () => {
-    const response = await get<CreditBalance>('/transactions/me/credit-balance')
+    const response = await TransactionsService.getMyCreditBalance()
     const credits = response.balances.find((b: any) => b.creditType === 'private')?.balance ?? 0
     setCredits(credits)
   }

@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CreateStudentDto } from '../models/CreateStudentDto';
+import type { StudentResponseDto } from '../models/StudentResponseDto';
 import type { UpdateStudentDto } from '../models/UpdateStudentDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -82,6 +83,23 @@ export class StudentService {
             url: '/api/students/{id}',
             path: {
                 'id': id,
+            },
+        });
+    }
+    /**
+     * Get all students for a user
+     * @param userId
+     * @returns StudentResponseDto
+     * @throws ApiError
+     */
+    public static userStudentControllerFindAllByUserId(
+        userId: string,
+    ): CancelablePromise<Array<StudentResponseDto>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/users/{userId}/students',
+            path: {
+                'userId': userId,
             },
         });
     }

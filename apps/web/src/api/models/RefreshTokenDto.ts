@@ -3,5 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type RefreshTokenDto = {
+    /**
+     * Refresh token
+     */
+    refreshToken: string;
 };
 

@@ -2,7 +2,7 @@
 
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
-import { del } from '@utils/api'
+import { InstructorService } from '@/services/api/shared/instructorService'
 import { useState } from 'react'
 
 interface DeleteInstructorModalProps {
@@ -24,7 +24,7 @@ export default function DeleteInstructorModal({ isOpen, onClose, onSuccess, inst
     setError(null)
 
     try {
-      await del(`/instructors/${instructor.id}`)
+      await InstructorService.remove(instructor.id)
       onSuccess()
       onClose()
     } catch (err) {

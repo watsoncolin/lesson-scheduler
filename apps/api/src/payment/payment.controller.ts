@@ -11,7 +11,10 @@ import { PaymentGatewayTypesEnum } from 'shared/payment-gateway-types.enum'
 import { PaymentStatusTypesEnum } from 'shared/payment-status-types.enum'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
 import { Role } from '@lesson-scheduler/shared'
+import { ApiTags, ApiOperation, ApiOkResponse, ApiBody, ApiParam } from '@nestjs/swagger'
+import { PaymentResponseDto } from './dto/payment-response.dto'
 
+@ApiTags('payments')
 @Controller('payments')
 export class PaymentController {
   constructor(
@@ -21,12 +24,16 @@ export class PaymentController {
   ) {}
 
   @Get('')
+  @ApiOperation({ summary: 'Get all payments' })
+  @ApiOkResponse({ type: PaymentResponseDto, isArray: true })
   async findAll() {
     const products = await this.paymentService.findAll()
     return products
   }
 
   @Post('paypal-create-order')
+  @ApiOperation({ summary: 'Create a PayPal order' })
+  @ApiBody({ type: CreatePaypalOrderDto })
   async createPaypalOrder(@Body() createPaypalOrder: CreatePaypalOrderDto, @ActiveUser() userdata: ActiveUserData) {
     const user = await this.userService.findOne(userdata.sub)
     const order = await this.paypalService.createOrder(createPaypalOrder.productId, createPaypalOrder.quantity, user)
@@ -46,6 +53,8 @@ export class PaymentController {
   }
 
   @Post('paypal-capture-order')
+  @ApiOperation({ summary: 'Capture a PayPal order' })
+  @ApiBody({ schema: { properties: { orderId: { type: 'string' } } } })
   @HttpCode(204)
   async captureOrder(@Body() { orderId }, @ActiveUser() userdata: ActiveUserData) {
     const order = await this.paypalService.captureOrder(orderId)
@@ -71,6 +80,8 @@ export class PaymentController {
   }
 
   @Post('apple-validate-merchant')
+  @ApiOperation({ summary: 'Validate Apple Pay merchant' })
+  @ApiBody({ schema: { properties: { validationUrl: { type: 'string' } } } })
   async appleValidateMerchant(@Body('validationUrl') validationUrl: string) {
     const merchantIdentifier = 'your-merchant-identifier' // Your Apple Pay Merchant ID
     const displayName = 'Stansbury Swim'
@@ -91,11 +102,17 @@ export class PaymentController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a payment' })
+  @ApiBody({ type: CreatePaymentDto })
+  @ApiOkResponse({ type: PaymentResponseDto })
   create(@Body() createPaymentDto: CreatePaymentDto) {
     return this.paymentService.create(createPaymentDto)
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a payment by ID' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiOkResponse({ type: PaymentResponseDto })
   async findOne(@Param('id') id: string) {
     const product = await this.paymentService.findOne(id)
     if (!product) {
@@ -106,6 +123,10 @@ export class PaymentController {
 
   @Patch(':id')
   @Roles(Role.Admin)
+  @ApiOperation({ summary: 'Update a payment' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiBody({ type: UpdatePaymentDto })
+  @ApiOkResponse({ type: PaymentResponseDto })
   async update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
     const payment = await this.paymentService.findOne(id)
     if (!payment) {

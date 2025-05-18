@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { patch } from '@utils/api'
+import { MeService } from '@/services/api/shared/meService'
 import { useUser } from '@contexts/user-context'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 
@@ -53,7 +53,7 @@ export default function Profile() {
     }
 
     try {
-      await patch('/users/me', updatedUser)
+      await MeService.update(updatedUser)
       refreshUser()
       setShowSuccess(true)
     } catch (err) {

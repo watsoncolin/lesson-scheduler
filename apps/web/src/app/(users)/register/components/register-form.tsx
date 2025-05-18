@@ -51,7 +51,6 @@ export default function RegisterForm() {
       router.push('/dashboard')
     } catch (err: unknown) {
       if (err instanceof ApiError) {
-        console.log(JSON.stringify(err.body, null, 2))
         setError(err.body.message || 'Registration failed')
       } else {
         setError('Registration failed')

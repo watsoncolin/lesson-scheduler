@@ -1,17 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Divider } from '@components/divider'
-import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@components/dropdown'
-import { Link } from '@components/link'
-import { EllipsisVerticalIcon } from '@heroicons/react/16/solid'
 import { IProduct } from '@lesson-scheduler/shared'
-import ProductModal from './product-modal'
 import DeleteProductModal from './delete-product-modal'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/table'
 import { Button } from '@components/button'
 import ProductEditModal from './product-edit-modal'
-import { get } from '@utils/api'
+import { ProductService } from '@/services/api/shared/productService'
 
 export default function ProductsList() {
   const [products, setProducts] = useState<IProduct[]>([])
@@ -22,7 +17,7 @@ export default function ProductsList() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await get<IProduct[]>('/products')
+        const data = await ProductService.findAll()
         setProducts(data)
       } catch (error) {
         console.error('Failed to fetch products:', error)

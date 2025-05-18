@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { get } from '@utils/api'
-import { Schedule } from '@lib/schedule'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { useUser } from '@contexts/user-context'
 import { useCredits } from '@contexts/credits-context'
 
@@ -20,7 +19,7 @@ export default function Credits() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const schedulesResponse = await get<Schedule[]>('/schedules/me')
+        const schedulesResponse = await ScheduleService.findMySchedule()
         const stats = [
           {
             name: 'Available lesson credits',

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
-import { post, upload } from '@utils/api'
+import { ProductService } from '@/services/api/shared/productService'
 
 interface ProductModalProps {
   isOpen: boolean
@@ -31,7 +31,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess }: ProductModa
     setError(null)
 
     try {
-      await post('/products', formData)
+      await ProductService.create(formData)
       onSuccess()
       onClose()
     } catch (err) {

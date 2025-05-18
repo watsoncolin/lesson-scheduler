@@ -16,17 +16,16 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ActiveUser } from '../iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from '../iam/authentication/interfaces/active-user-data.interface'
-import {
-  PaginationDto,
-  IUser,
-  PaginatedResponseDto,
-  Role,
-  UserSearchRequestDto,
-  UserSearchResponseDto,
-} from '@lesson-scheduler/shared'
+import { Role } from '@lesson-scheduler/shared'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
 import { StudentService } from 'student/student.service'
+import { UserSearchRequestDto } from './dto/user-search-request.dto'
+import { UserSearchResponseDto } from './dto/user-search-response.dto'
+import { PaginatedResponseDto } from '../common/dto/paginated-response.dto'
+import { ApiTags, ApiResponse, ApiQuery } from '@nestjs/swagger'
+import { UserResponseDto } from './dto/user-response.dto'
 
+@ApiTags('Users')
 @Roles(Role.Admin)
 @Controller('users')
 export class UserController {
@@ -36,11 +35,18 @@ export class UserController {
   ) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto)
+  @ApiResponse({ status: 201, type: UserResponseDto })
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
+    const user = await this.userService.create(createUserDto)
+    return user as UserResponseDto
   }
 
   @Get()
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'name', required: false, type: String })
+  @ApiQuery({ name: 'phone', required: false, type: String })
+  @ApiResponse({ status: 200, type: PaginatedResponseDto<UserSearchResponseDto> })
   async findAll(
     @Query() userSearchRequestDto: UserSearchRequestDto,
   ): Promise<PaginatedResponseDto<UserSearchResponseDto>> {
@@ -63,6 +69,12 @@ export class UserController {
 
     const data: UserSearchResponseDto[] = []
 
+    function toBirthdayString(birthday: unknown): string {
+      if (typeof birthday === 'string') return birthday
+      if (birthday instanceof Date) return birthday.toISOString()
+      return ''
+    }
+
     for (const user of users) {
       const students = allStudents
         .find(students => students.userId === user.id)
@@ -70,7 +82,7 @@ export class UserController {
           id: student.id,
           userId: student.userId,
           name: student.name,
-          birthday: student.birthday,
+          birthday: toBirthdayString(student.birthday),
           notes: student.notes || '',
         }))
 
@@ -87,10 +99,10 @@ export class UserController {
             id: student.id,
             userId: student.userId,
             name: student.name,
-            birthday: student.birthday,
+            birthday: toBirthdayString(student.birthday),
             notes: student.notes || '',
           })) ?? [],
-        instructorId: user.instructorId,
+        instructorId: user.instructorId ?? undefined,
       })
     }
 
@@ -104,28 +116,29 @@ export class UserController {
 
   @Get(':id')
   @Roles(Role.Admin)
-  async findOne(@Param('id') id: string) {
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  async findOne(@Param('id') id: string): Promise<UserResponseDto> {
     const foundUser = await this.userService.findOne(id)
-    const students = await this.studentService.findAllByUserId(foundUser.id)
-
-    return {
-      ...foundUser,
-      students,
-      instructorId: foundUser.instructorId,
-    }
+    return foundUser as UserResponseDto
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @ActiveUser() user: ActiveUserData) {
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<UserResponseDto> {
     if (user.role !== Role.Admin && (updateUserDto.instructorId || updateUserDto.role)) {
       throw new ForbiddenException('You are not authorized to update this user')
     }
-
-    return this.userService.update(id, updateUserDto)
+    const updatedUser = await this.userService.update(id, updateUserDto)
+    return updatedUser as UserResponseDto
   }
 
   @Delete(':id')
   @HttpCode(204)
+  @ApiResponse({ status: 204 })
   remove(@Param('id') id: string) {
     return this.userService.remove(id)
   }

@@ -1,5 +1,6 @@
-import { removeAuthToken, logout } from '@utils/api'
 import { googleLogout } from '@react-oauth/google'
+import { AuthService } from '@/services/api/shared/authService'
+import { deleteCookie, AUTH_COOKIE_NAME } from '@/app/utils/cookies'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -11,14 +12,22 @@ export default function SignOutButton() {
     try {
       // Sign out of Google
       googleLogout()
-      // Call backend logout endpoint and remove local auth token
-      await logout()
+      // Call backend logout endpoint
+      await AuthService.logout()
+      // Remove local auth token and user info
+      deleteCookie(AUTH_COOKIE_NAME)
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user')
+      }
       // Redirect to home page
       window.location.href = '/'
     } catch (error) {
       console.error('Error during sign out:', error)
       // Even if the backend call fails, try to clear local state
-      await removeAuthToken()
+      deleteCookie(AUTH_COOKIE_NAME)
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user')
+      }
       window.location.href = '/'
     }
   }

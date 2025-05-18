@@ -1,7 +1,7 @@
 import { BaseService, WithConfig } from './baseService'
 import { AuthenticationService, SignInDto, SignUpDto, RefreshTokenDto } from '@/api'
 
-@WithConfig() 
+@WithConfig()
 export class AuthService extends BaseService {
   static async signUp(data: SignUpDto) {
     return AuthenticationService.authenticationControllerSignUp(data)
@@ -19,11 +19,11 @@ export class AuthService extends BaseService {
     return AuthenticationService.authenticationControllerLogout()
   }
 
-  static async forgotPassword() {
-    return AuthenticationService.authenticationControllerForgotPassword()
+  static async forgotPassword(email: string) {
+    return AuthenticationService.authenticationControllerForgotPassword({ email })
   }
 
-  static async resetPassword() {
-    return AuthenticationService.authenticationControllerResetPassword()
+  static async resetPassword(token: string, password: string) {
+    return AuthenticationService.authenticationControllerResetPassword({ token, password })
   }
 }

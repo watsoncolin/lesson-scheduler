@@ -1,25 +1,30 @@
 'use client'
-import { CalendarIcon, CheckIcon, CreditCardIcon, HandThumbUpIcon, UserIcon } from '@heroicons/react/20/solid'
+import { CalendarIcon, CreditCardIcon } from '@heroicons/react/20/solid'
 import { useEffect, useState } from 'react'
-import { get } from '@utils/api'
+import { TransactionsService } from '@/services/api/shared/transactionsService'
+import { ProductService } from '@/services/api/shared/productService'
+import { StudentService } from '@/services/api/shared/studentService'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { useInstructors, usePools } from '@contexts/index'
-import { IProduct, ITransaction, IStudent, ISchedule } from '@lesson-scheduler/shared'
+import { IProduct, IStudent } from '@lesson-scheduler/shared'
+import { FindAllSchedulesResponseDto } from '@/api/models/FindAllSchedulesResponseDto'
+import { TransactionResponseDto } from '@/api'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function History() {
-  const [transactions, setTransactions] = useState([] as ITransaction[])
+  const [transactions, setTransactions] = useState([] as TransactionResponseDto[])
   const [products, setProducts] = useState([] as IProduct[])
   const [students, setStudents] = useState([] as IStudent[])
-  const [schedules, setSchedules] = useState([] as ISchedule[])
+  const [schedules, setSchedules] = useState([] as FindAllSchedulesResponseDto[])
   const { instructors } = useInstructors()
   const { pools } = usePools()
 
   const fetchTransactions = async () => {
     try {
-      const transactions = await get<ITransaction[]>('/transactions/me')
+      const transactions = await TransactionsService.findMy()
       // sort by created at descending
       transactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       setTransactions(transactions)
@@ -27,8 +32,8 @@ export default function History() {
       const scheduleIds = transactions.filter(t => t.scheduleId).map(t => t.scheduleId)
       const uniqueScheduleIds = Array.from(new Set(scheduleIds))
       const queryString = uniqueScheduleIds.map(id => id).join(',')
-      const schedules = await get<ISchedule[]>('/schedules/?scheduleIds=' + queryString)
-      setSchedules(schedules)
+      const schedules = queryString ? await ScheduleService.findAll() : []
+      setSchedules(schedules.filter(s => uniqueScheduleIds.includes(s.id)))
     } catch (err: any) {
       console.error(err)
     }
@@ -36,7 +41,7 @@ export default function History() {
 
   const fetchProducts = async () => {
     try {
-      const products = await get<IProduct[]>('/products')
+      const products = await ProductService.findAll()
       setProducts(products)
     } catch (err: any) {
       console.error(err)
@@ -45,7 +50,7 @@ export default function History() {
 
   const fetchStudents = async () => {
     try {
-      const students = await get<IStudent[]>('/users/me/students')
+      const students = await StudentService.findMyStudents()
       setStudents(students)
     } catch (err: any) {
       console.error(err)

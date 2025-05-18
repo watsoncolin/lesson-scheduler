@@ -32,8 +32,29 @@ export class ScheduleService extends BaseService {
     return GeneratedScheduleService.scheduleControllerFindAllForLoggedInUser()
   }
 
-  static async search() {
-    return GeneratedScheduleService.scheduleControllerSearch()
+  static async search({
+    pools,
+    instructors,
+    daysOfWeek,
+    date,
+    timezone,
+    includeReserved,
+  }: {
+    pools?: string[]
+    instructors?: string[]
+    daysOfWeek?: string[]
+    date?: string
+    timezone?: string
+    includeReserved?: boolean
+  } = {}) {
+    return GeneratedScheduleService.scheduleControllerSearch(
+      pools,
+      instructors,
+      daysOfWeek,
+      date,
+      timezone,
+      includeReserved,
+    )
   }
 
   static async findAvailableDates() {

@@ -11,20 +11,24 @@ import {
   HttpCode,
   Query,
 } from '@nestjs/common'
+import { ApiQuery, ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 
 import { ScheduleService } from './schedule.service'
 import { CreateScheduleDto } from './dto/create-schedule.dto'
 import { UpdateScheduleDto } from './dto/update-schedule.dto'
-import { SearchScheduleDto } from './dto/search-schedule.dto'
 import { ActiveUser } from 'iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from 'iam/authentication/interfaces/active-user-data.interface'
 import { Auth } from 'iam/authentication/decorators/auth.decorator'
 import { AuthType } from 'iam/authentication/enums/auth-type.enum'
-import { Role, ScheduleDto } from '@lesson-scheduler/shared'
+import { Role } from '@lesson-scheduler/shared'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
-import { Schedule } from './schedule'
 import { StudentService } from 'student/student.service'
 import { UserService } from 'user/user.service'
+import { FindAllSchedulesRequestDto } from './dto/find-all-schedules-request.dto'
+import { FindAllSchedulesResponseDto } from './dto/find-all-schedules-response.dto'
+import { SearchScheduleRequestDto } from './dto/search-schedule-request.dto'
+import { SearchScheduleResponseDto } from './dto/search-schedule-response.dto'
+
 @Controller('schedules')
 export class ScheduleController {
   constructor(
@@ -35,7 +39,13 @@ export class ScheduleController {
 
   @Get('')
   @Roles(Role.Admin, Role.Instructor)
-  async findAll(@Query() query: { scheduleIds?: string }): Promise<ScheduleDto[]> {
+  @ApiOperation({
+    summary: 'Get all schedules',
+    description: 'Returns all schedules, optionally filtered by scheduleIds.',
+  })
+  @ApiQuery({ name: 'scheduleIds', required: false, description: 'Comma-separated list of schedule IDs to filter by' })
+  @ApiOkResponse({ type: FindAllSchedulesResponseDto, isArray: true })
+  async findAll(@Query() query: FindAllSchedulesRequestDto): Promise<FindAllSchedulesResponseDto[]> {
     const scheduleIds = query.scheduleIds?.split(',').filter(id => id.length > 0)
     if (query.scheduleIds && scheduleIds?.length === 0) {
       return []
@@ -100,11 +110,16 @@ export class ScheduleController {
   @Get('me')
   async findAllForLoggedInUser(@ActiveUser() user: ActiveUserData) {
     const schedules = await this.scheduleService.findAllByUserId(user.sub)
-    return schedules
+    return schedules.filter(schedule => schedule.startDateTime > new Date())
   }
 
   @Get('search')
-  async search(@Query() query: SearchScheduleDto) {
+  @ApiOperation({
+    summary: 'Search schedules',
+    description: 'Search for schedules by pools, instructors, days of week, date, timezone, and includeReserved.',
+  })
+  @ApiOkResponse({ type: SearchScheduleResponseDto, isArray: true })
+  async search(@Query() query: SearchScheduleRequestDto): Promise<SearchScheduleResponseDto[]> {
     const { pools, instructors, daysOfWeek, date, timezone, includeReserved } = query
     const daysOfWeekInt = daysOfWeek
       ?.map(day => {
@@ -137,6 +152,38 @@ export class ScheduleController {
       includeReserved,
     )
     return schedules
+      .filter(schedule => schedule.startDateTime > new Date())
+      .map(schedule => ({
+        id: schedule.id,
+        poolId: schedule.poolId,
+        instructorId: schedule.instructorId,
+        classSize: schedule.classSize,
+        lessonType: schedule.lessonType,
+        startDateTime: schedule.startDateTime.toISOString(),
+        endDateTime: schedule.endDateTime.toISOString(),
+        registrations: schedule.registrations.map(registration => {
+          const student = (registration as any).student || { id: '', name: '', birthDate: '', notes: '' }
+          const user = (registration as any).user || { id: '', firstName: '', lastName: '', email: '', role: Role.User }
+          return {
+            studentId: registration.studentId,
+            userId: registration.userId,
+            createdAt: registration.createdAt.toISOString(),
+            student: {
+              id: student.id ?? '',
+              name: student.name ?? '',
+              birthDate: student.birthDate ?? '',
+              notes: student.notes ?? '',
+            },
+            user: {
+              id: user.id ?? '',
+              firstName: user.firstName ?? '',
+              lastName: user.lastName ?? '',
+              email: user.email ?? '',
+              role: user.role ?? Role.User,
+            },
+          }
+        }),
+      }))
   }
 
   @Get('available-dates')

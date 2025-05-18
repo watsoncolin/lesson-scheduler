@@ -3,7 +3,12 @@ import { CheckCircleIcon, ExclamationTriangleIcon, XMarkIcon } from '@heroicons/
 
 import { useState, useEffect } from 'react'
 
-import { get, post } from '@utils/api'
+import { ProductService } from '@/services/api/shared/productService'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
+import { StudentService } from '@/services/api/shared/studentService'
+import { PaymentService } from '@/services/api/shared/paymentService'
+import { WaitlistService } from '@/services/api/shared/waitlistService'
+import { ConfigService } from '@/services/api/shared/configService'
 import React from 'react'
 import { IProduct } from '@lesson-scheduler/shared'
 import { ISchedule } from '@lesson-scheduler/shared'
@@ -13,6 +18,7 @@ import { useInstructors } from '@contexts/instructor-context'
 import { useUser } from '@contexts/user-context'
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import { Button } from '@/app/components/button'
+import { useRouter } from 'next/navigation'
 
 // Extend the Window interface to include ApplePaySession
 declare global {
@@ -22,6 +28,7 @@ declare global {
 }
 
 export default function Purchase() {
+  const router = useRouter()
   const [products, setProducts] = useState([] as IProduct[])
   const [selectedProductId, setSelectedProductId] = useState('')
   const [quantity, setQuantity] = useState(1)
@@ -35,7 +42,6 @@ export default function Purchase() {
   const [waitlistEnabled, setWaitlistEnabled] = useState(false)
   const [schedules, setSchedules] = useState([] as ISchedule[])
   const { pools } = usePools()
-  const { instructors } = useInstructors()
   const { user } = useUser()
   const [onWaitlist, setOnWaitlist] = useState(false)
   const [purchaseEnabled, setPurchaseEnabled] = useState(false)
@@ -50,7 +56,7 @@ export default function Purchase() {
 
   const fetchSchedules = async () => {
     try {
-      const schedules = await get<ISchedule[]>('/schedules/parent-tot')
+      const schedules = await ScheduleService.findParentTot()
       setSchedules(schedules)
     } catch (err: any) {
       console.error(err)
@@ -59,7 +65,7 @@ export default function Purchase() {
 
   const fetchStudents = async () => {
     try {
-      const students = await get<IStudent[]>('/users/me/students')
+      const students = await StudentService.findMyStudents()
       setStudents(students)
     } catch (err: any) {
       console.error(err)
@@ -76,7 +82,7 @@ export default function Purchase() {
 
   const fetchProducts = async () => {
     try {
-      const products = await get<IProduct[]>('/products')
+      const products = await ProductService.findAll()
       setProducts(products)
     } catch (err: any) {
       setError(err.message)
@@ -95,7 +101,14 @@ export default function Purchase() {
   const paypalCreateOrder = async (): Promise<void> => {
     setError('')
     setPaymentCompleted(false)
+    if (!user) {
+      return router.push('/')
+    }
     try {
+      if (!selectedProductId) {
+        setError('No product selected')
+        return Promise.reject('No product selected')
+      }
       const product = products.find(p => p.id == selectedProductId)
       let selectedQuantity = quantity
       if (product?.credits != 1) {
@@ -112,13 +125,12 @@ export default function Purchase() {
         return Promise.reject('Please select a student')
       }
 
-      const response = await post('/payments/paypal-create-order', {
+      const response = await PaymentService.createPaypalOrder({
         productId: selectedProductId,
-        userId: user?.id,
-        paymentGateway: 'PAYPAL',
+        userId: user.id,
         quantity: selectedQuantity,
-        scheduleId: selectedScheduleId || undefined,
-        studentId: selectedStudentId || undefined,
+        scheduleId: selectedScheduleId,
+        studentId: selectedStudentId,
       })
       return response.id
     } catch (err: any) {
@@ -129,9 +141,7 @@ export default function Purchase() {
 
   const paypalCaptureOrder = async (orderId: string): Promise<void> => {
     try {
-      await post('/payments/paypal-capture-order', {
-        orderId,
-      })
+      await PaymentService.captureOrder({ orderId })
     } catch (err: any) {
       console.error(err)
       setError(err.message)
@@ -142,9 +152,7 @@ export default function Purchase() {
 
   useEffect(() => {
     const fetchConfig = async () => {
-      const response = await get<{
-        waitlistEnabled: boolean
-      }>('/config')
+      const response = await ConfigService.findOne()
       setWaitlistEnabled(response.waitlistEnabled)
     }
     fetchConfig()
@@ -153,11 +161,7 @@ export default function Purchase() {
   useEffect(() => {
     const fetchOnWaitlist = async () => {
       try {
-        const response = await get<{
-          id: string
-          userId: string
-          allowed: boolean
-        }>('/waitlist/me')
+        const response = await WaitlistService.me()
         setOnWaitlist(true)
         setPurchaseEnabled(response.allowed)
       } catch (err: any) {
@@ -170,9 +174,7 @@ export default function Purchase() {
   }, [])
 
   const joinWaitlist = async () => {
-    await post('/waitlist/join', {
-      userId: user?.id,
-    })
+    await WaitlistService.join()
     setOnWaitlist(true)
   }
 
@@ -186,9 +188,7 @@ export default function Purchase() {
       total: { label: 'Stansbury Swim', amount: product?.amount ?? 0 * quantity },
     })
     session.onvalidatemerchant = async (event: { validationURL: any }) => {
-      const response = await post('/payments/apple-validate-merchant', {
-        validationUrl: event.validationURL,
-      })
+      const response = await PaymentService.validateMerchant({ validationUrl: event.validationURL })
       const merchantSession = await response.json()
       session.completeMerchantValidation(merchantSession)
     }

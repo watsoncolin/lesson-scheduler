@@ -3,7 +3,7 @@ import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
 import { Announcement } from './announcement'
 import { AnnouncementEntity } from './entities/announcement.entity'
-import { CreateAnnouncementDto } from '@lesson-scheduler/shared'
+import { CreateAnnouncementDto } from './dto/create-announcement.dto'
 
 const mapper = (entity: AnnouncementEntity): Announcement => {
   return {

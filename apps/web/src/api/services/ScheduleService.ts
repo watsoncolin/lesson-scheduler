@@ -3,19 +3,29 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CreateScheduleDto } from '../models/CreateScheduleDto';
+import type { FindAllSchedulesResponseDto } from '../models/FindAllSchedulesResponseDto';
+import type { SearchScheduleResponseDto } from '../models/SearchScheduleResponseDto';
 import type { UpdateScheduleDto } from '../models/UpdateScheduleDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ScheduleService {
     /**
-     * @returns any
+     * Get all schedules
+     * Returns all schedules, optionally filtered by scheduleIds.
+     * @param scheduleIds Comma-separated list of schedule IDs to filter by
+     * @returns FindAllSchedulesResponseDto
      * @throws ApiError
      */
-    public static scheduleControllerFindAll(): CancelablePromise<any> {
+    public static scheduleControllerFindAll(
+        scheduleIds?: string,
+    ): CancelablePromise<Array<FindAllSchedulesResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/schedules',
+            query: {
+                'scheduleIds': scheduleIds,
+            },
         });
     }
     /**
@@ -54,13 +64,36 @@ export class ScheduleService {
         });
     }
     /**
-     * @returns any
+     * Search schedules
+     * Search for schedules by pools, instructors, days of week, date, timezone, and includeReserved.
+     * @param pools List of pool IDs
+     * @param instructors List of instructor IDs
+     * @param daysOfWeek List of days of the week
+     * @param date Date to search for (YYYY-MM-DD)
+     * @param timezone Timezone
+     * @param includeReserved Include reserved schedules
+     * @returns SearchScheduleResponseDto
      * @throws ApiError
      */
-    public static scheduleControllerSearch(): CancelablePromise<any> {
+    public static scheduleControllerSearch(
+        pools?: Array<string>,
+        instructors?: Array<string>,
+        daysOfWeek?: Array<string>,
+        date?: string,
+        timezone?: string,
+        includeReserved?: boolean,
+    ): CancelablePromise<Array<SearchScheduleResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/schedules/search',
+            query: {
+                'pools': pools,
+                'instructors': instructors,
+                'daysOfWeek': daysOfWeek,
+                'date': date,
+                'timezone': timezone,
+                'includeReserved': includeReserved,
+            },
         });
     }
     /**

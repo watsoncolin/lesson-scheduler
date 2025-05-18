@@ -4,10 +4,7 @@ import { useState, useEffect } from 'react'
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
-import { Textarea } from '@components/textarea'
-import { patch, upload } from '@utils/api'
-import Image from 'next/image'
-import { Pool } from '@lib/pool'
+import { ProductService } from '@/services/api/shared/productService'
 import { IProduct } from '@lesson-scheduler/shared'
 
 interface ProductEditModalProps {
@@ -46,7 +43,7 @@ export default function ProductEditModal({ isOpen, onClose, onSuccess, product }
     setError(null)
 
     try {
-      await patch(`/products/${product.id}`, formData)
+      await ProductService.update(product.id, formData)
       onSuccess()
       onClose()
     } catch (err) {

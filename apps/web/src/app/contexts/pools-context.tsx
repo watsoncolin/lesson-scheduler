@@ -1,12 +1,12 @@
 'use client'
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { get } from '../utils/api'
+import { PoolService } from '@/services/api/shared/poolService'
 import { ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Pool } from '../lib/pool'
+import { PoolDto } from '@/api'
 
 export interface PoolContextType {
-  pools: Pool[]
+  pools: PoolDto[]
   isLoading: boolean
   isError: boolean
   refetch: () => void
@@ -26,7 +26,7 @@ export const PoolsProvider = ({ children }: PoolsProviderProps) => {
     refetch,
   } = useQuery({
     queryKey: ['pools'],
-    queryFn: () => get<Pool[]>('/pools'),
+    queryFn: () => PoolService.findAll(),
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   })
 

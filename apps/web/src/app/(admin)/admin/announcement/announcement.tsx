@@ -1,38 +1,41 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/table'
-import { Pagination } from '@components/pagination'
-import { Waitlist } from '@lesson-scheduler/shared'
-import { get, patch, post } from '@/app/utils/api'
+import { AnnouncementService } from '@/services/api/shared/announcementService'
 import { Button } from '@components/button'
-import { Announcement } from '@lesson-scheduler/shared'
 import { Input } from '@components/input'
 import { Textarea } from '@components/textarea'
-import { useForm } from 'react-hook-form'
+import { CreateAnnouncementDto } from '@/api'
 
 export default function AnnouncementList() {
-  const [announcement, setAnnouncement] = useState<Announcement | null>(null)
+  const [announcement, setAnnouncement] = useState<CreateAnnouncementDto | null>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const { register, handleSubmit, reset } = useForm<Announcement>()
+  const [form, setForm] = useState<CreateAnnouncementDto>({ title: '', heading: '', content: '' })
 
   useEffect(() => {
     const fetchAnnouncement = async () => {
-      const response = (await get('/announcement')) as Announcement
-      setAnnouncement(response)
-      reset(response)
+      const response = await AnnouncementService.findOne()
+      if (response) {
+        setAnnouncement(response)
+        setForm(response)
+      }
     }
     fetchAnnouncement()
-  }, [reset])
+  }, [])
 
-  const onSubmit = async (data: Announcement) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setForm(prev => ({ ...prev, [name]: value }))
+  }
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log('data', form)
     try {
-      await post('/announcement', data)
+      await AnnouncementService.create(form)
       setIsEditing(false)
-      const response = await get<{
-        announcement: Announcement
-      }>('/announcement')
-      setAnnouncement(response.announcement)
+      const response = await AnnouncementService.findOne()
+      if (response) setAnnouncement(response)
     } catch (error) {
       console.error('Failed to save announcement:', error)
     }
@@ -48,25 +51,46 @@ export default function AnnouncementList() {
                 <span>
                   Announcement is currently <strong>{announcement?.title}</strong>
                 </span>
-                <Button onClick={() => setIsEditing(true)}>Edit</Button>
+                <Button
+                  onClick={() => {
+                    setIsEditing(true)
+                    setForm(announcement)
+                  }}
+                >
+                  Edit
+                </Button>
               </>
             ) : (
               <Button onClick={() => setIsEditing(true)}>Create Announcement</Button>
             )}
           </div>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={onSubmit} className="space-y-4">
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                 Title
               </label>
-              <Input id="title" {...register('title')} className="mt-1" placeholder="Enter announcement title" />
+              <Input
+                id="title"
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                className="mt-1"
+                placeholder="Enter announcement title"
+              />
             </div>
             <div>
               <label htmlFor="heading" className="block text-sm font-medium text-gray-700">
                 Heading
               </label>
-              <Input id="heading" {...register('heading')} className="mt-1" placeholder="Enter announcement heading" />
+              <Input
+                id="heading"
+                name="heading"
+                value={form.heading}
+                onChange={handleChange}
+                className="mt-1"
+                placeholder="Enter announcement heading"
+              />
             </div>
             <div>
               <label htmlFor="content" className="block text-sm font-medium text-gray-700">
@@ -74,7 +98,9 @@ export default function AnnouncementList() {
               </label>
               <Textarea
                 id="content"
-                {...register('content')}
+                name="content"
+                value={form.content}
+                onChange={handleChange}
                 className="mt-1"
                 placeholder="Enter announcement content"
                 rows={4}

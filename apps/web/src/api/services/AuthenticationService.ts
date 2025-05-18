@@ -2,7 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ForgotPasswordDto } from '../models/ForgotPasswordDto';
 import type { RefreshTokenDto } from '../models/RefreshTokenDto';
+import type { ResetPasswordDto } from '../models/ResetPasswordDto';
 import type { SignInDto } from '../models/SignInDto';
 import type { SignUpDto } from '../models/SignUpDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -10,8 +12,9 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AuthenticationService {
     /**
+     * Register a new user
      * @param requestBody
-     * @returns any
+     * @returns any User registered successfully
      * @throws ApiError
      */
     public static authenticationControllerSignUp(
@@ -25,8 +28,9 @@ export class AuthenticationService {
         });
     }
     /**
+     * Login a user
      * @param requestBody
-     * @returns any
+     * @returns any User logged in successfully
      * @throws ApiError
      */
     public static authenticationControllerSignIn(
@@ -40,8 +44,9 @@ export class AuthenticationService {
         });
     }
     /**
+     * Refresh authentication tokens
      * @param requestBody
-     * @returns any
+     * @returns any Tokens refreshed successfully
      * @throws ApiError
      */
     public static authenticationControllerRefreshTokens(
@@ -55,7 +60,8 @@ export class AuthenticationService {
         });
     }
     /**
-     * @returns any
+     * Logout the current user
+     * @returns any User logged out successfully
      * @throws ApiError
      */
     public static authenticationControllerLogout(): CancelablePromise<any> {
@@ -65,23 +71,35 @@ export class AuthenticationService {
         });
     }
     /**
-     * @returns any
+     * Request a password reset email
+     * @param requestBody
+     * @returns any Password reset email sent
      * @throws ApiError
      */
-    public static authenticationControllerForgotPassword(): CancelablePromise<any> {
+    public static authenticationControllerForgotPassword(
+        requestBody: ForgotPasswordDto,
+    ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/auth/forgot-password',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
     /**
-     * @returns any
+     * Reset user password
+     * @param requestBody
+     * @returns any Password reset successfully
      * @throws ApiError
      */
-    public static authenticationControllerResetPassword(): CancelablePromise<any> {
+    public static authenticationControllerResetPassword(
+        requestBody: ResetPasswordDto,
+    ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/auth/reset-password',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
 }

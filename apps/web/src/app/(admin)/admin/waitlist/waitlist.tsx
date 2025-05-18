@@ -3,26 +3,27 @@
 import { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/table'
 import { Pagination } from '@components/pagination'
-import { Waitlist } from '@lesson-scheduler/shared'
-import { get, patch, post } from '@/app/utils/api'
+import { WaitlistResponseDto } from '@/api/models/WaitlistResponseDto'
+import { ConfigService } from '@/services/api/shared/configService'
+import { SiteConfigService } from '@/api/services/SiteConfigService'
+import { WaitlistService } from '@/api/services/WaitlistService'
 import { Button } from '@components/button'
+
 export default function WaitlistList() {
-  const [waitlist, setWaitlist] = useState<Waitlist[]>([])
+  const [waitlist, setWaitlist] = useState<WaitlistResponseDto[]>([])
   const [total, setTotal] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [waitlistEnabled, setWaitlistEnabled] = useState(false)
 
   useEffect(() => {
     const fetchConfig = async () => {
-      const response = await get<{
-        waitlistEnabled: boolean
-      }>('/config')
+      const response = await ConfigService.findOne()
       setWaitlistEnabled(response.waitlistEnabled)
     }
     fetchConfig()
   }, [])
   const fetchWaitlist = async () => {
-    const response = await get<Waitlist[]>('/waitlist')
+    const response = await WaitlistService.waitlistControllerFindAll()
     setWaitlist(response)
   }
   useEffect(() => {
@@ -30,14 +31,13 @@ export default function WaitlistList() {
   }, [])
 
   const toggleWaitlist = async () => {
-    const response = await post(`/config/waitlist`, {
-      waitlistEnabled: !waitlistEnabled,
-    })
+    await SiteConfigService.siteConfigControllerToggleWaitlist()
+    const response = await ConfigService.findOne()
     setWaitlistEnabled(response.waitlistEnabled)
   }
 
   const allowPurchase = async (userId: string) => {
-    await patch(`/waitlist/${userId}/allow-purchase`, {})
+    await WaitlistService.waitlistControllerUpdate(userId)
     fetchWaitlist()
   }
 
@@ -70,7 +70,7 @@ export default function WaitlistList() {
                 </TableCell>
                 <TableCell>{user.phone}</TableCell>
                 <TableCell>{user.allowed ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{user.allowedOn ? new Date(user.allowedOn).toLocaleDateString() : ''}</TableCell>
+                <TableCell>{user.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : ''}</TableCell>
                 <TableCell>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : ''}</TableCell>
                 <TableCell>
                   <Button disabled={user.allowed} onClick={() => allowPurchase(user.userId)}>

@@ -3,5 +3,25 @@
 /* tslint:disable */
 /* eslint-disable */
 export type SignUpDto = {
+    /**
+     * User email address
+     */
+    email: string;
+    /**
+     * User password
+     */
+    password: string;
+    /**
+     * First name
+     */
+    firstName: string;
+    /**
+     * Last name
+     */
+    lastName: string;
+    /**
+     * User phone number
+     */
+    phoneNumber: string;
 };
 

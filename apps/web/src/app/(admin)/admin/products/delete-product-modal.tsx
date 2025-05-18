@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { IProduct } from '@lesson-scheduler/shared'
-import { del } from '@utils/api'
+import { ProductService } from '@/services/api/shared/productService'
 
 interface DeleteProductModalProps {
   isOpen: boolean
@@ -22,7 +22,7 @@ export default function DeleteProductModal({ isOpen, onClose, onSuccess, product
     setError(null)
 
     try {
-      await del(`/products/${product.id}`)
+      await ProductService.remove(product.id)
       onSuccess()
       onClose()
     } catch (err) {

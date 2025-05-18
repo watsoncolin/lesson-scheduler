@@ -132,16 +132,5 @@ async function uploadFile(endpoint: string, file: File) {
   }
 }
 
-// Client-side API functions
-export const get = async <T>(endpoint: string, headers = {}): Promise<T> => {
-  return request(endpoint, 'GET', null, headers)
-}
-
-export const post = (endpoint: string, body: any, headers = {}) => request(endpoint, 'POST', body, headers)
-export const put = (endpoint: string, body: any, headers = {}) => request(endpoint, 'PUT', body, headers)
-export const patch = (endpoint: string, body: any, headers = {}) => request(endpoint, 'PATCH', body, headers)
-export const del = (endpoint: string, headers = {}) => request(endpoint, 'DELETE', null, headers)
-export const upload = (endpoint: string, file: File) => uploadFile(endpoint, file)
-
 // Export auth token functions
 export { getAuthToken, setAuthToken, removeAuthToken, logout, setUser, getUser }

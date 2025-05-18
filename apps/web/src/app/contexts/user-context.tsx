@@ -1,11 +1,11 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react'
-import { get } from '../utils/api'
 import { ReactNode } from 'react'
-import { User } from '@lib/user'
+import { UserResponseDto } from '@/api'
+import { MeService } from '@/services/api/shared/meService'
 
 export interface UserContextType {
-  user: User | null
+  user: UserResponseDto | null
   refreshUser: () => void
 }
 
@@ -16,7 +16,7 @@ interface UserProviderProps {
 }
 
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const [user, setUser] = useState(null as User | null)
+  const [user, setUser] = useState(null as UserResponseDto | null)
 
   // Fetch user details when the app initializes
   useEffect(() => {
@@ -25,7 +25,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await get<User>('/users/me', {})
+      const response = await MeService.findMe()
       if (response) {
         setUser(response)
       } else {

@@ -1,10 +1,8 @@
 'use client'
 import React, { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { AuthService } from '@/services/api/shared/authService'
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
-import { post } from '@/app/utils/api'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export default function ResetPasswordForm() {
   const [password, setPassword] = useState('')
@@ -31,10 +29,7 @@ export default function ResetPasswordForm() {
     }
 
     try {
-      const response = await post(`/auth/reset-password`, {
-        token,
-        password,
-      })
+      const response = await AuthService.resetPassword(token, password)
 
       if (!response) {
         throw new Error('Failed to reset password')

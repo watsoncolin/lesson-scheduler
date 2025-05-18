@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { AuthService } from '@/services/api/shared/authService'
-import { setUser } from '@utils/api'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -35,7 +34,9 @@ export default function LoginForm() {
 
     try {
       const response = await AuthService.signIn(data)
-      setUser(response)
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(response))
+      }
       router.push('/dashboard')
     } catch (err: any) {
       setError(err.message || 'Failed to sign in')

@@ -1,34 +1,29 @@
 import { Heading } from '@components/heading'
-import { get, post } from '@utils/server-api'
-import { CreditBalanceResponseDto, IInstructor, IUser } from '@lesson-scheduler/shared'
-import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/16/solid'
+import { InstructorService } from '@/services/api/shared/instructorService'
+import { ArrowLeftIcon } from '@heroicons/react/16/solid'
 import { Button } from '@/app/components/button'
 import Link from 'next/link'
 import { DescriptionList, DescriptionTerm, DescriptionDetails } from '@/app/components/description-list'
-import { Transaction } from '@/app/lib/transaction'
 import { Table, TableHead, TableCell, TableRow, TableBody } from '@/app/components/table'
 import { CreateTransactionForm } from './create-transaction-form'
 import { Metadata } from 'next'
 import { Divider } from '@/app/components/divider'
 import { RolesSection } from './roles-section'
+import { UserService } from '@/services/api/shared/userService'
+import { StudentService } from '@/services/api/shared/studentService'
+import { TransactionsService } from '@/services/api/shared/transactionsService'
 
 export const metadata: Metadata = {
   title: 'User Details',
 }
 
-export default async function UserDetailPage({ params }: any) {
-  const user = await get<IUser>(`/users/${params.id}`)
-  const transactions = await get<Transaction[]>(`/transactions/${params.id}`)
-  const currentBalance = await get<CreditBalanceResponseDto>(`/transactions/${params.id}/credit-balance`)
-  const instructors = await get<IInstructor[]>('/instructors')
-
-  const assignInstructorRole = async (userId: string) => {
-    await post(`/users/${userId}/assign-instructor-role`, { instructorId: user.instructorId })
-  }
-
-  const removeInstructorRole = async (userId: string) => {
-    await post(`/users/${userId}/remove-instructor-role`, { instructorId: user.instructorId })
-  }
+export default async function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const user = await UserService.findOne(id)
+  const students = await StudentService.findAllByUserId(id)
+  const transactions = await TransactionsService.findByUserId(id)
+  const currentBalance = await TransactionsService.getMyCreditBalance()
+  const instructors = await InstructorService.findAll()
 
   return (
     <div className="space-y-6">
@@ -69,24 +64,18 @@ export default async function UserDetailPage({ params }: any) {
         <DescriptionTerm>Private Registration</DescriptionTerm>
         <DescriptionDetails>{user.privateRegistration ? 'Yes' : 'No'}</DescriptionDetails>
 
-        <DescriptionTerm>Email Verified</DescriptionTerm>
-        <DescriptionDetails>{user.isEmailVerified ? 'Yes' : 'No'}</DescriptionDetails>
-
-        <DescriptionTerm>Google ID</DescriptionTerm>
-        <DescriptionDetails>{user.googleId || 'Not connected'}</DescriptionDetails>
-
         <DescriptionTerm>Created At</DescriptionTerm>
-        <DescriptionDetails>{new Date(user.createdAt).toLocaleString()}</DescriptionDetails>
+        <DescriptionDetails>{new Date(user.createdAt ?? '').toLocaleString()}</DescriptionDetails>
 
         <DescriptionTerm>Updated At</DescriptionTerm>
-        <DescriptionDetails>{new Date(user.updatedAt).toLocaleString()}</DescriptionDetails>
+        <DescriptionDetails>{new Date(user.updatedAt ?? '').toLocaleString()}</DescriptionDetails>
 
         <DescriptionTerm>Unused Credits</DescriptionTerm>
-        <DescriptionDetails>{user.unusedCredits}</DescriptionDetails>
+        {/* <DescriptionDetails>{user.unusedCredits}</DescriptionDetails> */}
       </DescriptionList>
       <h2 className="text-2xl font-bold">Student Details</h2>
       <DescriptionList>
-        {user.students?.map(student => (
+        {students.map(student => (
           <div key={student.id}>
             <DescriptionTerm>{student.name}</DescriptionTerm>
             <DescriptionDetails>{student.notes}</DescriptionDetails>
@@ -129,7 +118,7 @@ export default async function UserDetailPage({ params }: any) {
       </Table>
 
       <h2 className="text-2xl font-bold">Create Transaction</h2>
-      <CreateTransactionForm userId={params.id} />
+      <CreateTransactionForm userId={id} />
       <Divider />
       <h2 className="text-2xl font-bold">Roles</h2>
       <RolesSection user={user} instructors={instructors} />

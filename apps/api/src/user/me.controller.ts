@@ -3,6 +3,8 @@ import { UserService } from './user.service'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ActiveUser } from '../iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from '../iam/authentication/interfaces/active-user-data.interface'
+import { WaiverDto } from './dto/waiver.dto'
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
 @Controller('users/me')
 export class MeController {
@@ -20,16 +22,19 @@ export class MeController {
 
   @Post('waiver')
   @HttpCode(200)
-  updateWaiver(
-    @ActiveUser() user: ActiveUserData,
-    @Body()
-    {
-      signedWaiver,
-      waiverSignature,
-      waiverSignatureDate,
-    }: { signedWaiver: boolean; waiverSignature: string; waiverSignatureDate: Date },
-  ) {
-    return this.userService.updateWaiver(user.sub, signedWaiver, waiverSignature, waiverSignatureDate)
+  @ApiOperation({
+    summary: 'Update the user waiver',
+    description: 'Updates the waiver information for the current user.',
+  })
+  @ApiBody({ type: WaiverDto })
+  @ApiResponse({ status: 200, description: 'Waiver updated successfully.' })
+  updateWaiver(@ActiveUser() user: ActiveUserData, @Body() waiverDto: WaiverDto) {
+    return this.userService.updateWaiver(
+      user.sub,
+      waiverDto.signedWaiver,
+      waiverDto.waiverSignature,
+      waiverDto.waiverSignatureDate,
+    )
   }
 
   @Delete()

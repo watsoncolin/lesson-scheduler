@@ -3,5 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export type CreatePaypalOrderDto = {
+    userId: string;
+    productId: string;
+    quantity: number;
+    scheduleId?: string;
+    studentId?: string;
 };
 

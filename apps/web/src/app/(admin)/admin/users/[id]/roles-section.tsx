@@ -1,12 +1,13 @@
 'use client'
 
 import { Button } from '@/app/components/button'
-import { patch, post } from '@/app/utils/api'
-import { IInstructor, IUser, Role } from '@lesson-scheduler/shared'
 import { useState } from 'react'
+import { UserService } from '@/services/api/shared/userService'
+import { IInstructor } from '@lesson-scheduler/shared'
+import { UpdateUserDto, UserResponseDto } from '@/api'
 
 interface RolesSectionProps {
-  user: IUser
+  user: UserResponseDto
   instructors: IInstructor[]
 }
 
@@ -14,13 +15,16 @@ export function RolesSection({ user, instructors }: RolesSectionProps) {
   const [selectedInstructorId, setSelectedInstructorId] = useState<string>(user.instructorId || '')
 
   const assignInstructorRole = async () => {
-    await patch(`/users/${user.id}`, { instructorId: selectedInstructorId, role: Role.Instructor })
+    await UserService.update(user.id, {
+      instructorId: selectedInstructorId,
+      role: UpdateUserDto.role.INSTRUCTOR,
+    })
 
     window.location.reload()
   }
 
   const removeInstructorRole = async () => {
-    await patch(`/users/${user.id}`, { instructorId: null, role: Role.User })
+    await UserService.update(user.id, { instructorId: undefined, role: UpdateUserDto.role.USER })
     window.location.reload()
   }
 

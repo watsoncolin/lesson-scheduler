@@ -3,15 +3,17 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CreateTransactionDto } from '../models/CreateTransactionDto';
+import type { CreditBalanceResponseDto } from '../models/CreditBalanceResponseDto';
+import type { TransactionResponseDto } from '../models/TransactionResponseDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class TransactionsService {
     /**
-     * @returns any
+     * @returns CreditBalanceResponseDto
      * @throws ApiError
      */
-    public static transactionsControllerGetMyCreditBalance(): CancelablePromise<any> {
+    public static transactionsControllerGetMyCreditBalance(): CancelablePromise<CreditBalanceResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/transactions/me/credit-balance',
@@ -19,12 +21,12 @@ export class TransactionsService {
     }
     /**
      * @param userId
-     * @returns any
+     * @returns CreditBalanceResponseDto
      * @throws ApiError
      */
     public static transactionsControllerGetCreditBalance(
         userId: string,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<CreditBalanceResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/transactions/{userId}/credit-balance',
@@ -34,10 +36,10 @@ export class TransactionsService {
         });
     }
     /**
-     * @returns any
+     * @returns TransactionResponseDto
      * @throws ApiError
      */
-    public static transactionsControllerFindAll(): CancelablePromise<any> {
+    public static transactionsControllerFindAll(): CancelablePromise<Array<TransactionResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/transactions',
@@ -45,12 +47,12 @@ export class TransactionsService {
     }
     /**
      * @param requestBody
-     * @returns any
+     * @returns TransactionResponseDto
      * @throws ApiError
      */
     public static transactionsControllerCreate(
         requestBody: CreateTransactionDto,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<TransactionResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/transactions',
@@ -59,10 +61,10 @@ export class TransactionsService {
         });
     }
     /**
-     * @returns any
+     * @returns TransactionResponseDto
      * @throws ApiError
      */
-    public static transactionsControllerFindMy(): CancelablePromise<any> {
+    public static transactionsControllerFindMy(): CancelablePromise<Array<TransactionResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/transactions/me',
@@ -70,12 +72,12 @@ export class TransactionsService {
     }
     /**
      * @param userId
-     * @returns any
+     * @returns TransactionResponseDto
      * @throws ApiError
      */
     public static transactionsControllerFindByUserId(
         userId: string,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<Array<TransactionResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/transactions/{userId}',

@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { UpdateUserDto } from '../models/UpdateUserDto';
+import type { WaiverDto } from '../models/WaiverDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -43,13 +44,20 @@ export class MeService {
         });
     }
     /**
-     * @returns any
+     * Update the user waiver
+     * Updates the waiver information for the current user.
+     * @param requestBody
+     * @returns any Waiver updated successfully.
      * @throws ApiError
      */
-    public static meControllerUpdateWaiver(): CancelablePromise<any> {
+    public static meControllerUpdateWaiver(
+        requestBody: WaiverDto,
+    ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/users/me/waiver',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
 }

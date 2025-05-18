@@ -1,7 +1,7 @@
 'use client'
 
 import { UserProvider } from '@/app/contexts/user-context'
-import { AdminProtectedPage } from '@/app/components/admin-protected-page'
+import AdminProtectedPage from './components/admin-protected-page'
 import { AppProvider } from '@/app/app-provider'
 import { CreditsProvider, InstructorsProvider, PoolsProvider } from '@contexts/index'
 import { GoogleOAuthProvider } from '@react-oauth/google'

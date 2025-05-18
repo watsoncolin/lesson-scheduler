@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, NotFoundException } from '@nestjs/common'
 import { AnnouncementService } from './announcement.service'
-import { Role } from '../../../../libs/shared/src/enums/role.enum'
+import { Role } from 'iam/role.enum'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
-import { CreateAnnouncementDto } from '@lesson-scheduler/shared'
 import { Auth } from 'iam/authentication/decorators/auth.decorator'
 import { AuthType } from 'iam/authentication/enums/auth-type.enum'
+import { CreateAnnouncementDto } from './dto/create-announcement.dto'
 
 @Controller('announcement')
 export class AnnouncementController {

@@ -1,4 +1,4 @@
-import { PoolService as GeneratedPoolService } from '@/api/services/PoolService'
+import { PoolsService as GeneratedPoolService } from '@/api/services/PoolsService'
 import type { CreatePoolDto, UpdatePoolDto } from '@/api'
 import { BaseService, WithConfig } from './baseService'
 

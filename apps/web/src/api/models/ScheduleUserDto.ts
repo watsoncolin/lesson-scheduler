@@ -2,14 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type FindAllSchedulesUserDto = {
+export type ScheduleUserDto = {
     id: string;
     firstName: string;
     lastName: string;
     email: string;
-    role: FindAllSchedulesUserDto.role;
+    role: ScheduleUserDto.role;
 };
-export namespace FindAllSchedulesUserDto {
+export namespace ScheduleUserDto {
     export enum role {
         USER = 'user',
         ADMIN = 'admin',

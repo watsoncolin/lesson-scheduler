@@ -3,7 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CreateScheduleDto } from '../models/CreateScheduleDto';
-import type { FindAllSchedulesResponseDto } from '../models/FindAllSchedulesResponseDto';
+import type { ParentTotScheduleResponseDto } from '../models/ParentTotScheduleResponseDto';
+import type { ScheduleResponseDto } from '../models/ScheduleResponseDto';
 import type { SearchScheduleResponseDto } from '../models/SearchScheduleResponseDto';
 import type { UpdateScheduleDto } from '../models/UpdateScheduleDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -14,12 +15,12 @@ export class ScheduleService {
      * Get all schedules
      * Returns all schedules, optionally filtered by scheduleIds.
      * @param scheduleIds Comma-separated list of schedule IDs to filter by
-     * @returns FindAllSchedulesResponseDto
+     * @returns ScheduleResponseDto
      * @throws ApiError
      */
     public static scheduleControllerFindAll(
         scheduleIds?: string,
-    ): CancelablePromise<Array<FindAllSchedulesResponseDto>> {
+    ): CancelablePromise<Array<ScheduleResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/schedules',
@@ -44,20 +45,23 @@ export class ScheduleService {
         });
     }
     /**
-     * @returns any
+     * Get all parent-tot schedules
+     * @returns ParentTotScheduleResponseDto List of parent-tot schedules
      * @throws ApiError
      */
-    public static scheduleControllerFindAllParentTot(): CancelablePromise<any> {
+    public static scheduleControllerFindAllParentTot(): CancelablePromise<Array<ParentTotScheduleResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/schedules/parent-tot',
         });
     }
     /**
-     * @returns any
+     * Get all schedules for the logged-in user
+     * Returns all upcoming schedules for the current user.
+     * @returns ScheduleResponseDto
      * @throws ApiError
      */
-    public static scheduleControllerFindAllForLoggedInUser(): CancelablePromise<any> {
+    public static scheduleControllerFindAllForLoggedInUser(): CancelablePromise<Array<ScheduleResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/schedules/me',

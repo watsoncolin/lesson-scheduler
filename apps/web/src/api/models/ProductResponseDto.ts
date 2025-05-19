@@ -2,41 +2,45 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type UpdateProductDto = {
+export type ProductResponseDto = {
     /**
      * Product ID
      */
     id: string;
     /**
+     * Order of the product
+     */
+    order: number;
+    /**
      * Name of the product
      */
-    name?: string;
+    name: string;
     /**
      * Type of lesson
      */
-    lessonType?: UpdateProductDto.lessonType;
+    lessonType: ProductResponseDto.lessonType;
     /**
      * Number of credits
      */
-    credits?: number;
+    credits: number;
     /**
      * Is the product active?
      */
-    active?: boolean;
+    active: boolean;
     /**
      * Amount for the product
      */
-    amount?: number;
+    amount: number;
     /**
      * Product description
      */
-    description?: string;
+    description: string;
     /**
-     * Optional schedule ID
+     * List of product features
      */
-    scheduleId?: string;
+    features: Array<string>;
 };
-export namespace UpdateProductDto {
+export namespace ProductResponseDto {
     /**
      * Type of lesson
      */

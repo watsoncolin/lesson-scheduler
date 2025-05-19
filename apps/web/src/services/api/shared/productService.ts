@@ -1,4 +1,4 @@
-import { ProductService as GeneratedProductService } from '@/api/services/ProductService'
+import { ProductsService as GeneratedProductService } from '@/api/services/ProductsService'
 import type { CreateProductDto, UpdateProductDto } from '@/api'
 import { BaseService, WithConfig } from './baseService'
 

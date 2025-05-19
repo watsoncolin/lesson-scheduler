@@ -3,6 +3,8 @@ import { Controller, Get, Post, Body, Param, Delete, NotFoundException, HttpCode
 import { ScheduleService } from './schedule.service'
 import { CreateRegistrationDto } from './dto/create-registration.dto'
 import { RegistrationService } from './registration.service'
+import { Role } from '@lesson-scheduler/shared'
+import { Roles } from 'iam/authentication/decorators/roles.decorator'
 
 @Controller('schedules')
 export class RegistrationController {
@@ -11,6 +13,7 @@ export class RegistrationController {
     private readonly registrationService: RegistrationService,
   ) {}
 
+  @Roles(Role.Admin)
   @Post(':id/registrations')
   create(@Param('id') id: string, @Body() createRegistrationDto: CreateRegistrationDto) {
     return this.registrationService.create(id, createRegistrationDto)

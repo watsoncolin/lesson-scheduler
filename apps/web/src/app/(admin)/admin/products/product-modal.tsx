@@ -5,6 +5,7 @@ import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
 import { ProductService } from '@/services/api/shared/productService'
+import { CreateProductDto } from '@/api'
 
 interface ProductModalProps {
   isOpen: boolean
@@ -18,9 +19,8 @@ export default function ProductModal({ isOpen, onClose, onSuccess }: ProductModa
     description: '',
     amount: 0,
     credits: 0,
-    lessonType: '',
     order: 0,
-    features: ['Personal Instructor', 'Warm Waters', 'Flexible Scheduling'],
+    lessonType: CreateProductDto.lessonType.PRIVATE,
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,7 +31,16 @@ export default function ProductModal({ isOpen, onClose, onSuccess }: ProductModa
     setError(null)
 
     try {
-      await ProductService.create(formData)
+      await ProductService.create({
+        name: formData.name,
+        description: formData.description,
+        amount: formData.amount,
+        credits: formData.credits,
+        order: formData.order,
+        lessonType: formData.lessonType,
+        active: true,
+        features: ['Personal Instructor', 'Warm Waters', 'Flexible Scheduling'],
+      })
       onSuccess()
       onClose()
     } catch (err) {

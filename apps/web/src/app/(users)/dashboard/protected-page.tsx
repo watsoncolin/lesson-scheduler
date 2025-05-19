@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useEffect } from 'react'
 
 import { ReactNode } from 'react'
-import Nav from './components/nav'
+import Nav from './components/Nav'
 import { MeService } from '@/services/api/shared/meService'
 
 const ProtectedPage = ({ children, redirectTo = '/sign-in' }: { children: ReactNode; redirectTo?: string }) => {

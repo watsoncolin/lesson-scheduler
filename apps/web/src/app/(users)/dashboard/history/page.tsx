@@ -6,8 +6,7 @@ import { ProductService } from '@/services/api/shared/productService'
 import { StudentService } from '@/services/api/shared/studentService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { useInstructors, usePools } from '@contexts/index'
-import { IProduct, IStudent } from '@lesson-scheduler/shared'
-import { FindAllSchedulesResponseDto } from '@/api/models/FindAllSchedulesResponseDto'
+import { ProductResponseDto, ScheduleResponseDto, StudentResponseDto } from '@/api'
 import { TransactionResponseDto } from '@/api'
 
 function classNames(...classes: string[]) {
@@ -16,9 +15,9 @@ function classNames(...classes: string[]) {
 
 export default function History() {
   const [transactions, setTransactions] = useState([] as TransactionResponseDto[])
-  const [products, setProducts] = useState([] as IProduct[])
-  const [students, setStudents] = useState([] as IStudent[])
-  const [schedules, setSchedules] = useState([] as FindAllSchedulesResponseDto[])
+  const [products, setProducts] = useState([] as ProductResponseDto[])
+  const [students, setStudents] = useState([] as StudentResponseDto[])
+  const [schedules, setSchedules] = useState([] as ScheduleResponseDto[])
   const { instructors } = useInstructors()
   const { pools } = usePools()
 

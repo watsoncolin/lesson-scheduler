@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LessonTypesEnum, Role } from '@lesson-scheduler/shared'
 
-
-class FindAllSchedulesUserDto {
+class ScheduleUserDto {
   @ApiProperty()
   id: string
   @ApiProperty()
@@ -15,7 +14,7 @@ class FindAllSchedulesUserDto {
   role: Role
 }
 
-class FindAllSchedulesStudentDto {
+class ScheduleStudentDto {
   @ApiProperty()
   id: string
   @ApiProperty()
@@ -26,20 +25,20 @@ class FindAllSchedulesStudentDto {
   notes: string
 }
 
-class FindAllSchedulesRegistrationDto {
+class ScheduleRegistrationDto {
   @ApiProperty()
   studentId: string
   @ApiProperty()
   userId: string
   @ApiProperty()
   createdAt: string
-  @ApiProperty({ type: FindAllSchedulesStudentDto })
-  student: FindAllSchedulesStudentDto
-  @ApiProperty({ type: FindAllSchedulesUserDto })
-  user: FindAllSchedulesUserDto
+  @ApiProperty({ type: ScheduleStudentDto })
+  student: ScheduleStudentDto
+  @ApiProperty({ type: ScheduleUserDto })
+  user: ScheduleUserDto
 }
 
-export class FindAllSchedulesResponseDto {
+export class ScheduleResponseDto {
   @ApiProperty()
   id: string
   @ApiProperty()
@@ -54,6 +53,6 @@ export class FindAllSchedulesResponseDto {
   startDateTime: string
   @ApiProperty()
   endDateTime: string
-  @ApiProperty({ type: [FindAllSchedulesRegistrationDto] })
-  registrations: FindAllSchedulesRegistrationDto[]
+  @ApiProperty({ type: [ScheduleRegistrationDto] })
+  registrations: ScheduleRegistrationDto[]
 }

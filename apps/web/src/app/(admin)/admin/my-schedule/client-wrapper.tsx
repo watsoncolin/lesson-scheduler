@@ -7,13 +7,13 @@ import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { Button } from '@components/button'
 import { parseISO, isSameDay } from 'date-fns'
 import { useUser } from '@contexts/user-context'
-import { FindAllSchedulesResponseDto } from '@/api/models/FindAllSchedulesResponseDto'
+import { ScheduleResponseDto } from '@/api'
 const ITEMS_PER_PAGE = 150
 
 export default function ClientWrapper() {
   const [selectedPool, setSelectedPool] = useState('')
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
-  const [schedules, setSchedules] = useState<FindAllSchedulesResponseDto[]>([])
+  const [schedules, setSchedules] = useState<ScheduleResponseDto[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const { user } = useUser()

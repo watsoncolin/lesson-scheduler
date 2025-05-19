@@ -8,8 +8,6 @@ import { Roles } from 'iam/authentication/decorators/roles.decorator'
 import { TransactionResponseDto } from './dto/transaction-response.dto'
 import { CreditBalanceResponseDto } from './dto/credit-balance-response.dto'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
-import { IsString, IsEnum, IsNumber } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
 
 @ApiTags('Transactions')
 @ApiBearerAuth()

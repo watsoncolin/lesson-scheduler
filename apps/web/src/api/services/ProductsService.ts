@@ -3,29 +3,32 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CreateProductDto } from '../models/CreateProductDto';
+import type { ProductResponseDto } from '../models/ProductResponseDto';
 import type { UpdateProductDto } from '../models/UpdateProductDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class ProductService {
+export class ProductsService {
     /**
-     * @returns any
+     * Get all products
+     * @returns ProductResponseDto List of products
      * @throws ApiError
      */
-    public static productControllerFindAll(): CancelablePromise<any> {
+    public static productControllerFindAll(): CancelablePromise<Array<ProductResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/products',
         });
     }
     /**
+     * Create a new product
      * @param requestBody
-     * @returns any
+     * @returns ProductResponseDto Product created
      * @throws ApiError
      */
     public static productControllerCreate(
         requestBody: CreateProductDto,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<ProductResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/products',
@@ -34,31 +37,36 @@ export class ProductService {
         });
     }
     /**
-     * @param id
-     * @returns any
+     * Get a product by ID
+     * @param id Product ID
+     * @returns ProductResponseDto Product found
      * @throws ApiError
      */
     public static productControllerFindOne(
         id: string,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<ProductResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/products/{id}',
             path: {
                 'id': id,
             },
+            errors: {
+                404: `Product not found`,
+            },
         });
     }
     /**
-     * @param id
+     * Update a product by ID
+     * @param id Product ID
      * @param requestBody
-     * @returns any
+     * @returns ProductResponseDto Product updated
      * @throws ApiError
      */
     public static productControllerUpdate(
         id: string,
         requestBody: UpdateProductDto,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<ProductResponseDto> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/products/{id}',
@@ -67,10 +75,14 @@ export class ProductService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                404: `Product not found`,
+            },
         });
     }
     /**
-     * @param id
+     * Delete a product by ID
+     * @param id Product ID
      * @returns void
      * @throws ApiError
      */
@@ -82,6 +94,9 @@ export class ProductService {
             url: '/api/products/{id}',
             path: {
                 'id': id,
+            },
+            errors: {
+                404: `Product not found`,
             },
         });
     }

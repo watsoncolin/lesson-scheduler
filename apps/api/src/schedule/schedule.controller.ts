@@ -11,7 +11,7 @@ import {
   HttpCode,
   Query,
 } from '@nestjs/common'
-import { ApiQuery, ApiOkResponse, ApiOperation } from '@nestjs/swagger'
+import { ApiQuery, ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
 import { ScheduleService } from './schedule.service'
 import { CreateScheduleDto } from './dto/create-schedule.dto'
@@ -25,9 +25,10 @@ import { Roles } from 'iam/authentication/decorators/roles.decorator'
 import { StudentService } from 'student/student.service'
 import { UserService } from 'user/user.service'
 import { FindAllSchedulesRequestDto } from './dto/find-all-schedules-request.dto'
-import { FindAllSchedulesResponseDto } from './dto/find-all-schedules-response.dto'
 import { SearchScheduleRequestDto } from './dto/search-schedule-request.dto'
 import { SearchScheduleResponseDto } from './dto/search-schedule-response.dto'
+import { ParentTotScheduleResponseDto } from './dto/parent-tot-schedule-response.dto'
+import { ScheduleResponseDto } from './dto/schedules-response.dto'
 
 @Controller('schedules')
 export class ScheduleController {
@@ -44,8 +45,8 @@ export class ScheduleController {
     description: 'Returns all schedules, optionally filtered by scheduleIds.',
   })
   @ApiQuery({ name: 'scheduleIds', required: false, description: 'Comma-separated list of schedule IDs to filter by' })
-  @ApiOkResponse({ type: FindAllSchedulesResponseDto, isArray: true })
-  async findAll(@Query() query: FindAllSchedulesRequestDto): Promise<FindAllSchedulesResponseDto[]> {
+  @ApiOkResponse({ type: ScheduleResponseDto, isArray: true })
+  async findAll(@Query() query: FindAllSchedulesRequestDto): Promise<ScheduleResponseDto[]> {
     const scheduleIds = query.scheduleIds?.split(',').filter(id => id.length > 0)
     if (query.scheduleIds && scheduleIds?.length === 0) {
       return []
@@ -98,6 +99,13 @@ export class ScheduleController {
 
   @Get('parent-tot')
   @Auth(AuthType.None)
+  @ApiOperation({ summary: 'Get all parent-tot schedules' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of parent-tot schedules',
+    type: ParentTotScheduleResponseDto,
+    isArray: true,
+  })
   async findAllParentTot() {
     const schedules = await this.scheduleService.findAllParentTot()
     return schedules.map(schedule => ({
@@ -108,6 +116,11 @@ export class ScheduleController {
   }
 
   @Get('me')
+  @ApiOperation({
+    summary: 'Get all schedules for the logged-in user',
+    description: 'Returns all upcoming schedules for the current user.',
+  })
+  @ApiOkResponse({ type: ScheduleResponseDto, isArray: true })
   async findAllForLoggedInUser(@ActiveUser() user: ActiveUserData) {
     const schedules = await this.scheduleService.findAllByUserId(user.sub)
     return schedules.filter(schedule => schedule.startDateTime > new Date())
@@ -192,8 +205,8 @@ export class ScheduleController {
     return this.scheduleService.findAvailableDates(timezone)
   }
 
-  // TODO add role guard
   @Post()
+  @Roles(Role.Admin)
   create(@Body() createScheduleDto: CreateScheduleDto) {
     return this.scheduleService.create(createScheduleDto)
   }

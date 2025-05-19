@@ -443,9 +443,17 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Student created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Create a student for the current user",
         "tags": [
           "MyStudent"
         ]
@@ -455,9 +463,20 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of students",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get all students for the current user",
         "tags": [
           "MyStudent"
         ]
@@ -471,6 +490,7 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Student ID",
             "schema": {
               "type": "string"
             }
@@ -478,9 +498,20 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Student found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Student not found"
           }
         },
+        "summary": "Get a student by ID for the current user",
         "tags": [
           "MyStudent"
         ]
@@ -492,6 +523,7 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Student ID",
             "schema": {
               "type": "string"
             }
@@ -509,9 +541,20 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "Student updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Student not found"
           }
         },
+        "summary": "Update a student by ID for the current user",
         "tags": [
           "MyStudent"
         ]
@@ -523,6 +566,7 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Student ID",
             "schema": {
               "type": "string"
             }
@@ -530,9 +574,13 @@
         ],
         "responses": {
           "204": {
-            "description": ""
+            "description": "Student deleted"
+          },
+          "404": {
+            "description": "Student not found"
           }
         },
+        "summary": "Delete a student by ID for the current user",
         "tags": [
           "MyStudent"
         ]
@@ -706,7 +754,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FindAllSchedulesResponseDto"
+                    "$ref": "#/components/schemas/ScheduleResponseDto"
                   }
                 }
               }
@@ -747,9 +795,20 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of parent-tot schedules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParentTotScheduleResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get all parent-tot schedules",
         "tags": [
           "Schedule"
         ]
@@ -757,13 +816,25 @@
     },
     "/api/schedules/me": {
       "get": {
+        "description": "Returns all upcoming schedules for the current user.",
         "operationId": "ScheduleController_findAllForLoggedInUser",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get all schedules for the logged-in user",
         "tags": [
           "Schedule"
         ]
@@ -1438,11 +1509,22 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get all products",
         "tags": [
-          "Product"
+          "Products"
         ]
       },
       "post": {
@@ -1460,11 +1542,19 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Product created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Create a new product",
         "tags": [
-          "Product"
+          "Products"
         ]
       }
     },
@@ -1476,6 +1566,7 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Product ID",
             "schema": {
               "type": "string"
             }
@@ -1483,11 +1574,22 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Product found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
           }
         },
+        "summary": "Get a product by ID",
         "tags": [
-          "Product"
+          "Products"
         ]
       },
       "patch": {
@@ -1497,6 +1599,7 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Product ID",
             "schema": {
               "type": "string"
             }
@@ -1514,11 +1617,22 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "Product updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
           }
         },
+        "summary": "Update a product by ID",
         "tags": [
-          "Product"
+          "Products"
         ]
       },
       "delete": {
@@ -1528,6 +1642,7 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Product ID",
             "schema": {
               "type": "string"
             }
@@ -1535,11 +1650,15 @@
         ],
         "responses": {
           "204": {
-            "description": ""
+            "description": "Product deleted"
+          },
+          "404": {
+            "description": "Product not found"
           }
         },
+        "summary": "Delete a product by ID",
         "tags": [
-          "Product"
+          "Products"
         ]
       }
     },
@@ -1548,10 +1667,18 @@
         "operationId": "SiteConfigController_toggleWaitlist",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "The updated site config",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteConfigResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Toggle the waitlist status",
         "tags": [
           "SiteConfig"
         ]
@@ -1563,9 +1690,17 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "The current site config",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteConfigResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Get the current site config",
         "tags": [
           "SiteConfig"
         ]
@@ -2390,11 +2525,33 @@
       },
       "CreateStudentDto": {
         "type": "object",
-        "properties": {}
-      },
-      "UpdateStudentDto": {
-        "type": "object",
-        "properties": {}
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Student name"
+          },
+          "birthday": {
+            "type": "string",
+            "description": "Birthday (ISO date string)"
+          },
+          "ability": {
+            "type": "string",
+            "description": "Ability level"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes"
+          }
+        },
+        "required": [
+          "name",
+          "birthday",
+          "ability"
+        ]
       },
       "StudentResponseDto": {
         "type": "object",
@@ -2427,7 +2584,35 @@
           "notes"
         ]
       },
-      "FindAllSchedulesStudentDto": {
+      "UpdateStudentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Student ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Student name"
+          },
+          "birthday": {
+            "type": "string",
+            "description": "Birthday (ISO date string)"
+          },
+          "ability": {
+            "type": "string",
+            "description": "Ability level"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ScheduleStudentDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -2450,7 +2635,7 @@
           "notes"
         ]
       },
-      "FindAllSchedulesUserDto": {
+      "ScheduleUserDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -2482,7 +2667,7 @@
           "role"
         ]
       },
-      "FindAllSchedulesRegistrationDto": {
+      "ScheduleRegistrationDto": {
         "type": "object",
         "properties": {
           "studentId": {
@@ -2495,10 +2680,10 @@
             "type": "string"
           },
           "student": {
-            "$ref": "#/components/schemas/FindAllSchedulesStudentDto"
+            "$ref": "#/components/schemas/ScheduleStudentDto"
           },
           "user": {
-            "$ref": "#/components/schemas/FindAllSchedulesUserDto"
+            "$ref": "#/components/schemas/ScheduleUserDto"
           }
         },
         "required": [
@@ -2509,7 +2694,7 @@
           "user"
         ]
       },
-      "FindAllSchedulesResponseDto": {
+      "ScheduleResponseDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -2540,7 +2725,7 @@
           "registrations": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FindAllSchedulesRegistrationDto"
+              "$ref": "#/components/schemas/ScheduleRegistrationDto"
             }
           }
         },
@@ -2553,6 +2738,66 @@
           "startDateTime",
           "endDateTime",
           "registrations"
+        ]
+      },
+      "ParentTotScheduleResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "scheduleId123",
+            "description": "Schedule ID"
+          },
+          "poolId": {
+            "type": "string",
+            "example": "poolId123",
+            "description": "Pool ID"
+          },
+          "instructorId": {
+            "type": "string",
+            "example": "instructorId123",
+            "description": "Instructor ID"
+          },
+          "classSize": {
+            "type": "number",
+            "example": 10,
+            "description": "Class size"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ],
+            "description": "Type of lesson"
+          },
+          "startDateTime": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2024-06-01T10:00:00.000Z",
+            "description": "Start date and time"
+          },
+          "endDateTime": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2024-06-01T11:00:00.000Z",
+            "description": "End date and time"
+          },
+          "spotsAvailable": {
+            "type": "number",
+            "example": 5,
+            "description": "Number of spots available"
+          }
+        },
+        "required": [
+          "id",
+          "poolId",
+          "instructorId",
+          "classSize",
+          "lessonType",
+          "startDateTime",
+          "endDateTime",
+          "spotsAvailable"
         ]
       },
       "SearchScheduleStudentDto": {
@@ -2964,13 +3209,206 @@
           "credits"
         ]
       },
+      "ProductResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "productId123",
+            "description": "Product ID"
+          },
+          "order": {
+            "type": "number",
+            "example": 1,
+            "description": "Order of the product"
+          },
+          "name": {
+            "type": "string",
+            "example": "Product Name",
+            "description": "Name of the product"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ],
+            "description": "Type of lesson"
+          },
+          "credits": {
+            "type": "number",
+            "example": 10,
+            "description": "Number of credits"
+          },
+          "active": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is the product active?"
+          },
+          "amount": {
+            "type": "number",
+            "example": 100,
+            "description": "Amount for the product"
+          },
+          "description": {
+            "type": "string",
+            "example": "Description of the product",
+            "description": "Product description"
+          },
+          "features": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "order",
+          "name",
+          "lessonType",
+          "credits",
+          "active",
+          "amount",
+          "description",
+          "features"
+        ]
+      },
       "CreateProductDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "order": {
+            "type": "number",
+            "example": 1,
+            "description": "Order of the product"
+          },
+          "name": {
+            "type": "string",
+            "example": "Product Name",
+            "description": "Name of the product"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ],
+            "description": "Type of lesson"
+          },
+          "description": {
+            "type": "string",
+            "example": "Description of the product",
+            "description": "Product description"
+          },
+          "credits": {
+            "type": "number",
+            "example": 10,
+            "description": "Number of credits"
+          },
+          "amount": {
+            "type": "number",
+            "example": 100,
+            "description": "Amount for the product"
+          },
+          "active": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is the product active?"
+          },
+          "scheduleId": {
+            "type": "string",
+            "example": "scheduleId123",
+            "description": "Optional schedule ID"
+          },
+          "features": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "order",
+          "name",
+          "lessonType",
+          "description",
+          "credits",
+          "amount",
+          "active",
+          "features"
+        ]
       },
       "UpdateProductDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "productId123",
+            "description": "Product ID"
+          },
+          "name": {
+            "type": "string",
+            "example": "Product Name",
+            "description": "Name of the product"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ],
+            "description": "Type of lesson"
+          },
+          "credits": {
+            "type": "number",
+            "example": 10,
+            "description": "Number of credits"
+          },
+          "active": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is the product active?"
+          },
+          "amount": {
+            "type": "number",
+            "example": 100,
+            "description": "Amount for the product"
+          },
+          "description": {
+            "type": "string",
+            "example": "Description of the product",
+            "description": "Product description"
+          },
+          "scheduleId": {
+            "type": "string",
+            "example": "scheduleId123",
+            "description": "Optional schedule ID"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "SiteConfigResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "609e129e8bfa4a0015bfae1c",
+            "description": "Unique identifier for the site config"
+          },
+          "waitlistEnabled": {
+            "type": "boolean",
+            "example": true,
+            "description": "Whether the waitlist is enabled"
+          }
+        },
+        "required": [
+          "id",
+          "waitlistEnabled"
+        ]
       },
       "WaitlistResponseDto": {
         "type": "object",

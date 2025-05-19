@@ -8,18 +8,18 @@ import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { TrashIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useUser } from '@/app/contexts/user-context'
-import { FindAllSchedulesResponseDto } from '@/api/models/FindAllSchedulesResponseDto'
+import { ScheduleResponseDto } from '@/api'
 import { UserResponseDto } from '@/api'
 
 interface SchedulesListProps {
-  schedules: FindAllSchedulesResponseDto[]
+  schedules: ScheduleResponseDto[]
   onDelete?: () => void
 }
 
 export default function SchedulesList({ schedules, onDelete }: SchedulesListProps) {
   const { instructors } = useInstructors()
   const { pools } = usePools()
-  const [scheduleToDelete, setScheduleToDelete] = useState<FindAllSchedulesResponseDto | null>(null)
+  const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleResponseDto | null>(null)
   const [error, setError] = useState<string | null>(null)
   const { user } = useUser()
 

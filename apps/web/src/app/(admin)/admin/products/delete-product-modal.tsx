@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
-import { IProduct } from '@lesson-scheduler/shared'
+import { ProductResponseDto } from '@/api'
 import { ProductService } from '@/services/api/shared/productService'
 
 interface DeleteProductModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
-  product: IProduct
+  product: ProductResponseDto
 }
 
 export default function DeleteProductModal({ isOpen, onClose, onSuccess, product }: DeleteProductModalProps) {

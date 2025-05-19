@@ -5,13 +5,13 @@ import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
 import { Button } from '@components/button'
 import { Input } from '@components/input'
 import { ProductService } from '@/services/api/shared/productService'
-import { IProduct } from '@lesson-scheduler/shared'
+import { ProductResponseDto } from '@/api'
 
 interface ProductEditModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
-  product: IProduct
+  product: ProductResponseDto
 }
 
 export default function ProductEditModal({ isOpen, onClose, onSuccess, product }: ProductEditModalProps) {
@@ -43,7 +43,13 @@ export default function ProductEditModal({ isOpen, onClose, onSuccess, product }
     setError(null)
 
     try {
-      await ProductService.update(product.id, formData)
+      await ProductService.update(product.id, {
+        id: product.id,
+        name: formData.name,
+        description: formData.description,
+        amount: formData.amount,
+        credits: formData.credits,
+      })
       onSuccess()
       onClose()
     } catch (err) {

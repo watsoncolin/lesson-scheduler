@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { IProduct } from '@lesson-scheduler/shared'
+import { ProductResponseDto } from '@/api'
 import DeleteProductModal from './delete-product-modal'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/table'
 import { Button } from '@components/button'
@@ -9,10 +9,10 @@ import ProductEditModal from './product-edit-modal'
 import { ProductService } from '@/services/api/shared/productService'
 
 export default function ProductsList() {
-  const [products, setProducts] = useState<IProduct[]>([])
+  const [products, setProducts] = useState<ProductResponseDto[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [editingProduct, setEditingProduct] = useState<IProduct | null>(null)
-  const [deletingProduct, setDeletingProduct] = useState<IProduct | null>(null)
+  const [editingProduct, setEditingProduct] = useState<ProductResponseDto | null>(null)
+  const [deletingProduct, setDeletingProduct] = useState<ProductResponseDto | null>(null)
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -30,13 +30,13 @@ export default function ProductsList() {
     fetchProducts()
   }, [])
 
-  const handleEditClick = (product: IProduct, e: React.MouseEvent) => {
+  const handleEditClick = (product: ProductResponseDto, e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setEditingProduct(product)
   }
 
-  const handleDeleteClick = (product: IProduct, e: React.MouseEvent) => {
+  const handleDeleteClick = (product: ProductResponseDto, e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setDeletingProduct(product)

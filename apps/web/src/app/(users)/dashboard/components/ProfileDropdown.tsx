@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import SignOutButton from './sign-out-button'
+import SignOutButton from './SignOutButton'
 import { AvatarComponent } from 'avatar-initials'
 import { useUser } from '@contexts/index'
 function classNames(...classes: string[]) {

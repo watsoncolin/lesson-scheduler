@@ -3,5 +3,25 @@
 /* tslint:disable */
 /* eslint-disable */
 export type CreateStudentDto = {
+    /**
+     * User ID
+     */
+    userId?: string;
+    /**
+     * Student name
+     */
+    name: string;
+    /**
+     * Birthday (ISO date string)
+     */
+    birthday: string;
+    /**
+     * Ability level
+     */
+    ability: string;
+    /**
+     * Notes
+     */
+    notes?: string;
 };
 

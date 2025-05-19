@@ -2,18 +2,18 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FindAllSchedulesRegistrationDto } from './FindAllSchedulesRegistrationDto';
-export type FindAllSchedulesResponseDto = {
+import type { ScheduleRegistrationDto } from './ScheduleRegistrationDto';
+export type ScheduleResponseDto = {
     id: string;
     poolId: string;
     instructorId: string;
     classSize: number;
-    lessonType: FindAllSchedulesResponseDto.lessonType;
+    lessonType: ScheduleResponseDto.lessonType;
     startDateTime: string;
     endDateTime: string;
-    registrations: Array<FindAllSchedulesRegistrationDto>;
+    registrations: Array<ScheduleRegistrationDto>;
 };
-export namespace FindAllSchedulesResponseDto {
+export namespace ScheduleResponseDto {
     export enum lessonType {
         PRIVATE = 'private',
         GROUP = 'group',

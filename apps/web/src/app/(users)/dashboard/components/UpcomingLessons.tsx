@@ -5,8 +5,9 @@ import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/r
 import { StudentService } from '@/services/api/shared/studentService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { RegistrationService } from '@/services/api/shared/registrationService'
-import { Student, Pool, Instructor, Schedule } from '@lib/index'
+import { Student, Pool, Instructor } from '@lib/index'
 import { usePools, useInstructors, useCredits, PoolContextType, InstructorsContextType } from '@contexts/index'
+import { ScheduleResponseDto } from '@/api'
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ')
@@ -23,7 +24,7 @@ export default function UpcomingLessons() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [students, setStudents] = useState([] as Student[])
-  const [schedules, setSchedules] = useState([] as Schedule[])
+  const [schedules, setSchedules] = useState([] as ScheduleResponseDto[])
   const { refreshCredits } = useCredits()
 
   const poolsContext = usePools() as PoolContextType
@@ -69,7 +70,7 @@ export default function UpcomingLessons() {
     setLoading(studentsLoading || schedulesLoading)
   }, [studentsLoading, schedulesLoading])
 
-  const handleCancel = async (e: React.MouseEvent, schedule: Schedule, student: Student) => {
+  const handleCancel = async (e: React.MouseEvent, schedule: ScheduleResponseDto, student: Student) => {
     e.preventDefault()
     try {
       await RegistrationService.remove(schedule.id, student.id)

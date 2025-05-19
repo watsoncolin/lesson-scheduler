@@ -3,12 +3,11 @@
 import { Button } from '@/app/components/button'
 import { useState } from 'react'
 import { UserService } from '@/services/api/shared/userService'
-import { IInstructor } from '@lesson-scheduler/shared'
-import { UpdateUserDto, UserResponseDto } from '@/api'
+import { UpdateUserDto, UserResponseDto, InstructorResponseDto } from '@/api'
 
 interface RolesSectionProps {
   user: UserResponseDto
-  instructors: IInstructor[]
+  instructors: InstructorResponseDto[]
 }
 
 export function RolesSection({ user, instructors }: RolesSectionProps) {

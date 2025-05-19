@@ -1,4 +1,3 @@
-import { Heading } from '@components/heading'
 import type { Metadata } from 'next'
 import UsersPageClient from './users-page-client'
 

@@ -3,16 +3,17 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CreateInstructorDto } from '../models/CreateInstructorDto';
+import type { InstructorResponseDto } from '../models/InstructorResponseDto';
 import type { UpdateInstructorDto } from '../models/UpdateInstructorDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class InstructorService {
+export class InstructorsService {
     /**
-     * @returns any
+     * @returns InstructorResponseDto
      * @throws ApiError
      */
-    public static instructorControllerFindAll(): CancelablePromise<any> {
+    public static instructorControllerFindAll(): CancelablePromise<Array<InstructorResponseDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/instructors',
@@ -20,12 +21,12 @@ export class InstructorService {
     }
     /**
      * @param requestBody
-     * @returns any
+     * @returns InstructorResponseDto
      * @throws ApiError
      */
     public static instructorControllerCreate(
         requestBody: CreateInstructorDto,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<InstructorResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/instructors',
@@ -35,30 +36,33 @@ export class InstructorService {
     }
     /**
      * @param id
-     * @returns any
+     * @returns InstructorResponseDto
      * @throws ApiError
      */
     public static instructorControllerFindOne(
         id: string,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<InstructorResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/instructors/{id}',
             path: {
                 'id': id,
             },
+            errors: {
+                404: `Instructor not found`,
+            },
         });
     }
     /**
      * @param id
      * @param requestBody
-     * @returns any
+     * @returns InstructorResponseDto
      * @throws ApiError
      */
     public static instructorControllerUpdate(
         id: string,
         requestBody: UpdateInstructorDto,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<InstructorResponseDto> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/instructors/{id}',
@@ -67,6 +71,9 @@ export class InstructorService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                404: `Instructor not found`,
+            },
         });
     }
     /**
@@ -82,6 +89,9 @@ export class InstructorService {
             url: '/api/instructors/{id}',
             path: {
                 'id': id,
+            },
+            errors: {
+                404: `Instructor not found`,
             },
         });
     }

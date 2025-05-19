@@ -5,9 +5,10 @@ import { TransactionsService } from '@/services/api/shared/transactionsService'
 import { ProductService } from '@/services/api/shared/productService'
 import { StudentService } from '@/services/api/shared/studentService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
-import { useInstructors, usePools } from '@contexts/index'
-import { ProductResponseDto, ScheduleResponseDto, StudentResponseDto } from '@/api'
+import { InstructorResponseDto, PoolDto, ProductResponseDto, ScheduleResponseDto, StudentResponseDto } from '@/api'
 import { TransactionResponseDto } from '@/api'
+import { PoolService } from '@/services/api/shared/poolService'
+import { InstructorService } from '@/services/api/shared/instructorService'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -18,8 +19,19 @@ export default function History() {
   const [products, setProducts] = useState([] as ProductResponseDto[])
   const [students, setStudents] = useState([] as StudentResponseDto[])
   const [schedules, setSchedules] = useState([] as ScheduleResponseDto[])
-  const { instructors } = useInstructors()
-  const { pools } = usePools()
+
+  const [pools, setPools] = useState([] as PoolDto[])
+  const [instructors, setInstructors] = useState([] as InstructorResponseDto[])
+
+  const fetchPools = async () => {
+    const pools = await PoolService.findAll()
+    setPools(pools)
+  }
+
+  const fetchInstructors = async () => {
+    const instructors = await InstructorService.findAll()
+    setInstructors(instructors)
+  }
 
   const fetchTransactions = async () => {
     try {
@@ -60,6 +72,8 @@ export default function History() {
     fetchTransactions()
     fetchProducts()
     fetchStudents()
+    fetchPools()
+    fetchInstructors()
   }, [])
 
   return (

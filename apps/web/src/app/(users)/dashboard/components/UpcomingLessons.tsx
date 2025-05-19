@@ -5,9 +5,9 @@ import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/r
 import { StudentService } from '@/services/api/shared/studentService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { RegistrationService } from '@/services/api/shared/registrationService'
-import { Student, Pool, Instructor } from '@lib/index'
-import { usePools, useInstructors, useCredits, PoolContextType, InstructorsContextType } from '@contexts/index'
-import { ScheduleResponseDto } from '@/api'
+import { Student } from '@lib/index'
+import { useCredits } from '@contexts/index'
+import { ScheduleResponseDto, InstructorResponseDto, PoolDto } from '@/api'
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ')
@@ -20,18 +20,18 @@ const isWithin24Hours = (date: string) => {
   return hoursUntilLesson <= 24
 }
 
-export default function UpcomingLessons() {
+export default function UpcomingLessons({
+  instructors,
+  pools,
+}: {
+  instructors: InstructorResponseDto[]
+  pools: PoolDto[]
+}) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [students, setStudents] = useState([] as Student[])
   const [schedules, setSchedules] = useState([] as ScheduleResponseDto[])
   const { refreshCredits } = useCredits()
-
-  const poolsContext = usePools() as PoolContextType
-  const pools = poolsContext?.pools || ([] as Pool[])
-
-  const instructorsContext = useInstructors() as InstructorsContextType
-  const instructors = instructorsContext?.instructors || ([] as Instructor[])
 
   // Track loading for both students and schedules
   const [studentsLoading, setStudentsLoading] = useState(true)

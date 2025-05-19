@@ -10,16 +10,7 @@ import {
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/20/solid'
-import {
-  Listbox,
-  ListboxOption,
-  ListboxOptions,
-  Menu,
-  Switch,
-  Transition,
-  ListboxButton,
-  Button,
-} from '@headlessui/react'
+import { Listbox, ListboxOption, ListboxOptions, Transition, ListboxButton } from '@headlessui/react'
 import Filter from './components/filter'
 import { StudentService } from '@/services/api/shared/studentService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
@@ -27,11 +18,13 @@ import { RegistrationService } from '@/services/api/shared/registrationService'
 import React from 'react'
 import { Student } from '@lib/student'
 import { useUser } from '@contexts/user-context'
-import { usePools } from '@contexts/pools-context'
-import { useInstructors } from '@contexts/instructor-context'
 import { useCredits } from '@contexts/credits-context'
 import { SignWaiverButton } from './sign-waiver-button'
 import { SearchScheduleResponseDto } from '@/api/models/SearchScheduleResponseDto'
+import { InstructorResponseDto } from '@/api'
+import { PoolDto } from '@/api'
+import { PoolService } from '@/services/api/shared/poolService'
+import { InstructorService } from '@/services/api/shared/instructorService'
 export interface Option {
   value: string
   label: string
@@ -72,6 +65,19 @@ export default function Schedule() {
   const itemsPerPage = 10
   const [availableDates, setAvailableDates] = useState([] as string[])
 
+  const [pools, setPools] = useState([] as PoolDto[])
+  const [instructors, setInstructors] = useState([] as InstructorResponseDto[])
+
+  const fetchPools = async () => {
+    const pools = await PoolService.findAll()
+    setPools(pools)
+  }
+
+  const fetchInstructors = async () => {
+    const instructors = await InstructorService.findAll()
+    setInstructors(instructors)
+  }
+
   useEffect(() => {
     const fetchAvailableDates = async () => {
       const dates = await ScheduleService.findAvailableDates()
@@ -80,9 +86,12 @@ export default function Schedule() {
     fetchAvailableDates()
   }, [])
 
+  useEffect(() => {
+    fetchPools()
+    fetchInstructors()
+  }, [])
+
   const { user, refreshUser } = useUser()
-  const { pools } = usePools()
-  const { instructors } = useInstructors()
   const days = [
     { value: 'monday', label: 'Monday', checked: true },
     { value: 'tuesday', label: 'Tuesday', checked: true },

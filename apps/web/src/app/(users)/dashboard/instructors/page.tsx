@@ -1,6 +1,6 @@
 import Instructors from '@components/instructors'
 
-export default function Students() {
+export default function InstructorsPage() {
   return (
     <>
       <div className="py-10">

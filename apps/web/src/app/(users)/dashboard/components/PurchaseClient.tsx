@@ -10,12 +10,11 @@ import { useState, useEffect } from 'react'
 import { PaymentService } from '@/services/api/shared/paymentService'
 import { WaitlistService } from '@/services/api/shared/waitlistService'
 import React from 'react'
-import { usePools } from '@contexts/pools-context'
 import { useUser } from '@contexts/user-context'
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import { Button } from '@/app/components/button'
 import { useRouter } from 'next/navigation'
-import { ProductResponseDto, ParentTotScheduleResponseDto, StudentResponseDto } from '@/api'
+import { ProductResponseDto, ParentTotScheduleResponseDto, StudentResponseDto, PoolDto } from '@/api'
 
 interface PurchaseClientProps {
   products: ProductResponseDto[]
@@ -24,6 +23,7 @@ interface PurchaseClientProps {
   waitlistEnabled: boolean
   onWaitlist: boolean
   purchaseEnabled: boolean
+  pools: PoolDto[]
 }
 
 export default function PurchaseClient({
@@ -33,6 +33,7 @@ export default function PurchaseClient({
   waitlistEnabled,
   onWaitlist: initialOnWaitlist,
   purchaseEnabled,
+  pools,
 }: PurchaseClientProps) {
   const router = useRouter()
   const [selectedProductId, setSelectedProductId] = useState('')
@@ -42,7 +43,6 @@ export default function PurchaseClient({
   const [canUseApplePay, setCanUseApplePay] = useState(false)
   const [selectedScheduleId, setSelectedScheduleId] = useState('')
   const [selectedStudentId, setSelectedStudentId] = useState('')
-  const { pools } = usePools()
   const { user } = useUser()
   const [onWaitlist, setOnWaitlist] = useState(initialOnWaitlist)
 

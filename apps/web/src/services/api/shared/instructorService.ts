@@ -1,4 +1,4 @@
-import { InstructorService as GeneratedInstructorService } from '@/api/services/InstructorService'
+import { InstructorsService as GeneratedInstructorService } from '@/api/services/InstructorsService'
 import type { CreateInstructorDto, UpdateInstructorDto } from '@/api'
 import { BaseService, WithConfig } from './baseService'
 

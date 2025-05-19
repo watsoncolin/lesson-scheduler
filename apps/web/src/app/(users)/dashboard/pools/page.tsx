@@ -1,6 +1,6 @@
 import Pools from '@components/pools'
 
-export default function Students() {
+export default function PoolsPage() {
   return (
     <>
       <div className="py-10">

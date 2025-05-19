@@ -34,7 +34,7 @@ export default async function Index() {
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             <div className={styles.page}>
               <Credits stats={stats} />
-              <UpcomingLessons />
+              <UpcomingLessons instructors={instructors} pools={pools} />
             </div>
           </div>
         </main>

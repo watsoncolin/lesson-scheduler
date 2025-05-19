@@ -6,15 +6,17 @@ import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { StudentService } from '@/services/api/shared/studentService'
 import { ConfigService } from '@/services/api/shared/configService'
 import { WaitlistService } from '@/services/api/shared/waitlistService'
+import { PoolService } from '@/services/api/shared/poolService'
 
 export default async function PurchasePage() {
   // Fetch all required data on the server
-  const [products, schedules, students, config, waitlist] = await Promise.all([
+  const [products, schedules, students, config, waitlist, pools] = await Promise.all([
     ProductService.findAll(),
     ScheduleService.findParentTot(),
     StudentService.findMyStudents(),
     ConfigService.findOne(),
-    WaitlistService.me().catch(() => null), // waitlist may fail if not on waitlist
+    WaitlistService.me().catch(() => null),
+    PoolService.findAll(),
   ])
 
   return (
@@ -25,6 +27,7 @@ export default async function PurchasePage() {
       waitlistEnabled={config.waitlistEnabled}
       onWaitlist={!!waitlist}
       purchaseEnabled={waitlist?.allowed ?? false}
+      pools={pools}
     />
   )
 }

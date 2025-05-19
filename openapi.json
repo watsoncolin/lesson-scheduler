@@ -1812,11 +1812,21 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InstructorResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
-          "Instructor"
+          "instructors"
         ]
       },
       "post": {
@@ -1834,11 +1844,18 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstructorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
-          "Instructor"
+          "instructors"
         ]
       }
     },
@@ -1857,11 +1874,21 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstructorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Instructor not found"
           }
         },
         "tags": [
-          "Instructor"
+          "instructors"
         ]
       },
       "put": {
@@ -1888,11 +1915,21 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstructorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Instructor not found"
           }
         },
         "tags": [
-          "Instructor"
+          "instructors"
         ]
       },
       "delete": {
@@ -1909,11 +1946,14 @@
         ],
         "responses": {
           "204": {
-            "description": ""
+            "description": "Instructor deleted"
+          },
+          "404": {
+            "description": "Instructor not found"
           }
         },
         "tags": [
-          "Instructor"
+          "instructors"
         ]
       }
     },
@@ -3456,6 +3496,32 @@
           "allowed",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "InstructorResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "bio",
+          "imageUrl"
         ]
       },
       "CreateInstructorDto": {

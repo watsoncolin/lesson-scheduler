@@ -13,11 +13,7 @@ export default function ClientProviders({ children }: { children: React.ReactNod
       <SpeedInsights />
       <ProtectedPage>
         <AppProvider>
-          <InstructorsProvider>
-            <PoolsProvider>
-              <CreditsProvider>{children}</CreditsProvider>
-            </PoolsProvider>
-          </InstructorsProvider>
+          <CreditsProvider>{children}</CreditsProvider>
         </AppProvider>
       </ProtectedPage>
     </UserProvider>

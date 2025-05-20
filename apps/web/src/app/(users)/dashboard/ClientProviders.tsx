@@ -1,6 +1,6 @@
 'use client'
 import ProtectedPage from './protected-page'
-import { CreditsProvider, InstructorsProvider, PoolsProvider, UserProvider } from '@contexts/index'
+import { CreditsProvider, UserProvider } from '@contexts/index'
 import { AppProvider } from '../../app-provider'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'

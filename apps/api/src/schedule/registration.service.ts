@@ -13,6 +13,8 @@ import { UserService } from 'user/user.service'
 import { RegistrationCanceledEvent } from './events/registration-canceled.event'
 import { EventBus } from '@nestjs/cqrs'
 import { differenceInHours } from 'date-fns'
+import { StudentService } from 'student/student.service'
+
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
     id: entity._id.toString(),
@@ -39,6 +41,7 @@ export class RegistrationService {
     private readonly transactionService: TransactionService,
     private readonly userService: UserService,
     private readonly eventBus: EventBus,
+    private readonly studentService: StudentService,
   ) {}
 
   async create(scheduleId: string, createRegistrationDto: CreateRegistrationDto): Promise<Schedule> {
@@ -58,6 +61,11 @@ export class RegistrationService {
 
     if (schedule.classSize <= schedule.registrations.length) {
       throw new BadRequestException('Class is full')
+    }
+
+    const student = await this.studentService.findOne(createRegistrationDto.studentId)
+    if (!student || student.userId.toString() !== createRegistrationDto.userId) {
+      throw new NotFoundException('Student not found')
     }
 
     const creditBalances = await this.transactionService.readCreditBalances(createRegistrationDto.userId)

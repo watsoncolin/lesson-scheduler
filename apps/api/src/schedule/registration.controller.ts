@@ -13,7 +13,6 @@ export class RegistrationController {
     private readonly registrationService: RegistrationService,
   ) {}
 
-  @Roles(Role.Admin)
   @Post(':id/registrations')
   create(@Param('id') id: string, @Body() createRegistrationDto: CreateRegistrationDto) {
     return this.registrationService.create(id, createRegistrationDto)

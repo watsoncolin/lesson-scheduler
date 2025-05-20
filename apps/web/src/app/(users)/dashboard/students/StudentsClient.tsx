@@ -4,7 +4,7 @@ import { useState } from 'react'
 import StudentModal from './components/student-modal'
 import { Student } from '@lib/student'
 import { StudentService } from '@/services/api/shared/studentService'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 function calculateAge(birthday: string | Date): number {
   const birthDate = new Date(birthday)

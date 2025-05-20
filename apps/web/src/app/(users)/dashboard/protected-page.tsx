@@ -4,7 +4,6 @@ import { useEffect } from 'react'
 
 import { ReactNode } from 'react'
 import Nav from './components/Nav'
-import { MeService } from '@/services/api/shared/meService'
 
 const ProtectedPage = ({ children, redirectTo = '/sign-in' }: { children: ReactNode; redirectTo?: string }) => {
   const router = useRouter()
@@ -13,7 +12,8 @@ const ProtectedPage = ({ children, redirectTo = '/sign-in' }: { children: ReactN
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const user = await MeService.findMe()
+        const userString = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+        const user = userString ? JSON.parse(userString) : null
         if (!user) {
           router.push(redirectTo)
         }

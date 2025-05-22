@@ -5,12 +5,11 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const authToken = request.cookies.get('authToken')?.value
 
-  // Protect dashboard routes
-  if (pathname.startsWith('/dashboard')) {
-    if (!authToken) {
-      const signInUrl = new URL('/sign-in', request.url)
-      return NextResponse.redirect(signInUrl)
-    }
+  const isDashboardRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/users/dashboard')
+
+  if (isDashboardRoute && !authToken) {
+    const signInUrl = new URL('/sign-in', request.url)
+    return NextResponse.redirect(signInUrl)
   }
 
   // Clone the request headers
@@ -28,5 +27,5 @@ export function middleware(request: NextRequest) {
 
 // Configure which routes the middleware should run on
 export const config = {
-  matcher: ['/api/:path*', '/dashboard/:path*'],
+  matcher: ['/api/:path*', '/dashboard/:path*', '/(users)/dashboard/:path*'],
 }

@@ -1,9 +1,9 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react'
 import { ReactNode } from 'react'
-import { UserResponseDto } from '@/api'
+import { ApiError, UserResponseDto } from '@/api'
 import { MeService } from '@/services/api/shared/meService'
-
+import { redirect } from 'next/navigation'
 export interface UserContextType {
   user: UserResponseDto | null
   refreshUser: () => void
@@ -32,7 +32,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         console.error('Failed to fetch user details')
       }
     } catch (error) {
-      console.error('Error fetching user details:', error)
+      if (error instanceof ApiError && error.status === 401) {
+        console.error('User is not authenticated')
+        setUser(null)
+        redirect('/sign-in')
+      } else {
+        console.error('Error fetching user details:', error)
+      }
     }
   }
 

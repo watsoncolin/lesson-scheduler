@@ -19,7 +19,7 @@ export class StudentEntity extends Document {
   @Prop({ required: true })
   birthday: Date
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   ability: string
 
   @Prop({ required: false })

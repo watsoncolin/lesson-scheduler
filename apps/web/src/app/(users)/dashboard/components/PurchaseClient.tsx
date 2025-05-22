@@ -336,7 +336,7 @@ export default function PurchaseClient({
                     clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
                     currency: 'USD',
                     intent: 'capture',
-                    disableFunding: ['paylater', 'card'],
+                    disableFunding: ['paylater'],
                   }}
                 >
                   <PayPalButtons

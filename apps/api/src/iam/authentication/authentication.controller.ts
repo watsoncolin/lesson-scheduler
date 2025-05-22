@@ -31,6 +31,7 @@ export class AuthenticationController {
       httpOnly: true,
       sameSite: 'lax',
       domain: process.env.NODE_ENV === 'production' ? '.stansburyswim.com' : 'localhost',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in ms
     })
     return result
   }
@@ -47,6 +48,7 @@ export class AuthenticationController {
       httpOnly: true,
       sameSite: 'lax',
       domain: process.env.NODE_ENV === 'production' ? '.stansburyswim.com' : 'localhost',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in ms
     })
     return result
   }
@@ -62,7 +64,8 @@ export class AuthenticationController {
       secure: this.configService.get('NODE_ENV') === 'production',
       httpOnly: true,
       sameSite: 'lax',
-      domain: '.stansburyswim.com',
+      domain: process.env.NODE_ENV === 'production' ? '.stansburyswim.com' : 'localhost',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in ms
     })
     return result
   }

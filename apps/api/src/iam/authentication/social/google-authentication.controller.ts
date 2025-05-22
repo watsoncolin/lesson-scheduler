@@ -22,6 +22,7 @@ export class GoogleAuthenticationController {
       httpOnly: true,
       sameSite: 'lax',
       domain: process.env.NODE_ENV === 'production' ? '.stansburyswim.com' : 'localhost',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in ms
     })
     return result
   }

@@ -4,7 +4,7 @@ const COOKIE_SETTINGS = process.env.NODE_ENV === 'development' ? 'path=/;' : 'pa
 export const AUTH_COOKIE_NAME = 'authToken'
 
 // Client-side cookie functions
-export const setCookie = (name: string, value: string, days = 7) => {
+export const setCookie = (name: string, value: string, days = 30) => {
   if (typeof window === 'undefined') return // Skip if running on server
 
   const date = new Date()
@@ -59,6 +59,7 @@ export const setServerCookie = async (
   const cookieStore = await cookies()
   cookieStore.set(name, value, {
     ...options,
+    maxAge: options.maxAge ?? 30 * 24 * 60 * 60, // 30 days in seconds
     path: options.path || '/',
     secure: process.env.NODE_ENV === 'production',
     sameSite: options.sameSite || 'lax',

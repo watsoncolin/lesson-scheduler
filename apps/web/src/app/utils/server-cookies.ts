@@ -20,6 +20,7 @@ export const setServerCookie = async (
   const cookieStore = await cookies()
   cookieStore.set(name, value, {
     ...options,
+    maxAge: options.maxAge ?? 30 * 24 * 60 * 60, // 30 days in seconds
     path: options.path || '/',
     secure: process.env.NODE_ENV === 'production',
     sameSite: options.sameSite || 'lax',

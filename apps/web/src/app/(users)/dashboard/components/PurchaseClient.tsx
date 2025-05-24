@@ -45,6 +45,12 @@ export default function PurchaseClient({
   const [selectedStudentId, setSelectedStudentId] = useState('')
   const { user } = useUser()
   const [onWaitlist, setOnWaitlist] = useState(initialOnWaitlist)
+  const [isPaying, setIsPaying] = useState(false)
+
+  const currencyFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  })
 
   useEffect(() => {
     if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
@@ -215,12 +221,14 @@ export default function PurchaseClient({
                       border: '1px solid #D1D5DB',
                     }}
                     className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
-                    disabled={isMissingContactInfo}
+                    disabled={isMissingContactInfo || isPaying}
                   />
                   <div className="flex flex-col flex-1">
                     <span className="ml-3 flex flex-col">
-                      <span className="block text-sm font-medium text-gray-900 ">{product.name}</span>
-                      <span className="block text-sm text-gray-500 ">{product.description}</span>
+                      <span className="block text-sm font-medium text-gray-900 ">{product.name} </span>
+                      <span className="block text-sm text-gray-500 ">
+                        {product.description} {currencyFormatter.format(product.amount / product.credits)} per lesson
+                      </span>
                     </span>
                   </div>
                   {product.credits == 1 ? (
@@ -234,7 +242,7 @@ export default function PurchaseClient({
                           name="quantity"
                           className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={e => setQuantity(parseInt(e.target.value))}
-                          disabled={isMissingContactInfo}
+                          disabled={isMissingContactInfo || isPaying}
                         >
                           <option>1</option>
                           <option>2</option>
@@ -256,7 +264,7 @@ export default function PurchaseClient({
                   key={product.id}
                   aria-label={product.name}
                   aria-description={product.description}
-                  className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
+                  className="group flex flex-col sm:flex-row gap-4 cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
                 >
                   <input
                     value={product.name}
@@ -265,25 +273,27 @@ export default function PurchaseClient({
                     name="product"
                     type="radio"
                     className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
-                    disabled={isMissingContactInfo}
+                    disabled={isMissingContactInfo || isPaying}
                   />
                   <div className="flex flex-col flex-1">
-                    <span className="ml-3 flex flex-col">
+                    <span className="ml-0 sm:ml-3 flex flex-col">
                       <span className="block text-sm font-medium text-gray-900 ">{product.name}</span>
-                      <span className="block text-sm text-gray-500 ">{product.description}</span>
+                      <span className="block text-sm text-gray-500 ">
+                        {product.description} {currencyFormatter.format(product.amount / product.credits)} per session
+                      </span>
                     </span>
                   </div>
-                  <div>
+                  <div className="flex flex-col gap-2 w-full sm:w-auto">
                     <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
                       Session
                     </label>
-                    <div className="mt-2 grid grid-cols-1">
+                    <div className="mt-2">
                       <select
                         id="quantity"
                         name="quantity"
-                        className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         onChange={e => setSelectedScheduleId(e.target.value)}
-                        disabled={isMissingContactInfo}
+                        disabled={isMissingContactInfo || isPaying}
                       >
                         <option>select a parent and tot session</option>
                         {schedules
@@ -305,17 +315,17 @@ export default function PurchaseClient({
                       </select>
                     </div>
                   </div>
-                  <div className="px-4">
+                  <div className="flex flex-col gap-2 w-full sm:w-auto sm:px-4">
                     <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
                       Student
                     </label>
-                    <div className="mt-2 grid grid-cols-1">
+                    <div className="mt-2">
                       <select
                         id="quantity"
                         name="quantity"
-                        className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         onChange={e => setSelectedStudentId(e.target.value)}
-                        disabled={isMissingContactInfo}
+                        disabled={isMissingContactInfo || isPaying}
                       >
                         <option>select a student</option>
                         {students.map(student => (
@@ -330,16 +340,17 @@ export default function PurchaseClient({
               ))}
             </fieldset>
             <div className="mt-4">
-              <div className="flex space-x-4">
+              <div className="w-full sm:w-[24rem] md:w-[32rem] mx-auto flex flex-col items-center">
                 <PayPalScriptProvider
                   options={{
                     clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
                     currency: 'USD',
                     intent: 'capture',
-                    disableFunding: ['paylater', 'card'],
+                    disableFunding: ['paylater'],
                   }}
                 >
                   <PayPalButtons
+                    className="w-full"
                     style={{
                       color: 'black',
                       shape: 'rect',
@@ -347,21 +358,25 @@ export default function PurchaseClient({
                       height: 50,
                     }}
                     createOrder={async (data, actions) => {
+                      setIsPaying(true)
                       let order_id = await paypalCreateOrder()
                       return order_id + ''
                     }}
                     onApprove={async (data, actions): Promise<void> => {
                       await paypalCaptureOrder(data.orderID)
+                      setIsPaying(false)
                     }}
-                    disabled={selectedProductId == '' || isMissingContactInfo}
+                    onError={() => setIsPaying(false)}
+                    onCancel={() => setIsPaying(false)}
                   />
                 </PayPalScriptProvider>
                 {canUseApplePay ? (
                   <button
                     type="submit"
                     style={{ backgroundColor: 'black', maxHeight: '50px' }}
-                    disabled={selectedProductId == '' || isMissingContactInfo}
+                    disabled={selectedProductId == '' || isMissingContactInfo || isPaying}
                     onClick={handlePayWithApplePay}
+                    className="mt-4 w-full"
                   >
                     <img
                       src="/images/button-pay-with@2x.png"

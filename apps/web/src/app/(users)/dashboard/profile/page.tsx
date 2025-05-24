@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { MeService } from '@/services/api/shared/meService'
 import { useUser } from '@contexts/user-context'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
+import Header from '../components/Header'
 
 export default function Profile() {
   const { user, refreshUser } = useUser()
@@ -77,12 +78,8 @@ export default function Profile() {
 
   return (
     <>
+      <Header title="My Profile" />
       <div className="py-10">
-        <header>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">My Profile</h1>
-          </div>
-        </header>
         <main className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             <div className="px-4 sm:px-6 lg:px-8">

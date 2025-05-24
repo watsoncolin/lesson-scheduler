@@ -5,6 +5,7 @@ import StudentModal from './components/student-modal'
 import { Student } from '@lib/student'
 import { StudentService } from '@/services/api/shared/studentService'
 import React from 'react'
+import Header from '../components/Header'
 
 function calculateAge(birthday: string | Date): number {
   const birthDate = new Date(birthday)
@@ -70,13 +71,9 @@ export default function StudentsClient({ students: initialStudents, error: initi
   }
 
   return (
-    <>
+    <div>
+      <Header title="My Students" />
       <div className="py-10">
-        <header>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">My Students</h1>
-          </div>
-        </header>
         <main className="px-6">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
             <div>
@@ -155,6 +152,6 @@ export default function StudentsClient({ students: initialStudents, error: initi
           onDelete={handleDelete}
         />
       )}
-    </>
+    </div>
   )
 }

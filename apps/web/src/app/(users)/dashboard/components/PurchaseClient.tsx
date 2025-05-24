@@ -15,6 +15,7 @@ import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import { Button } from '@/app/components/button'
 import { useRouter } from 'next/navigation'
 import { ProductResponseDto, ParentTotScheduleResponseDto, StudentResponseDto, PoolDto } from '@/api'
+import Header from './Header'
 
 interface PurchaseClientProps {
   products: ProductResponseDto[]
@@ -145,14 +146,10 @@ export default function PurchaseClient({
 
   return (
     <>
-      <div className="py-10">
-        <header>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">Purchase</h1>
-          </div>
-        </header>
+      <Header title="Purchase" />
+      <div>
         <main className="px-6">
-          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 py-10">
+          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
             {waitlistEnabled && !purchaseEnabled && (
               <div className="mt-2 border-l-4 border-yellow-400 bg-yellow-50 p-4">
                 <div className="flex">
@@ -203,144 +200,199 @@ export default function PurchaseClient({
                 </div>
               </div>
             )}
-            <fieldset aria-label="products" className="-space-y-px rounded-md bg-white">
-              {privateLessons.map(product => (
-                <label
-                  key={product.id}
-                  aria-label={product.name}
-                  aria-description={product.description}
-                  className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
-                >
-                  <input
-                    value={product.name}
-                    checked={selectedProductId == product.id}
-                    onChange={() => setSelectedProductId(product.id)}
-                    name="product"
-                    type="radio"
-                    style={{
-                      border: '1px solid #D1D5DB',
-                    }}
-                    className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
-                    disabled={isMissingContactInfo || isPaying}
-                  />
-                  <div className="flex flex-col flex-1">
-                    <span className="ml-3 flex flex-col">
-                      <span className="block text-sm font-medium text-gray-900 ">{product.name} </span>
-                      <span className="block text-sm text-gray-500 ">
-                        {product.description} {currencyFormatter.format(product.amount / product.credits)} per lesson
+            <div className="mt-4">
+              <fieldset aria-label="products" className="-space-y-px rounded-md bg-white">
+                {privateLessons.map(product => (
+                  <label
+                    key={product.id}
+                    aria-label={product.name}
+                    aria-description={product.description}
+                    className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
+                  >
+                    <input
+                      value={product.name}
+                      checked={selectedProductId == product.id}
+                      onChange={() => setSelectedProductId(product.id)}
+                      name="product"
+                      type="radio"
+                      style={{ border: '1px solid #D1D5DB' }}
+                      className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
+                      disabled={isMissingContactInfo || isPaying}
+                    />
+                    <div className="flex flex-col flex-1">
+                      <span className="ml-3 flex flex-col">
+                        <span className="block text-sm font-medium text-gray-900 ">{product.name} </span>
+                        <span className="block text-sm text-gray-500 ">
+                          {product.description} {currencyFormatter.format(product.amount / product.credits)} per lesson
+                        </span>
                       </span>
-                    </span>
-                  </div>
-                  {product.credits == 1 ? (
-                    <div>
+                    </div>
+                    {product.credits == 1 ? (
+                      <div>
+                        <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
+                          Quantity
+                        </label>
+                        <div className="mt-2 grid grid-cols-1">
+                          <select
+                            id="quantity"
+                            name="quantity"
+                            className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                            onChange={e => setQuantity(parseInt(e.target.value))}
+                            disabled={isMissingContactInfo || isPaying}
+                          >
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                          </select>
+                        </div>
+                      </div>
+                    ) : null}
+                  </label>
+                ))}
+                {groupLessons.map(product => (
+                  <label
+                    key={product.id}
+                    aria-label={product.name}
+                    aria-description={product.description}
+                    className="group flex flex-col sm:flex-row gap-4 cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
+                  >
+                    <input
+                      value={product.name}
+                      checked={selectedProductId == product.id}
+                      onChange={() => setSelectedProductId(product.id)}
+                      name="product"
+                      type="radio"
+                      className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
+                      disabled={isMissingContactInfo || isPaying}
+                    />
+                    <div className="flex flex-col flex-1">
+                      <span className="ml-0 sm:ml-3 flex flex-col">
+                        <span className="block text-sm font-medium text-gray-900 ">{product.name}</span>
+                        <span className="block text-sm text-gray-500 ">
+                          {product.description} {currencyFormatter.format(product.amount / product.credits)} per session
+                        </span>
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-2 w-full sm:w-auto">
                       <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
-                        Quantity
+                        Session
                       </label>
-                      <div className="mt-2 grid grid-cols-1">
+                      <div className="mt-2">
                         <select
                           id="quantity"
                           name="quantity"
-                          className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                          onChange={e => setQuantity(parseInt(e.target.value))}
+                          className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                          onChange={e => setSelectedScheduleId(e.target.value)}
                           disabled={isMissingContactInfo || isPaying}
                         >
-                          <option>1</option>
-                          <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option>
-                          <option>6</option>
-                          <option>7</option>
-                          <option>8</option>
-                          <option>9</option>
+                          <option>select a parent and tot session</option>
+                          {schedules
+                            .filter(s => s.spotsAvailable && s.spotsAvailable > 0)
+                            .map(schedule => {
+                              const pool = pools.find(pool => pool.id === schedule.poolId)?.name
+                              const formatted = new Date(schedule.startDateTime).toLocaleString('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: 'numeric',
+                              })
+                              return (
+                                <option key={schedule.id} value={schedule.id}>
+                                  {formatted} at {pool}
+                                </option>
+                              )
+                            })}
                         </select>
                       </div>
                     </div>
-                  ) : null}
-                </label>
-              ))}
-              {groupLessons.map(product => (
-                <label
-                  key={product.id}
-                  aria-label={product.name}
-                  aria-description={product.description}
-                  className="group flex flex-col sm:flex-row gap-4 cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
-                >
-                  <input
-                    value={product.name}
-                    checked={selectedProductId == product.id}
-                    onChange={() => setSelectedProductId(product.id)}
-                    name="product"
-                    type="radio"
-                    className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
-                    disabled={isMissingContactInfo || isPaying}
-                  />
-                  <div className="flex flex-col flex-1">
-                    <span className="ml-0 sm:ml-3 flex flex-col">
-                      <span className="block text-sm font-medium text-gray-900 ">{product.name}</span>
-                      <span className="block text-sm text-gray-500 ">
-                        {product.description} {currencyFormatter.format(product.amount / product.credits)} per session
-                      </span>
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-2 w-full sm:w-auto">
-                    <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
-                      Session
-                    </label>
-                    <div className="mt-2">
-                      <select
-                        id="quantity"
-                        name="quantity"
-                        className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                        onChange={e => setSelectedScheduleId(e.target.value)}
-                        disabled={isMissingContactInfo || isPaying}
-                      >
-                        <option>select a parent and tot session</option>
-                        {schedules
-                          .filter(s => s.spotsAvailable && s.spotsAvailable > 0)
-                          .map(schedule => {
-                            const pool = pools.find(pool => pool.id === schedule.poolId)?.name
-                            const formatted = new Date(schedule.startDateTime).toLocaleString('en-US', {
-                              month: 'long',
-                              day: 'numeric',
-                              hour: 'numeric',
-                              minute: 'numeric',
-                            })
-                            return (
-                              <option key={schedule.id} value={schedule.id}>
-                                {formatted} at {pool}
-                              </option>
-                            )
-                          })}
-                      </select>
+                    <div className="flex flex-col gap-2 w-full sm:w-auto sm:px-4">
+                      <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
+                        Student
+                      </label>
+                      <div className="mt-2">
+                        <select
+                          id="quantity"
+                          name="quantity"
+                          className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                          onChange={e => setSelectedStudentId(e.target.value)}
+                          disabled={isMissingContactInfo || isPaying}
+                        >
+                          <option>select a student</option>
+                          {students.map(student => (
+                            <option key={student.id} value={student.id}>
+                              {student.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-2 w-full sm:w-auto sm:px-4">
-                    <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
-                      Student
-                    </label>
-                    <div className="mt-2">
-                      <select
-                        id="quantity"
-                        name="quantity"
-                        className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                        onChange={e => setSelectedStudentId(e.target.value)}
-                        disabled={isMissingContactInfo || isPaying}
-                      >
-                        <option>select a student</option>
-                        {students.map(student => (
-                          <option key={student.id} value={student.id}>
-                            {student.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </label>
-              ))}
-            </fieldset>
-            <div className="mt-4">
+                  </label>
+                ))}
+              </fieldset>
               <div className="w-full sm:w-[24rem] md:w-[32rem] mx-auto flex flex-col items-center">
+                <div className="w-full rounded-lg bg-white shadow p-4 mb-6">
+                  <h2 className="text-lg font-bold text-gray-900 mb-2">Checkout Summary</h2>
+                  {selectedProductId ? (
+                    (() => {
+                      const product = products.find(p => p.id === selectedProductId)
+                      const isGroup = product?.lessonType === 'group'
+                      const schedule = isGroup ? schedules.find(s => s.id === selectedScheduleId) : null
+                      const student = isGroup ? students.find(s => s.id === selectedStudentId) : null
+                      const pool = isGroup && schedule ? pools.find(pool => pool.id === schedule.poolId) : null
+                      const formattedSession = schedule
+                        ? new Date(schedule.startDateTime).toLocaleString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: 'numeric',
+                          })
+                        : null
+                      const total = product ? product.amount * (product.credits === 1 ? quantity : 1) : 0
+                      return (
+                        <ul className="text-sm text-gray-700 space-y-1">
+                          <li>
+                            <span className="font-medium">Product:</span> {product?.name}
+                          </li>
+                          <li>
+                            <span className="font-medium">Description:</span> {product?.description}
+                          </li>
+                          {product?.credits === 1 && (
+                            <li>
+                              <span className="font-medium">Quantity:</span> {quantity}
+                            </li>
+                          )}
+                          {isGroup && (
+                            <>
+                              <li>
+                                <span className="font-medium">Session:</span>{' '}
+                                {schedule ? (
+                                  `${formattedSession} at ${pool?.name}`
+                                ) : (
+                                  <span className="text-red-500">Not selected</span>
+                                )}
+                              </li>
+                              <li>
+                                <span className="font-medium">Student:</span>{' '}
+                                {student ? student.name : <span className="text-red-500">Not selected</span>}
+                              </li>
+                            </>
+                          )}
+                          <li className="font-semibold mt-2">Total: {currencyFormatter.format(total)}</li>
+                        </ul>
+                      )
+                    })()
+                  ) : (
+                    <div className="text-gray-500">
+                      Select a product and fill out all required fields to see your summary.
+                    </div>
+                  )}
+                </div>
                 <PayPalScriptProvider
                   options={{
                     clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
@@ -368,6 +420,18 @@ export default function PurchaseClient({
                     }}
                     onError={() => setIsPaying(false)}
                     onCancel={() => setIsPaying(false)}
+                    disabled={
+                      selectedProductId == '' ||
+                      isMissingContactInfo ||
+                      isPaying ||
+                      (() => {
+                        const product = products.find(p => p.id === selectedProductId)
+                        if (product?.lessonType === 'group') {
+                          return !selectedScheduleId || !selectedStudentId
+                        }
+                        return false
+                      })()
+                    }
                   />
                 </PayPalScriptProvider>
                 {canUseApplePay ? (

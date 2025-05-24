@@ -88,6 +88,9 @@ export class PaypalService {
           ],
         },
       ],
+      application_context: {
+        shipping_preference: 'NO_SHIPPING',
+      },
     })
     const response = await PaypalClient.execute(request)
 

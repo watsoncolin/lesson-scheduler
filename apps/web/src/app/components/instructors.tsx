@@ -7,7 +7,7 @@ export default async function Instructors() {
     <div id="team" className="bg-white py-12 md:py-10 lg:py-10">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3">
         <div className="mx-auto max-w-2xl lg:mx-0">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our team</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Our team</h2>
           <p className="mt-6 text-lg leading-8 text-gray-600">
             We have a dynamic group of instructors who are passionate about what they do and dedicated to delivering the
             best results for our students.

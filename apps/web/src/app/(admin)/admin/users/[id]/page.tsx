@@ -22,7 +22,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
   const user = await UserService.findOne(id)
   const students = await StudentService.findAllByUserId(id)
   const transactions = await TransactionsService.findByUserId(id)
-  const currentBalance = await TransactionsService.getMyCreditBalance()
+  const currentBalance = await TransactionsService.getCreditBalance(id)
   const instructors = await InstructorService.findAll()
 
   return (

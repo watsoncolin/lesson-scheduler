@@ -4,8 +4,8 @@ import { BaseService, WithConfig } from './baseService'
 
 @WithConfig()
 export class ScheduleService extends BaseService {
-  static async findAll() {
-    return GeneratedScheduleService.scheduleControllerFindAll()
+  static async findAll(scheduleIds?: string) {
+    return GeneratedScheduleService.scheduleControllerFindAll(scheduleIds)
   }
 
   static async findOne(id: string) {

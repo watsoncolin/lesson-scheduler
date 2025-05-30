@@ -12,6 +12,9 @@ import { RolesSection } from './roles-section'
 import { UserService } from '@/services/api/shared/userService'
 import { StudentService } from '@/services/api/shared/studentService'
 import { TransactionsService } from '@/services/api/shared/transactionsService'
+import { ScheduleService } from '@/services/api/shared/scheduleService'
+import { PoolService } from '@/services/api/shared/poolService'
+import { format } from 'date-fns'
 
 export const metadata: Metadata = {
   title: 'User Details',
@@ -24,6 +27,9 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
   const transactions = await TransactionsService.findByUserId(id)
   const currentBalance = await TransactionsService.getCreditBalance(id)
   const instructors = await InstructorService.findAll()
+  const scheduleIds = transactions.map(transaction => transaction.scheduleId).filter(id => id !== undefined)
+  const schedules = await ScheduleService.findAll(scheduleIds.join(','))
+  const pools = await PoolService.findAll()
 
   return (
     <div className="space-y-6">
@@ -98,6 +104,16 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
         </TableHead>
         <TableBody>
           {transactions.map(transaction => {
+            const schedule = schedules.find(schedule => schedule.id === transaction.scheduleId)
+            const formatSchedule = () => {
+              const pool = pools.find(pool => pool.id === schedule?.poolId)
+              const instructor = instructors.find(instructor => instructor.id === schedule?.instructorId)
+              const start = schedule?.startDateTime
+                ? format(new Date(schedule.startDateTime), 'MMM d, yyyy h:mm a')
+                : ''
+              const end = schedule?.endDateTime ? format(new Date(schedule.endDateTime), 'h:mm a') : ''
+              return `${start} - ${end} at ${pool?.name} with ${instructor?.name}`
+            }
             const typeLabel =
               transaction.transactionType === 'PURCHASE_CREDITS'
                 ? 'Purchase Credits'
@@ -105,13 +121,23 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
                   ? 'Register'
                   : 'Cancel Registration'
             return (
-              <TableRow key={transaction.id}>
-                <TableCell>{typeLabel}</TableCell>
-                <TableCell>{transaction.creditType}</TableCell>
-                <TableCell>${transaction.amount}</TableCell>
-                <TableCell>{transaction.credits}</TableCell>
-                <TableCell>{new Date(transaction.createdAt).toLocaleString()}</TableCell>
-              </TableRow>
+              <>
+                <TableRow key={transaction.id}>
+                  <TableCell>{typeLabel}</TableCell>
+                  <TableCell>{transaction.creditType}</TableCell>
+                  <TableCell>${transaction.amount}</TableCell>
+                  <TableCell>{transaction.credits}</TableCell>
+                  <TableCell>{new Date(transaction.createdAt).toLocaleString()}</TableCell>
+                </TableRow>
+                {schedule && (
+                  <TableRow
+                    key={transaction.id + 'schedule'}
+                    className="text-sm text-zinc-500 dark:text-zinc-400 !border-none"
+                  >
+                    <TableCell colSpan={5}>{formatSchedule()}</TableCell>
+                  </TableRow>
+                )}
+              </>
             )
           })}
         </TableBody>

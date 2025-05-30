@@ -59,10 +59,6 @@ export class RegistrationService {
       throw new NotFoundException('Schedule not found')
     }
 
-    if (schedule.classSize <= schedule.registrations.length) {
-      throw new BadRequestException('Class is full')
-    }
-
     const student = await this.studentService.findOne(createRegistrationDto.studentId)
     if (!student || student.userId.toString() !== createRegistrationDto.userId) {
       throw new NotFoundException('Student not found')
@@ -79,30 +75,59 @@ export class RegistrationService {
       throw new BadRequestException('Not enough credits')
     }
 
-    // Create registration transaction
-    const transaction = await this.transactionService.create({
-      userId: createRegistrationDto.userId,
-      credits: -1,
-      creditType: schedule.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
-      transactionType: TransactionTypesEnum.Register,
-      scheduleId,
-      studentId: createRegistrationDto.studentId,
-    })
+    // Prepare registration object (transactionId will be set after transaction creation)
+    let transaction
+    let registration
+    try {
+      // Atomically push registration if class is not full
+      registration = {
+        userId: new Types.ObjectId(createRegistrationDto.userId),
+        studentId: new Types.ObjectId(createRegistrationDto.studentId),
+        createdAt: new Date(),
+        transactionId: undefined, // placeholder
+      }
 
-    // Push registration on model
-    await this.model.updateOne(
-      { _id: new Types.ObjectId(scheduleId) },
-      {
-        $push: {
-          registrations: {
-            userId: new Types.ObjectId(createRegistrationDto.userId),
-            studentId: new Types.ObjectId(createRegistrationDto.studentId),
-            createdAt: new Date(),
-            transactionId: transaction.id,
+      // Atomically check and push registration
+      const updated = await this.model.findOneAndUpdate(
+        {
+          _id: new Types.ObjectId(scheduleId),
+          $expr: { $lt: [{ $size: '$registrations' }, '$classSize'] },
+        },
+        { $push: { registrations: registration } },
+        { new: true },
+      )
+
+      if (!updated) {
+        throw new BadRequestException('Class is full')
+      }
+
+      // Now create the transaction
+      transaction = await this.transactionService.create({
+        userId: createRegistrationDto.userId,
+        credits: -1,
+        creditType: schedule.lessonType == LessonTypesEnum.PRIVATE ? CreditTypesEnum.PRIVATE : CreditTypesEnum.GROUP,
+        transactionType: TransactionTypesEnum.Register,
+        scheduleId,
+        studentId: createRegistrationDto.studentId,
+      })
+
+      // Update the registration with the transactionId
+      await this.model.updateOne(
+        {
+          _id: new Types.ObjectId(scheduleId),
+          'registrations.userId': new Types.ObjectId(createRegistrationDto.userId),
+          'registrations.studentId': new Types.ObjectId(createRegistrationDto.studentId),
+        },
+        {
+          $set: {
+            'registrations.$.transactionId': transaction.id,
           },
         },
-      },
-    )
+      )
+    } catch (err) {
+      // Optionally: rollback if transaction was created but registration failed, or vice versa
+      throw err
+    }
 
     const entity = await this.model.findById(schedule._id)
     if (!entity) {

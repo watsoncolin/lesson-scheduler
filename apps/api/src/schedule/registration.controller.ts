@@ -3,8 +3,6 @@ import { Controller, Get, Post, Body, Param, Delete, NotFoundException, HttpCode
 import { ScheduleService } from './schedule.service'
 import { CreateRegistrationDto } from './dto/create-registration.dto'
 import { RegistrationService } from './registration.service'
-import { Role } from '@lesson-scheduler/shared'
-import { Roles } from 'iam/authentication/decorators/roles.decorator'
 
 @Controller('schedules')
 export class RegistrationController {
@@ -27,7 +25,6 @@ export class RegistrationController {
     return schedule.registrations
   }
 
-  // TODO add role guard
   @Delete(':id/registrations/:studentId')
   @HttpCode(204)
   async remove(@Param('id') id: string, @Param('studentId') studentId: string) {

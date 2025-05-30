@@ -15,6 +15,7 @@ import { TransactionsService } from '@/services/api/shared/transactionsService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { PoolService } from '@/services/api/shared/poolService'
 import { format } from 'date-fns'
+import { Fragment } from 'react'
 
 export const metadata: Metadata = {
   title: 'User Details',
@@ -121,8 +122,8 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
                   ? 'Register'
                   : 'Cancel Registration'
             return (
-              <>
-                <TableRow key={transaction.id}>
+              <Fragment key={transaction.id}>
+                <TableRow>
                   <TableCell>{typeLabel}</TableCell>
                   <TableCell>{transaction.creditType}</TableCell>
                   <TableCell>${transaction.amount}</TableCell>
@@ -130,14 +131,11 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
                   <TableCell>{new Date(transaction.createdAt).toLocaleString()}</TableCell>
                 </TableRow>
                 {schedule && (
-                  <TableRow
-                    key={transaction.id + 'schedule'}
-                    className="text-sm text-zinc-500 dark:text-zinc-400 !border-none"
-                  >
+                  <TableRow className="text-sm text-zinc-500 dark:text-zinc-400 !border-none">
                     <TableCell colSpan={5}>{formatSchedule()}</TableCell>
                   </TableRow>
                 )}
-              </>
+              </Fragment>
             )
           })}
         </TableBody>

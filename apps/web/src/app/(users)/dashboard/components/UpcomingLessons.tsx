@@ -122,8 +122,8 @@ export default function UpcomingLessons({
       ) : (
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-16">
           <ol className="mt-4 divide-y divide-gray-100 text-sm leading-6 lg:col-span-7 xl:col-span-8">
-            {schedules.length > 0 ? (
-              schedules.map(schedule => {
+            {futureLessons.length > 0 ? (
+              futureLessons.map(schedule => {
                 const instructor = instructors.find(i => i.id === schedule.instructorId)
                 const pool = pools.find(p => p.id === schedule.poolId)
                 const student = students.find(

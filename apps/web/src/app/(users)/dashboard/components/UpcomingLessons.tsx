@@ -81,6 +81,16 @@ export default function UpcomingLessons({
     }
   }
 
+  const futureLessons = schedules.filter(schedule => {
+    const start = new Date(schedule.startDateTime)
+    return start > new Date()
+  })
+
+  const pastLessons = schedules.filter(schedule => {
+    const start = new Date(schedule.startDateTime)
+    return start < new Date()
+  })
+
   return (
     <div className="py-5">
       <h3 className="text-base font-semibold leading-6 text-gray-900">Upcoming lessons</h3>
@@ -226,6 +236,69 @@ export default function UpcomingLessons({
               <p>
                 No upcoming lessons. <a href="/dashboard/schedule">Schedule one now</a>
               </p>
+            )}
+          </ol>
+        </div>
+      )}
+      <h3 className="text-base font-semibold leading-6 text-gray-900">Past lessons</h3>
+      {loading ? (
+        <p className="text-center text-sm text-gray-500">Loading past lessons...</p>
+      ) : (
+        <div className="lg:grid lg:grid-cols-12 lg:gap-x-16">
+          <ol className="mt-4 divide-y divide-gray-100 text-sm leading-6 lg:col-span-7 xl:col-span-8">
+            {pastLessons.length > 0 ? (
+              pastLessons.map(schedule => {
+                const instructor = instructors.find(i => i.id === schedule.instructorId)
+                const pool = pools.find(p => p.id === schedule.poolId)
+                const student = students.find(
+                  s => s.id === schedule.registrations.find(r => r.studentId === s.id)?.studentId,
+                )
+                if (!instructor || !pool || !student) return null
+
+                // format time to local time
+                const time = new Date(schedule.startDateTime)
+                const timeOfDay = time.toLocaleTimeString().split(':').slice(0, 2).join(':')
+                const day = time.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+                // subtract start and end times
+                const start = new Date(schedule.startDateTime)
+                const end = new Date(schedule.endDateTime)
+                // duration in minutes
+                const duration = Math.round((end.getTime() - start.getTime()) / 1000 / 60)
+
+                return (
+                  <li key={schedule.id} className="relative flex space-x-6 py-6 xl:static">
+                    <img src={instructor.imageUrl} alt="" className="h-14 w-14 flex-none rounded-full" />
+                    <div className="flex-auto">
+                      <h3 className="pr-10 font-semibold text-gray-900 xl:pr-0">
+                        {student.name} with {instructor.name} (
+                        {schedule.lessonType === 'private' ? 'Private' : 'Parent and Tot'})
+                      </h3>
+                      <dl className="mt-2 flex flex-col text-gray-500 xl:flex-row">
+                        <div className="flex items-start space-x-3">
+                          <dt className="mt-0.5">
+                            <span className="sr-only">Date</span>
+                            <CalendarIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                          </dt>
+                          <dd>
+                            <time dateTime={schedule.startDateTime}>
+                              {day} at {timeOfDay} for {duration} minutes
+                            </time>
+                          </dd>
+                        </div>
+                        <div className="mt-2 flex items-start space-x-3 xl:ml-3.5 xl:mt-0 xl:border-l xl:border-gray-400 xl:border-opacity-50 xl:pl-3.5">
+                          <dt className="mt-0.5">
+                            <span className="sr-only">Location</span>
+                            <MapPinIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                          </dt>
+                          <dd>{pool.name}</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </li>
+                )
+              })
+            ) : (
+              <p>No past lessons.</p>
             )}
           </ol>
         </div>

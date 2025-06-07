@@ -123,7 +123,7 @@ export class ScheduleController {
   @ApiOkResponse({ type: ScheduleResponseDto, isArray: true })
   async findAllForLoggedInUser(@ActiveUser() user: ActiveUserData) {
     const schedules = await this.scheduleService.findAllByUserId(user.sub)
-    return schedules.filter(schedule => schedule.startDateTime > new Date())
+    return schedules
   }
 
   @Get('search')

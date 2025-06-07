@@ -12,7 +12,10 @@ import { ScheduleSaga } from './schedule.saga'
 import { UserSaga } from './user.saga'
 import { StudentModule } from 'student/student.module'
 import { ScheduleModule } from 'schedule/schedule.module'
-const COMMAND_HANDLERS = [SendCancellationEmailHandler, SendWelcomeEmailHandler]
+import { SendReservationEmailHandler } from './commands/send-reservation-email/send-reservation-email.handler'
+import { PoolModule } from 'pool/pool.module'
+import { InstructorModule } from 'instructor/instructor.module'
+const COMMAND_HANDLERS = [SendCancellationEmailHandler, SendWelcomeEmailHandler, SendReservationEmailHandler]
 const SAGAS = [UserSaga, ScheduleSaga]
 
 @Module({
@@ -23,6 +26,8 @@ const SAGAS = [UserSaga, ScheduleSaga]
     ConfigModule,
     StudentModule,
     ScheduleModule,
+    PoolModule,
+    InstructorModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

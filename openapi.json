@@ -1806,157 +1806,6 @@
         ]
       }
     },
-    "/api/instructors": {
-      "get": {
-        "operationId": "InstructorController_findAll",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InstructorResponseDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "instructors"
-        ]
-      },
-      "post": {
-        "operationId": "InstructorController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateInstructorDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InstructorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "instructors"
-        ]
-      }
-    },
-    "/api/instructors/{id}": {
-      "get": {
-        "operationId": "InstructorController_findOne",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InstructorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Instructor not found"
-          }
-        },
-        "tags": [
-          "instructors"
-        ]
-      },
-      "put": {
-        "operationId": "InstructorController_update",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateInstructorDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InstructorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Instructor not found"
-          }
-        },
-        "tags": [
-          "instructors"
-        ]
-      },
-      "delete": {
-        "operationId": "InstructorController_remove",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Instructor deleted"
-          },
-          "404": {
-            "description": "Instructor not found"
-          }
-        },
-        "tags": [
-          "instructors"
-        ]
-      }
-    },
     "/api/pools": {
       "get": {
         "operationId": "PoolController_findAll",
@@ -2110,6 +1959,157 @@
         "summary": "Delete a pool by ID",
         "tags": [
           "Pools"
+        ]
+      }
+    },
+    "/api/instructors": {
+      "get": {
+        "operationId": "InstructorController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InstructorResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "instructors"
+        ]
+      },
+      "post": {
+        "operationId": "InstructorController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInstructorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstructorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "instructors"
+        ]
+      }
+    },
+    "/api/instructors/{id}": {
+      "get": {
+        "operationId": "InstructorController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstructorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Instructor not found"
+          }
+        },
+        "tags": [
+          "instructors"
+        ]
+      },
+      "put": {
+        "operationId": "InstructorController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInstructorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstructorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Instructor not found"
+          }
+        },
+        "tags": [
+          "instructors"
+        ]
+      },
+      "delete": {
+        "operationId": "InstructorController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Instructor deleted"
+          },
+          "404": {
+            "description": "Instructor not found"
+          }
+        },
+        "tags": [
+          "instructors"
         ]
       }
     },
@@ -3498,40 +3498,6 @@
           "updatedAt"
         ]
       },
-      "InstructorResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "bio": {
-            "type": "string"
-          },
-          "imageUrl": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "bio",
-          "imageUrl"
-        ]
-      },
-      "CreateInstructorDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "UpdateInstructorDto": {
-        "type": "object",
-        "properties": {}
-      },
       "PoolDto": {
         "type": "object",
         "properties": {
@@ -3632,6 +3598,40 @@
         "required": [
           "id"
         ]
+      },
+      "InstructorResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "bio",
+          "imageUrl"
+        ]
+      },
+      "CreateInstructorDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateInstructorDto": {
+        "type": "object",
+        "properties": {}
       },
       "UploadFileResponseDto": {
         "type": "object",

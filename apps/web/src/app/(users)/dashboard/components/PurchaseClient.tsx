@@ -134,7 +134,6 @@ export default function PurchaseClient({
     }
     session.onpaymentauthorized = (event: { payment: any }) => {
       const payment = event.payment
-      console.log(payment)
       // Process the payment with your backend
       // On success:
       session.completePayment(window.ApplePaySession.STATUS_SUCCESS)

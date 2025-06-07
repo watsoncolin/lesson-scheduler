@@ -30,7 +30,6 @@ export default function AnnouncementList() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('data', form)
     try {
       await AnnouncementService.create(form)
       setIsEditing(false)

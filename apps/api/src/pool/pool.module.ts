@@ -8,5 +8,6 @@ import { PoolService } from './pool.service'
   imports: [MongooseModule.forFeature([{ name: PoolEntity.name, schema: PoolSchema }])],
   controllers: [PoolController],
   providers: [PoolService],
+  exports: [PoolService],
 })
 export class PoolModule {}

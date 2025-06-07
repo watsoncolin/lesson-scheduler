@@ -14,6 +14,7 @@ import { RegistrationCanceledEvent } from './events/registration-canceled.event'
 import { EventBus } from '@nestjs/cqrs'
 import { differenceInHours } from 'date-fns'
 import { StudentService } from 'student/student.service'
+import { RegistrationCreatedEvent } from './events/registration-created.event'
 
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
@@ -133,6 +134,7 @@ export class RegistrationService {
     if (!entity) {
       throw new NotFoundException('Schedule not found')
     }
+    this.eventBus.publish(new RegistrationCreatedEvent(createRegistrationDto.userId, scheduleId, student.id))
     return mapper(entity)
   }
 

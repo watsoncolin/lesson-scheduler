@@ -6,6 +6,7 @@ const navigation = {
     { name: 'Team', href: '/#team' },
     { name: 'Pricing', href: '/#pricing' },
     { name: 'Pools', href: '/#pools' },
+    { name: 'Privacy Policy', href: '/privacy-policy' },
   ],
 }
 

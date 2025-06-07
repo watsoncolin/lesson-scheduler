@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { Model, Types } from 'mongoose'
 import { InjectModel } from '@nestjs/mongoose'
 import { ScheduleEntity, ScheduleStatusEnum } from './entities/schedule.entity'
@@ -7,8 +7,10 @@ import { CreateScheduleDto } from './dto/create-schedule.dto'
 import { UpdateScheduleDto } from './dto/update-schedule.dto'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
-import { addDays } from 'date-fns'
+import { addDays, addHours } from 'date-fns'
 import { RegistrationService } from './registration.service'
+import { RegistrationReminderEvent } from './events/registration-reminder.event'
+import { EventBus } from '@nestjs/cqrs'
 
 const mapper = (entity: ScheduleEntity): Schedule => {
   return {
@@ -34,6 +36,8 @@ export class ScheduleService {
     @InjectModel(ScheduleEntity.name)
     private readonly model: Model<ScheduleEntity>,
     private readonly registrationService: RegistrationService,
+    private readonly eventBus: EventBus,
+    private readonly logger: Logger,
   ) {}
   async create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
     const _id = new Types.ObjectId()
@@ -270,5 +274,43 @@ export class ScheduleService {
       $expr: { $lt: [{ $size: '$registrations' }, '$classSize'] },
       startDateTime: { $gt: new Date() },
     })
+  }
+
+  async sendPendingReminders() {
+    // Find schedules that are less than 48 hours from now
+    const fourtyEightHoursFromNow = addHours(new Date(), 48)
+
+    const schedules = await this.model.find({
+      startDateTime: { $lte: fourtyEightHoursFromNow },
+      'registrations.reminderSentAt': { $exists: false },
+    })
+
+    for (const schedule of schedules) {
+      for (const registration of schedule.registrations) {
+        this.logger.log(`Sending reminder for schedule ${schedule._id} and student ${registration.studentId}`)
+        this.eventBus.publish(
+          new RegistrationReminderEvent(
+            registration.userId.toString(),
+            schedule._id.toString(),
+            registration.studentId.toString(),
+          ),
+        )
+      }
+    }
+  }
+
+  async updateRegistrationReminderSentAt(scheduleId: string, studentId: string) {
+    const schedule = await this.findOne(scheduleId)
+    if (!schedule) {
+      throw new NotFoundException('Schedule not found')
+    }
+    const registration = schedule.registrations.find(r => r.studentId.toString() === studentId)
+    if (!registration) {
+      throw new NotFoundException('Registration not found')
+    }
+    await this.model.updateOne(
+      { _id: new Types.ObjectId(scheduleId), 'registrations.studentId': new Types.ObjectId(studentId) },
+      { $set: { 'registrations.$.reminderSentAt': new Date() } },
+    )
   }
 }

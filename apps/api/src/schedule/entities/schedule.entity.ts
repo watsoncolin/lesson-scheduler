@@ -1,4 +1,3 @@
-import { Type } from '@nestjs/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types, Document } from 'mongoose'
 import { LessonTypesEnum } from 'shared/lesson-types.enum'
@@ -20,6 +19,8 @@ export class RegistrationEntity extends Document {
   studentId: Types.ObjectId
   @Prop({ required: true })
   transactionId: Types.ObjectId
+  @Prop({ required: false })
+  reminderSentAt?: Date
 }
 
 export const RegistrationSchema = SchemaFactory.createForClass(RegistrationEntity)

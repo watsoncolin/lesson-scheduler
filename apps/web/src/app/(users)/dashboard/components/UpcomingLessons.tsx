@@ -81,15 +81,19 @@ export default function UpcomingLessons({
     }
   }
 
-  const futureLessons = schedules.filter(schedule => {
-    const start = new Date(schedule.startDateTime)
-    return start > new Date()
-  })
+  const futureLessons = schedules
+    .filter(schedule => {
+      const start = new Date(schedule.startDateTime)
+      return start > new Date()
+    })
+    .sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime())
 
-  const pastLessons = schedules.filter(schedule => {
-    const start = new Date(schedule.startDateTime)
-    return start < new Date()
-  })
+  const pastLessons = schedules
+    .filter(schedule => {
+      const start = new Date(schedule.startDateTime)
+      return start < new Date()
+    })
+    .sort((a, b) => new Date(b.startDateTime).getTime() - new Date(a.startDateTime).getTime())
 
   return (
     <div className="py-5">

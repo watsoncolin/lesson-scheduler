@@ -10,6 +10,7 @@ import {
   NotFoundException,
   HttpCode,
   Query,
+  Logger,
 } from '@nestjs/common'
 import { ApiQuery, ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
@@ -36,6 +37,7 @@ export class ScheduleController {
     private readonly scheduleService: ScheduleService,
     private readonly studentService: StudentService,
     private readonly userService: UserService,
+    private readonly logger: Logger,
   ) {}
 
   @Get('')
@@ -249,5 +251,12 @@ export class ScheduleController {
     } else {
       await this.scheduleService.remove(id)
     }
+  }
+
+  @Post('send-pending-reminders')
+  @Auth(AuthType.None)
+  async sendPendingReminders() {
+    this.logger.log('Sending pending reminders')
+    return this.scheduleService.sendPendingReminders()
   }
 }

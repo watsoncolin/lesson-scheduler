@@ -1019,6 +1019,20 @@
         ]
       }
     },
+    "/api/schedules/send-pending-reminders": {
+      "post": {
+        "operationId": "ScheduleController_sendPendingReminders",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Schedule"
+        ]
+      }
+    },
     "/api/schedules/{id}/registrations": {
       "post": {
         "operationId": "RegistrationController_create",

@@ -3,4 +3,5 @@ export class Registration {
   studentId: string
   transactionId: string
   createdAt: Date
+  reminderSentAt?: Date
 }

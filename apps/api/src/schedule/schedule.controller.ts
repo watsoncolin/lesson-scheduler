@@ -255,8 +255,9 @@ export class ScheduleController {
 
   @Post('send-pending-reminders')
   @Auth(AuthType.None)
-  async sendPendingReminders() {
+  async sendPendingReminders(@Query() query: { corrected: string }) {
     this.logger.log('Sending pending reminders')
-    return this.scheduleService.sendPendingReminders()
+    const corrected = query.corrected === 'true'
+    return this.scheduleService.sendPendingReminders(corrected)
   }
 }

@@ -199,11 +199,26 @@ We are unable to cancel, refund, or reschedule a lesson within 24 hours of lesso
     const formattedDateTimeMdt = formatInTimeZone(schedule.startDateTime, 'America/Denver', 'MM/dd/yyyy hh:mm a')
     const pool = await this.poolService.findOne(schedule.poolId)
     const instructor = await this.instructorService.findOne(schedule.instructorId)
+
+    this.logger.log(
+      `Sending schedule reminder email to ${user.email} for ${student.name} on ${formattedDateTimeMdt} at ${pool.name} with ${instructor.name}`,
+      {
+        user: user.email,
+        student: student.name,
+        schedule: schedule.startDateTime.toISOString(),
+        pool: pool.name,
+        instructor: instructor.name,
+        formattedDateTimeMdt,
+        corrected,
+      },
+    )
+
     const msg = {
       to: user.email,
       from: 'no-reply@stansburyswim.com',
       subject: corrected ? 'Lesson Reminder (Corrected)' : 'Lesson Reminder',
       html: `<p>Hello ${user.firstName} ${user.lastName},</p>
+      ${corrected ? '<p>This is a corrected reminder for your lesson. Previous email contained the wrong time.</p>' : ''}
       <p>This is a reminder that your lesson for ${student.name} is scheduled on ${formattedDateTimeMdt} at ${pool.name} with ${instructor.name}.</p>
       <p>Please arrive at least 5 minutes prior to the lesson.</p>
 

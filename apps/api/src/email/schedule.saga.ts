@@ -29,7 +29,9 @@ export class ScheduleSaga {
   onRegistrationReminderEvent = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(RegistrationReminderEvent),
-      map(event => new SendScheduleReminderEmailCommand(event.userId, event.scheduleId, event.studentId)),
+      map(
+        event => new SendScheduleReminderEmailCommand(event.userId, event.scheduleId, event.studentId, event.corrected),
+      ),
     )
   }
 }

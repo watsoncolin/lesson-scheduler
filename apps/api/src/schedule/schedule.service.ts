@@ -276,7 +276,7 @@ export class ScheduleService {
     })
   }
 
-  async sendPendingReminders() {
+  async sendPendingReminders(corrected: boolean = false) {
     // Find schedules that are less than 48 hours from now and in the future.
     const fourtyEightHoursFromNow = addHours(new Date(), 48)
 
@@ -293,6 +293,7 @@ export class ScheduleService {
             registration.userId.toString(),
             schedule._id.toString(),
             registration.studentId.toString(),
+            corrected,
           ),
         )
       }

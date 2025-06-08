@@ -6,6 +6,7 @@ export class SendScheduleReminderEmailCommand extends Command<void> {
     public readonly userId: string,
     public readonly scheduleId: string,
     public readonly studentId: string,
+    public readonly corrected: boolean = false,
   ) {
     super()
   }

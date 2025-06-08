@@ -46,6 +46,6 @@ export class SendScheduleReminderEmailHandler implements ICommandHandler<SendSch
 
     await this.scheduleService.updateRegistrationReminderSentAt(command.scheduleId, student.id)
 
-    await this.emailService.sendScheduleReminderEmail(user, student, schedule)
+    await this.emailService.sendScheduleReminderEmail(user, student, schedule, command.corrected)
   }
 }

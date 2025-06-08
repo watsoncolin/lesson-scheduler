@@ -43,8 +43,9 @@ export class SendScheduleReminderEmailHandler implements ICommandHandler<SendSch
       return
     }
     this.logger.log(`Sending reminder for schedule ${command.scheduleId} and student ${command.studentId}`)
-    await this.scheduleService.updateRegistrationReminderSentAt(command.scheduleId, student.id)
 
-    await this.emailService.sendScheduleReminderEmail(user, student, schedule)
+    // await this.scheduleService.updateRegistrationReminderSentAt(command.scheduleId, student.id)
+
+    // await this.emailService.sendScheduleReminderEmail(user, student, schedule)
   }
 }

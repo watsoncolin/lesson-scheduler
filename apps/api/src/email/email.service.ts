@@ -208,19 +208,19 @@ We are unable to cancel, refund, or reschedule a lesson within 24 hours of lesso
       <p>${pool.details}</p>
 
       									
-<p>Policies and Tips:</p>											
-<ul>											
-<li>All lessons are private, with one-on-one instruction customized to the student's goals and skill level.</li>											
-<li>Lessons start and end promptly.  We advise arriving at least 5 minutes early to be ready for the lesson.</li>											
-<li>Please be considerate when parking.  Do not block driveways or mailboxes.</li>											
-<li>All lesson credits MUST be used in the season purchased.  All unused lesson credits will be forfeited with no refund.  Seasons typically end July 31.</li>											
-<li>Text "@stansswim1" to 81010 or visit remind.com/join/stansswim1 to receive text updates (including new schedule offerings and cancellations due to weather).</li>											
-<li>24-hour cancellation notice is required.  There is no charge to reschedule any lesson, if done more that 24 hours ahead of time.  Within 24 hours of lesson time, there will be a full charge on all lessons.  You are welcome to send a replacement student if the scheduled student is unavailable.  </li>											
-<li>Instructors are subject to change without notice.</li>											
-<li>We strongly prefer reusable swim diapers over disposable and sunscreen lotion over aerosol.</li>											
-<li>Recommended: Ages 3-5 20-40 Lessons, Ages 5+10-20 Lessons + Maintenance Program 1-3 times/week. </li>											
-<li>Give your child lots of love and encouragement between lessons.  Recognize his/her bravery and achievements.  Take pictures and video during the lesson.  Children love to watch themselves and gain confidence as they do so.</li>											
-</ul>											
+      <p>Policies and Tips:</p>											
+      <ul>											
+      <li>All lessons are private, with one-on-one instruction customized to the student's goals and skill level.</li>											
+      <li>Lessons start and end promptly.  We advise arriving at least 5 minutes early to be ready for the lesson.</li>											
+      <li>Please be considerate when parking.  Do not block driveways or mailboxes.</li>											
+      <li>All lesson credits MUST be used in the season purchased.  All unused lesson credits will be forfeited with no refund.  Seasons typically end July 31.</li>											
+      <li>Text "@stansswim1" to 81010 or visit remind.com/join/stansswim1 to receive text updates (including new schedule offerings and cancellations due to weather).</li>											
+      <li>24-hour cancellation notice is required.  There is no charge to reschedule any lesson, if done more that 24 hours ahead of time.  Within 24 hours of lesson time, there will be a full charge on all lessons.  You are welcome to send a replacement student if the scheduled student is unavailable.  </li>											
+      <li>Instructors are subject to change without notice.</li>											
+      <li>We strongly prefer reusable swim diapers over disposable and sunscreen lotion over aerosol.</li>											
+      <li>Recommended: Ages 3-5 20-40 Lessons, Ages 5+10-20 Lessons + Maintenance Program 1-3 times/week. </li>											
+      <li>Give your child lots of love and encouragement between lessons.  Recognize his/her bravery and achievements.  Take pictures and video during the lesson.  Children love to watch themselves and gain confidence as they do so.</li>											
+      </ul>											
 
       <p>We look forward to seeing you!</p>
       <p>The Stansbury Swim Team</p>

@@ -277,11 +277,11 @@ export class ScheduleService {
   }
 
   async sendPendingReminders() {
-    // Find schedules that are less than 48 hours from now
+    // Find schedules that are less than 48 hours from now and in the future.
     const fourtyEightHoursFromNow = addHours(new Date(), 48)
 
     const schedules = await this.model.find({
-      startDateTime: { $lte: fourtyEightHoursFromNow },
+      startDateTime: { $gte: new Date(), $lte: fourtyEightHoursFromNow },
       'registrations.reminderSentAt': { $exists: false },
     })
 

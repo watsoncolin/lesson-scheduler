@@ -2,15 +2,15 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { UserService } from '../user/user.service'
-
 import sgMail from '@sendgrid/mail'
 import { User } from 'user/user'
 import { ConfigEnum } from '../shared/config.enum'
 import { Student } from 'student/student'
 import { Schedule } from 'schedule/schedule'
-import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { PoolService } from 'pool/pool.service'
 import { InstructorService } from 'instructor/instructor.service'
+
 @Injectable()
 export class EmailService {
   constructor(
@@ -121,7 +121,7 @@ export class EmailService {
   }
 
   public async sendCancellationEmail(user: User, student: Student, schedule: Schedule): Promise<void> {
-    const formattedDateTime = format(schedule.startDateTime, 'MM/dd/yyyy hh:mm a')
+    const formattedDateTimeMdt = formatInTimeZone(schedule.startDateTime, 'America/Denver', 'MM/dd/yyyy hh:mm a')
     const msg = {
       to: user.email,
       from: 'no-reply@stansburyswim.com',
@@ -129,7 +129,7 @@ export class EmailService {
       html: `<html>
 <body>
 <p><strong>Lesson Cancellation Confirmation</strong></p>
-<p>Your lesson scheduled for ${formattedDateTime} has been cancelled and your credit has been restored to your account.  Reserve your next lesson <a href='https://stansburyswim.com/dashboard'>here</a>.</p>
+<p>Your lesson scheduled for ${formattedDateTimeMdt} has been cancelled and your credit has been restored to your account.  Reserve your next lesson <a href='https://stansburyswim.com/dashboard'>here</a>.</p>
 <p>See you soon! </br>The Stansbury Swim Team</p>
 
 <p>Policies and Tips:</p>
@@ -155,14 +155,15 @@ export class EmailService {
   }
 
   public async sendReservationEmail(user: User, student: Student, schedule: Schedule): Promise<void> {
-    const formattedDateTime = format(schedule.startDateTime, 'MM/dd/yyyy hh:mm a')
+    // convert to MDT
+    const formattedDateTimeMdt = formatInTimeZone(schedule.startDateTime, 'America/Denver', 'MM/dd/yyyy hh:mm a')
     const pool = await this.poolService.findOne(schedule.poolId)
     const instructor = await this.instructorService.findOne(schedule.instructorId)
     const msg = {
       to: user.email,
       from: 'no-reply@stansburyswim.com',
       subject: 'Lesson Reservation Confirmation',
-      html: `<p>Splash!  ${student.name}'s lesson reservation for ${formattedDateTime} at ${pool.name} with ${instructor.name} is confirmed.  Please arrive at least 5 minutes prior to the lesson.  You may cancel this lesson online up to 24 hours before lesson time with no penalty.</p>											
+      html: `<p>Splash!  ${student.name}'s lesson reservation for ${formattedDateTimeMdt} at ${pool.name} with ${instructor.name} is confirmed.  Please arrive at least 5 minutes prior to the lesson.  You may cancel this lesson online up to 24 hours before lesson time with no penalty.</p>											
 103 Lakeview: Enter pool area through the gate to the right of the garage. 180 Durfee: Walk down driveway and enter pool area between the two garages. Text or call Sarah with any questions 435-659-6307.											
 We are unable to cancel, refund, or reschedule a lesson within 24 hours of lesson time. You are welcome to send a replacement student if the scheduled student is unavailable. 											
 											
@@ -189,16 +190,21 @@ We are unable to cancel, refund, or reschedule a lesson within 24 hours of lesso
     return this.sendMail(msg)
   }
 
-  public async sendScheduleReminderEmail(user: User, student: Student, schedule: Schedule): Promise<void> {
-    const formattedDateTime = format(schedule.startDateTime, 'MM/dd/yyyy hh:mm a')
+  public async sendScheduleReminderEmail(
+    user: User,
+    student: Student,
+    schedule: Schedule,
+    corrected: boolean = false,
+  ): Promise<void> {
+    const formattedDateTimeMdt = formatInTimeZone(schedule.startDateTime, 'America/Denver', 'MM/dd/yyyy hh:mm a')
     const pool = await this.poolService.findOne(schedule.poolId)
     const instructor = await this.instructorService.findOne(schedule.instructorId)
     const msg = {
       to: user.email,
       from: 'no-reply@stansburyswim.com',
-      subject: 'Lesson Reminder',
+      subject: corrected ? 'Lesson Reminder (Corrected)' : 'Lesson Reminder',
       html: `<p>Hello ${user.firstName} ${user.lastName},</p>
-      <p>This is a reminder that your lesson for ${student.name} is scheduled on ${formattedDateTime} at ${pool.name} with ${instructor.name}.</p>
+      <p>This is a reminder that your lesson for ${student.name} is scheduled on ${formattedDateTimeMdt} at ${pool.name} with ${instructor.name}.</p>
       <p>Please arrive at least 5 minutes prior to the lesson.</p>
 
       <p>Pool Details:</p>

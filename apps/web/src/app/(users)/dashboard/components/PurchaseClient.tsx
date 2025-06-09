@@ -259,7 +259,7 @@ export default function PurchaseClient({
                     key={product.id}
                     aria-label={product.name}
                     aria-description={product.description}
-                    className="group flex flex-col sm:flex-row gap-4 cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
+                    className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none"
                   >
                     <input
                       value={product.name}
@@ -267,6 +267,7 @@ export default function PurchaseClient({
                       onChange={() => setSelectedProductId(product.id)}
                       name="product"
                       type="radio"
+                      style={{ border: '1px solid #D1D5DB' }}
                       className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
                       disabled={isMissingContactInfo || isPaying}
                     />

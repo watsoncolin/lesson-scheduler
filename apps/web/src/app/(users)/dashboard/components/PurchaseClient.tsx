@@ -271,65 +271,68 @@ export default function PurchaseClient({
                       className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
                       disabled={isMissingContactInfo || isPaying}
                     />
-                    <div className="flex flex-col flex-1">
-                      <span className="ml-0 sm:ml-3 flex flex-col">
-                        <span className="block text-sm font-medium text-gray-900 ">{product.name}</span>
-                        <span className="block text-sm text-gray-500 ">
-                          {product.description} {currencyFormatter.format(product.amount / product.credits)} per session
+                    <div className="flex flex-col sm:flex-row w-full gap-2">
+                      <div className="flex flex-col flex-1 w-full sm:w-auto ml-3">
+                        <span className="flex flex-col">
+                          <span className="block text-sm font-medium text-gray-900 ">{product.name}</span>
+                          <span className="block text-sm text-gray-500 ">
+                            {product.description} {currencyFormatter.format(product.amount / product.credits)} per
+                            session
+                          </span>
                         </span>
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-2 w-full sm:w-auto">
-                      <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
-                        Session
-                      </label>
-                      <div className="mt-2">
-                        <select
-                          id="quantity"
-                          name="quantity"
-                          className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                          onChange={e => setSelectedScheduleId(e.target.value)}
-                          disabled={isMissingContactInfo || isPaying}
-                        >
-                          <option>select a parent and tot session</option>
-                          {schedules
-                            .filter(s => s.spotsAvailable && s.spotsAvailable > 0)
-                            .map(schedule => {
-                              const pool = pools.find(pool => pool.id === schedule.poolId)?.name
-                              const formatted = new Date(schedule.startDateTime).toLocaleString('en-US', {
-                                month: 'long',
-                                day: 'numeric',
-                                hour: 'numeric',
-                                minute: 'numeric',
-                              })
-                              return (
-                                <option key={schedule.id} value={schedule.id}>
-                                  {formatted} at {pool}
-                                </option>
-                              )
-                            })}
-                        </select>
                       </div>
-                    </div>
-                    <div className="flex flex-col gap-2 w-full sm:w-auto sm:px-4">
-                      <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
-                        Student
-                      </label>
-                      <div className="mt-2">
-                        <select
-                          id="quantity"
-                          name="quantity"
-                          className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                          onChange={e => setSelectedStudentId(e.target.value)}
-                          disabled={isMissingContactInfo || isPaying}
-                        >
-                          <option>select a student</option>
-                          {students.map(student => (
-                            <option key={student.id} value={student.id}>
-                              {student.name}
-                            </option>
-                          ))}
-                        </select>
+                      <div className="flex flex-col gap-2 w-full sm:w-auto">
+                        <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
+                          Session
+                        </label>
+                        <div className="mt-2">
+                          <select
+                            id="quantity"
+                            name="quantity"
+                            className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                            onChange={e => setSelectedScheduleId(e.target.value)}
+                            disabled={isMissingContactInfo || isPaying}
+                          >
+                            <option>select a parent and tot session</option>
+                            {schedules
+                              .filter(s => s.spotsAvailable && s.spotsAvailable > 0)
+                              .map(schedule => {
+                                const pool = pools.find(pool => pool.id === schedule.poolId)?.name
+                                const formatted = new Date(schedule.startDateTime).toLocaleString('en-US', {
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: 'numeric',
+                                  minute: 'numeric',
+                                })
+                                return (
+                                  <option key={schedule.id} value={schedule.id}>
+                                    {formatted} at {pool}
+                                  </option>
+                                )
+                              })}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 w-full sm:w-auto sm:px-4">
+                        <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
+                          Student
+                        </label>
+                        <div className="mt-2">
+                          <select
+                            id="quantity"
+                            name="quantity"
+                            className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                            onChange={e => setSelectedStudentId(e.target.value)}
+                            disabled={isMissingContactInfo || isPaying}
+                          >
+                            <option>select a student</option>
+                            {students.map(student => (
+                              <option key={student.id} value={student.id}>
+                                {student.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </label>

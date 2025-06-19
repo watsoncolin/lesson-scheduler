@@ -11,7 +11,7 @@ const navigation = [
 
 export default async function Nav() {
   const cookieStore = await cookies()
-  const authCookie = cookieStore.get('auth')
+  const authCookie = cookieStore.get('authToken')
   const isLoggedIn = !!authCookie
 
   return (

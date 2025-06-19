@@ -10,6 +10,7 @@ import { TransactionResponseDto } from '@/api'
 import { PoolService } from '@/services/api/shared/poolService'
 import { InstructorService } from '@/services/api/shared/instructorService'
 import Header from '../components/Header'
+import { formatDateTime } from '@/app/components/time'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -127,15 +128,7 @@ export default function History() {
                     transaction.transactionType == 'REGISTER' ||
                     transaction.transactionType == 'CANCEL_REGISTRATION'
                   ) {
-                    const startTimeFormatted = schedule
-                      ? new Date(schedule.startDateTime).toLocaleString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: 'numeric',
-                          minute: 'numeric',
-                          hour12: true,
-                        })
-                      : ''
+                    const startTimeFormatted = schedule ? formatDateTime(schedule.startDateTime) : ''
                     details = ` with ${instructors.find(i => i.id === schedule?.instructorId)?.name} at ${pool?.name} on ${startTimeFormatted}`
                   }
 

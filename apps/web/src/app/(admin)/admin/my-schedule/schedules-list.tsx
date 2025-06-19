@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { useUser } from '@/app/contexts/user-context'
 import { ScheduleResponseDto } from '@/api'
 import { UserResponseDto } from '@/api'
+import Time from '@/app/components/time'
 
 interface SchedulesListProps {
   schedules: ScheduleResponseDto[]
@@ -106,7 +107,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                           {schedule.lessonType === 'private' ? 'Private' : 'Group'}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {format(new Date(schedule.startDateTime), 'MMM d, yyyy h:mm a')}
+                          <Time dateTime={schedule.startDateTime} />
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {schedule.registrations.length > 0 && (

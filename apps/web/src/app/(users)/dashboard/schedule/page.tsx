@@ -26,6 +26,7 @@ import { PoolDto } from '@/api'
 import { PoolService } from '@/services/api/shared/poolService'
 import { InstructorService } from '@/services/api/shared/instructorService'
 import Header from '../components/Header'
+import Time from '@/app/components/time'
 
 export interface Option {
   value: string
@@ -286,14 +287,7 @@ export default function Schedule() {
                     const instructor = instructors.find(instructor => instructor.id === schedule.instructorId)
                     const pool = pools.find(pool => pool.id === schedule.poolId)
                     const name = `${instructor?.name ?? 'Private instructor'} at ${pool?.name}`
-                    const options: Intl.DateTimeFormatOptions = {
-                      month: 'long', // 'January'
-                      day: 'numeric', // '27'
-                      hour: 'numeric', // '12 PM'
-                      minute: 'numeric', // '30'
-                    }
-                    const startDateTime = new Date(schedule.startDateTime)
-                    const endDateTime = new Date(schedule.endDateTime)
+
                     const selectedStudent = pendingSchedules.find(
                       pendingSchedule => pendingSchedule.scheduleId === schedule.id,
                     )
@@ -307,13 +301,7 @@ export default function Schedule() {
                         <div className="flex-auto">
                           <p className="text-gray-900">{name}</p>
                           <p className="mt-0.5">
-                            <time dateTime={startDateTime.toISOString()}>
-                              {startDateTime.toLocaleString('en-US', options)}
-                            </time>
-                            {/* -{' '} */}
-                            {/* <time dateTime={endDateTime.toISOString()}>
-                                {endDateTime.toLocaleString('en-US', options)}
-                              </time> */}
+                            <Time dateTime={schedule.startDateTime} />
                           </p>
                         </div>
                         <div className="flex-auto">

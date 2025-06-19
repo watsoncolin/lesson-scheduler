@@ -32,6 +32,10 @@ export default function UpcomingLessons({
   const [students, setStudents] = useState([] as Student[])
   const [schedules, setSchedules] = useState([] as ScheduleResponseDto[])
   const { refreshCredits } = useCredits()
+  const [timeOptions, setTimeOptions] = useState<Intl.DateTimeFormatOptions>({
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 
   // Track loading for both students and schedules
   const [studentsLoading, setStudentsLoading] = useState(true)
@@ -60,6 +64,21 @@ export default function UpcomingLessons({
       setSchedulesLoading(false)
     }
   }
+
+  useEffect(() => {
+    const parts = new Intl.DateTimeFormat('en-US', { timeZoneName: 'short' }).formatToParts(new Date())
+    const tzPart = parts.find(part => part.type === 'timeZoneName')
+
+    const newOptions: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+    }
+
+    if (tzPart && tzPart.value !== 'MDT') {
+      newOptions.timeZoneName = 'short'
+    }
+    setTimeOptions(newOptions)
+  }, [])
 
   useEffect(() => {
     fetchSchedules()
@@ -137,7 +156,7 @@ export default function UpcomingLessons({
 
                 // format time to local time
                 const time = new Date(schedule.startDateTime)
-                const timeOfDay = time.toLocaleTimeString().split(':').slice(0, 2).join(':')
+                const timeOfDay = time.toLocaleTimeString('en-US', timeOptions)
                 const day = time.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
                 // subtract start and end times
                 const start = new Date(schedule.startDateTime)
@@ -261,7 +280,7 @@ export default function UpcomingLessons({
 
                 // format time to local time
                 const time = new Date(schedule.startDateTime)
-                const timeOfDay = time.toLocaleTimeString().split(':').slice(0, 2).join(':')
+                const timeOfDay = time.toLocaleTimeString('en-US', timeOptions)
                 const day = time.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
                 // subtract start and end times
                 const start = new Date(schedule.startDateTime)

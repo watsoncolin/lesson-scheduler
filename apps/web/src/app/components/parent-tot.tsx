@@ -2,6 +2,7 @@ import { AnnouncementService } from '@/services/api/shared/announcementService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { InstructorService } from '@/services/api/shared/instructorService'
 import { PoolService } from '@/services/api/shared/poolService'
+import Time from './time'
 
 export default async function ParentTot() {
   const [announcement, schedules, instructors, pools] = await Promise.all([
@@ -24,14 +25,6 @@ export default async function ParentTot() {
                 const instructor = instructors.find(instructor => instructor.id === schedule.instructorId)
                 const pool = pools.find(pool => pool.id === schedule.poolId)
                 const name = `${instructor?.name ?? 'Private instructor'} at ${pool?.name}`
-                const options: Intl.DateTimeFormatOptions = {
-                  month: 'long', // 'January'
-                  day: 'numeric', // '27'
-                  hour: 'numeric', // '12 PM'
-                  minute: 'numeric', // '30'
-                }
-                const startDateTime = new Date(schedule.startDateTime)
-                const endDateTime = new Date(schedule.endDateTime)
 
                 return (
                   <li
@@ -43,13 +36,7 @@ export default async function ParentTot() {
                       <div className="flex-auto">
                         <p className="text-gray-900">{name}</p>
                         <p className="mt-0.5">
-                          <time dateTime={startDateTime.toISOString()}>
-                            {startDateTime.toLocaleString('en-US', options)}
-                          </time>
-                          -{' '}
-                          <time dateTime={endDateTime.toISOString()}>
-                            {endDateTime.toLocaleString('en-US', options)}
-                          </time>
+                          <Time dateTime={schedule.startDateTime} />- <Time dateTime={schedule.endDateTime} />
                         </p>
                         <p className="mt-0.5">{schedule.spotsAvailable} spots left</p>
                       </div>

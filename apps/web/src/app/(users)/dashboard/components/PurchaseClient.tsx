@@ -16,6 +16,7 @@ import { Button } from '@/app/components/button'
 import { useRouter } from 'next/navigation'
 import { ProductResponseDto, ParentTotScheduleResponseDto, StudentResponseDto, PoolDto } from '@/api'
 import Header from './Header'
+import { formatDateTime } from '@/app/components/time'
 
 interface PurchaseClientProps {
   products: ProductResponseDto[]
@@ -298,12 +299,7 @@ export default function PurchaseClient({
                               .filter(s => s.spotsAvailable && s.spotsAvailable > 0)
                               .map(schedule => {
                                 const pool = pools.find(pool => pool.id === schedule.poolId)?.name
-                                const formatted = new Date(schedule.startDateTime).toLocaleString('en-US', {
-                                  month: 'long',
-                                  day: 'numeric',
-                                  hour: 'numeric',
-                                  minute: 'numeric',
-                                })
+                                const formatted = formatDateTime(schedule.startDateTime)
                                 return (
                                   <option key={schedule.id} value={schedule.id}>
                                     {formatted} at {pool}
@@ -348,14 +344,7 @@ export default function PurchaseClient({
                       const schedule = isGroup ? schedules.find(s => s.id === selectedScheduleId) : null
                       const student = isGroup ? students.find(s => s.id === selectedStudentId) : null
                       const pool = isGroup && schedule ? pools.find(pool => pool.id === schedule.poolId) : null
-                      const formattedSession = schedule
-                        ? new Date(schedule.startDateTime).toLocaleString('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: 'numeric',
-                          })
-                        : null
+                      const formattedSession = schedule ? formatDateTime(schedule.startDateTime) : null
                       const total = product ? product.amount * (product.credits === 1 ? quantity : 1) : 0
                       return (
                         <ul className="text-sm text-gray-700 space-y-1">

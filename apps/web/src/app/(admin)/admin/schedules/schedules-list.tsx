@@ -2,12 +2,12 @@
 
 import { useInstructors } from '@contexts/instructor-context'
 import { usePools } from '@contexts/pools-context'
-import { format } from 'date-fns'
 import { Fragment, useState } from 'react'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { TrashIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { ScheduleResponseDto } from '@/api'
+import Time from '@/app/components/time'
 
 interface SchedulesListProps {
   schedules: ScheduleResponseDto[]
@@ -101,7 +101,7 @@ export default function SchedulesList({ schedules, onDelete }: SchedulesListProp
                           {schedule.lessonType === 'private' ? 'Private' : 'Group'}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {format(new Date(schedule.startDateTime), 'MMM d, yyyy h:mm a')}
+                          <Time dateTime={schedule.startDateTime} />
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {schedule.registrations.length > 0 && (

@@ -16,6 +16,7 @@ import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { PoolService } from '@/services/api/shared/poolService'
 import { format } from 'date-fns'
 import { Fragment } from 'react'
+import { formatDateTime } from '@/app/components/time'
 
 export const metadata: Metadata = {
   title: 'User Details',
@@ -109,10 +110,8 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
             const formatSchedule = () => {
               const pool = pools.find(pool => pool.id === schedule?.poolId)
               const instructor = instructors.find(instructor => instructor.id === schedule?.instructorId)
-              const start = schedule?.startDateTime
-                ? format(new Date(schedule.startDateTime), 'MMM d, yyyy h:mm a')
-                : ''
-              const end = schedule?.endDateTime ? format(new Date(schedule.endDateTime), 'h:mm a') : ''
+              const start = schedule?.startDateTime ? formatDateTime(schedule.startDateTime) : ''
+              const end = schedule?.endDateTime ? formatDateTime(schedule.endDateTime) : ''
               return `${start} - ${end} at ${pool?.name} with ${instructor?.name}`
             }
             const typeLabel =

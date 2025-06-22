@@ -5,4 +5,5 @@ export class Student {
   birthday: Date
   ability: string
   notes: string
+  deletedAt: Date | null
 }

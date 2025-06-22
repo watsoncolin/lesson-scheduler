@@ -2671,6 +2671,10 @@
           },
           "notes": {
             "type": "string"
+          },
+          "deletedAt": {
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -2679,7 +2683,8 @@
           "name",
           "birthday",
           "ability",
-          "notes"
+          "notes",
+          "deletedAt"
         ]
       },
       "UpdateStudentDto": {

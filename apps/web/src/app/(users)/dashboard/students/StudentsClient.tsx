@@ -6,6 +6,7 @@ import { Student } from '@lib/student'
 import { StudentService } from '@/services/api/shared/studentService'
 import React from 'react'
 import Header from '../components/Header'
+import { StudentResponseDto } from '@/api'
 
 function calculateAge(birthday: string | Date): number {
   const birthDate = new Date(birthday)
@@ -15,12 +16,12 @@ function calculateAge(birthday: string | Date): number {
 }
 
 interface StudentsClientProps {
-  students: Student[]
+  students: StudentResponseDto[]
   error: string | null
 }
 
 export default function StudentsClient({ students: initialStudents, error: initialError }: StudentsClientProps) {
-  const [students, setStudents] = useState<Student[]>(initialStudents)
+  const [students, setStudents] = useState<StudentResponseDto[]>(initialStudents)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(initialError)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -42,10 +43,10 @@ export default function StudentsClient({ students: initialStudents, error: initi
   const handleSave = async (student: Student) => {
     if (student.id) {
       await StudentService.update(student.id, student)
-      setStudents(prev => prev.map(s => (s.id === student.id ? student : s)))
+      setStudents(prev => prev.map(s => (s.id === student.id ? student : s)) as StudentResponseDto[])
     } else {
       await StudentService.create(student)
-      setStudents(prev => [...prev, { ...student }])
+      setStudents(prev => [...prev, { ...student } as StudentResponseDto])
     }
     setIsModalOpen(false)
     fetchStudents()
@@ -101,38 +102,73 @@ export default function StudentsClient({ students: initialStudents, error: initi
                       <p className="text-center text-sm text-red-500">Error: {error}</p>
                     ) : students.length > 0 ? (
                       <ul role="list" className="divide-y divide-gray-100">
-                        {students.map(student => (
-                          <li
-                            key={student.name}
-                            className="relative flex justify-between gap-x-6 py-5"
-                            onClick={() => handleEdit(student)}
-                          >
-                            <div className="flex min-w-0 gap-x-4">
-                              <div className="min-w-0 flex-auto">
-                                <p className="text-sm font-semibold leading-6 text-gray-900">
-                                  <a href="#">
-                                    <span className="absolute inset-x-0 -top-px bottom-0" />
-                                    {student.name}
-                                  </a>
-                                </p>
-                                <p className="mt-1 flex text-xs leading-5 text-gray-500">
-                                  <a href={`mailto:${student.notes}`} className="relative truncate hover:underline">
-                                    {student.notes}
-                                  </a>
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex shrink-0 items-center gap-x-4">
-                              <div className="hidden sm:flex sm:flex-col sm:items-end">
-                                <p className="text-sm leading-6 text-gray-900">Age {calculateAge(student.birthday)}</p>
-                                <p className="mt-1 text-xs leading-5 text-gray-500">
-                                  Ability: <span>{student.ability}</span>
-                                </p>
-                              </div>
-                              <ChevronRightIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
-                            </div>
-                          </li>
-                        ))}
+                        {[...students]
+                          .sort((a, b) => {
+                            const aDeleted = !!a.deletedAt
+                            const bDeleted = !!b.deletedAt
+                            if (aDeleted === bDeleted) return 0
+                            return aDeleted ? 1 : -1
+                          })
+                          .map(student => {
+                            const studentName = student.deletedAt ? `${student.name} (Deleted)` : student.name
+                            const isDeleted = !!student.deletedAt
+                            return (
+                              <li
+                                key={student.id}
+                                className={`relative flex justify-between gap-x-6 py-5 ${
+                                  isDeleted ? 'cursor-default' : 'hover:bg-gray-50'
+                                }`}
+                                onClick={() => !isDeleted && handleEdit(student)}
+                              >
+                                <div className="flex min-w-0 gap-x-4">
+                                  <div className="min-w-0 flex-auto">
+                                    <p
+                                      className={`text-sm font-semibold leading-6 ${
+                                        isDeleted ? 'text-gray-500' : 'text-gray-900'
+                                      }`}
+                                    >
+                                      <a href="#">
+                                        <span className="absolute inset-x-0 -top-px bottom-0" />
+                                        {studentName}
+                                      </a>
+                                    </p>
+                                    <p
+                                      className={`mt-1 flex text-xs leading-5 ${
+                                        isDeleted ? 'text-gray-400' : 'text-gray-500'
+                                      }`}
+                                    >
+                                      <a
+                                        href={`mailto:${student.notes}`}
+                                        className="relative truncate hover:underline"
+                                        onClick={e => {
+                                          if (isDeleted) e.preventDefault()
+                                        }}
+                                      >
+                                        {student.notes}
+                                      </a>
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex shrink-0 items-center gap-x-4">
+                                  <div className="hidden sm:flex sm:flex-col sm:items-end">
+                                    <p className={`text-sm leading-6 ${isDeleted ? 'text-gray-500' : 'text-gray-900'}`}>
+                                      Age {calculateAge(student.birthday)}
+                                    </p>
+                                    <p
+                                      className={`mt-1 text-xs leading-5 ${
+                                        isDeleted ? 'text-gray-400' : 'text-gray-500'
+                                      }`}
+                                    >
+                                      Ability: <span>{student.ability}</span>
+                                    </p>
+                                  </div>
+                                  {student.deletedAt === null && (
+                                    <ChevronRightIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                                  )}
+                                </div>
+                              </li>
+                            )
+                          })}
                       </ul>
                     ) : (
                       <p className="text-center text-sm text-gray-500">No students found.</p>

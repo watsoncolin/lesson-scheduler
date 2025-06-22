@@ -9,5 +9,6 @@ export type StudentResponseDto = {
     birthday: string;
     ability: string;
     notes: string;
+    deletedAt: string | null;
 };
 

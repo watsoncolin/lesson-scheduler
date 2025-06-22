@@ -38,9 +38,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         const decodedToken: any = jwtDecode(token)
         if (decodedToken.impersonatorId) {
           setIsImpersonating(true)
-          const adminUser = await MeService.findUserById(decodedToken.impersonatorId)
-          if (adminUser) {
-            setImpersonator({ id: adminUser.id, name: adminUser.firstName })
+          const adminUser = localStorage.getItem('adminUser')
+          const adminUserObj = adminUser ? JSON.parse(adminUser) : null
+
+          if (adminUserObj) {
+            setImpersonator({ id: adminUserObj.id, name: adminUserObj.name })
           }
         } else {
           setIsImpersonating(false)

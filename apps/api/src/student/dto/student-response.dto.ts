@@ -18,4 +18,7 @@ export class StudentResponseDto {
 
   @ApiProperty()
   notes: string
+
+  @ApiProperty({ type: String, nullable: true })
+  deletedAt: string | null
 }

@@ -1,12 +1,12 @@
 export const dynamic = 'force-dynamic'
 
 import { StudentService } from '@/services/api/shared/studentService'
-import { Student } from '@lib/student'
+import { StudentResponseDto } from '@/api'
 import StudentsClient from './StudentsClient'
 
 export default async function StudentsPage() {
   // Fetch students on the server
-  let students: Student[] = []
+  let students: StudentResponseDto[] = []
   let error: string | null = null
   try {
     students = await StudentService.findMyStudents()

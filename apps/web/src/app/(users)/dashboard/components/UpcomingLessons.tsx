@@ -7,7 +7,7 @@ import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { RegistrationService } from '@/services/api/shared/registrationService'
 import { Student } from '@lib/index'
 import { useCredits } from '@contexts/index'
-import { ScheduleResponseDto, InstructorResponseDto, PoolDto } from '@/api'
+import { ScheduleResponseDto, InstructorResponseDto, PoolDto, StudentResponseDto } from '@/api'
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ')
@@ -29,7 +29,7 @@ export default function UpcomingLessons({
 }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [students, setStudents] = useState([] as Student[])
+  const [students, setStudents] = useState([] as StudentResponseDto[])
   const [schedules, setSchedules] = useState([] as ScheduleResponseDto[])
   const { refreshCredits } = useCredits()
   const [timeOptions, setTimeOptions] = useState<Intl.DateTimeFormatOptions>({
@@ -164,12 +164,14 @@ export default function UpcomingLessons({
                 // duration in minutes
                 const duration = Math.round((end.getTime() - start.getTime()) / 1000 / 60)
 
+                const studentName = student.deletedAt ? `${student.name} (Deleted)` : student.name
+
                 return (
                   <li key={schedule.id} className="relative flex space-x-6 py-6 xl:static">
                     <img src={instructor.imageUrl} alt="" className="h-14 w-14 flex-none rounded-full" />
                     <div className="flex-auto">
                       <h3 className="pr-10 font-semibold text-gray-900 xl:pr-0">
-                        {student.name} with {instructor.name} (
+                        {studentName} with {instructor.name} (
                         {schedule.lessonType === 'private' ? 'Private' : 'Parent and Tot'})
                       </h3>
                       <dl className="mt-2 flex flex-col text-gray-500 xl:flex-row">

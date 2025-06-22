@@ -14,6 +14,7 @@ const mapper = (entity: StudentEntity): Student => {
     birthday: entity.birthday,
     ability: entity.ability,
     notes: entity.notes,
+    deletedAt: entity.deletedAt ?? null,
   }
 }
 
@@ -50,7 +51,7 @@ export class StudentService {
   }
 
   async findAllByUserId(userId: string): Promise<Student[]> {
-    return (await this.model.find({ userId: new Types.ObjectId(userId), deletedAt: { $exists: false } })).map(mapper)
+    return (await this.model.find({ userId: new Types.ObjectId(userId) })).map(mapper)
   }
 
   async findOne(id: string): Promise<Student> {

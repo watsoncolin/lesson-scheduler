@@ -32,6 +32,7 @@ export class AccessTokenGuard implements CanActivate {
   private extractTokenFromRequest(request: Request): string | undefined {
     // First try to get token from cookies
     const cookieToken = request.cookies?.authToken
+    
     if (cookieToken) {
       return cookieToken
     }

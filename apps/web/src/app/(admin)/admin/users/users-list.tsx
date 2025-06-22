@@ -1,15 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Divider } from '@components/divider'
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@components/dropdown'
 import { Link } from '@components/link'
 import { EllipsisVerticalIcon } from '@heroicons/react/16/solid'
 import { IUser, IPaginatedData } from '@lesson-scheduler/shared'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/table'
-import { Button } from '@components/button'
 import { Pagination } from '@components/pagination'
 import { UserService } from '@/services/api/shared/userService'
+import { AuthenticationService } from '@/api'
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation'
 
 export default function UsersList({
   searchQuery = '',
@@ -24,8 +25,28 @@ export default function UsersList({
   const [total, setTotal] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [limit, setLimit] = useState(1000)
+  const router = useRouter()
 
   const totalPages = Math.ceil(total / limit)
+
+  const handleImpersonate = async (userId: string) => {
+    try {
+      const adminUser = localStorage.getItem('user')
+      localStorage.setItem('adminUser', adminUser ?? '')
+
+      // Call the impersonation endpoint
+      const response = await AuthenticationService.authenticationControllerImpersonate({ userId })
+      console.log('impersonate response', response)
+      if (response.accessToken) {
+        localStorage.setItem('user', JSON.stringify(response))
+        // Redirect to user's dashboard
+        window.location.href = '/dashboard'
+      }
+    } catch (error) {
+      console.error('Failed to impersonate user:', error)
+      // Handle error (e.g., show a notification)
+    }
+  }
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -55,13 +76,16 @@ export default function UsersList({
               <TableHeader>Phone</TableHeader>
               <TableHeader>Students</TableHeader>
               <TableHeader>Unused credits</TableHeader>
+              <TableHeader></TableHeader>
             </TableRow>
           </TableHead>
           <TableBody>
             {users.map(user => (
-              <TableRow key={user.id} title={`User #${user.id}`} href={`/admin/users/${user.id}`}>
+              <TableRow key={user.id}>
                 <TableCell>
-                  {user.firstName} {user.lastName}
+                  <Link href={`/admin/users/${user.id}`}>
+                    {user.firstName} {user.lastName}
+                  </Link>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
@@ -71,6 +95,16 @@ export default function UsersList({
                 <TableCell>{user.phone}</TableCell>
                 <TableCell>{user.students.length}</TableCell>
                 <TableCell>{user.unusedCredits}</TableCell>
+                <TableCell>
+                  <Dropdown>
+                    <DropdownButton plain>
+                      <EllipsisVerticalIcon />
+                    </DropdownButton>
+                    <DropdownMenu>
+                      <DropdownItem onClick={() => handleImpersonate(user.id)}>Impersonate</DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -14,4 +14,9 @@ export interface ActiveUserData {
    * The subject's (user) role.
    */
   role: string
+
+  /**
+   * The ID of the impersonator.
+   */
+  impersonatorId?: string
 }

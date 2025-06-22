@@ -162,4 +162,14 @@ export class ScheduleService {
             },
         });
     }
+    /**
+     * @returns any
+     * @throws ApiError
+     */
+    public static scheduleControllerSendPendingReminders(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/schedules/send-pending-reminders',
+        });
+    }
 }

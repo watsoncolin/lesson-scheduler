@@ -14,9 +14,7 @@ import { StudentService } from '@/services/api/shared/studentService'
 import { TransactionsService } from '@/services/api/shared/transactionsService'
 import { ScheduleService } from '@/services/api/shared/scheduleService'
 import { PoolService } from '@/services/api/shared/poolService'
-import { format } from 'date-fns'
 import { Fragment } from 'react'
-import { formatDateTime } from '@/app/components/time'
 
 export const metadata: Metadata = {
   title: 'User Details',
@@ -32,6 +30,18 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
   const scheduleIds = transactions.map(transaction => transaction.scheduleId).filter(id => id !== undefined)
   const schedules = await ScheduleService.findAll(scheduleIds.join(','))
   const pools = await PoolService.findAll()
+
+  const formatDateTimeWithTimezone = (dateTime: string) => {
+    const date = new Date(dateTime)
+    const options: Intl.DateTimeFormatOptions = {
+      month: 'long', // 'January'
+      day: 'numeric', // '27'
+      hour: 'numeric', // '12 PM'
+      minute: 'numeric', // '30'
+      timeZoneName: 'short',
+    }
+    return date.toLocaleString('en-US', options)
+  }
 
   return (
     <div className="space-y-6">
@@ -110,8 +120,8 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
             const formatSchedule = () => {
               const pool = pools.find(pool => pool.id === schedule?.poolId)
               const instructor = instructors.find(instructor => instructor.id === schedule?.instructorId)
-              const start = schedule?.startDateTime ? formatDateTime(schedule.startDateTime) : ''
-              const end = schedule?.endDateTime ? formatDateTime(schedule.endDateTime) : ''
+              const start = schedule?.startDateTime ? formatDateTimeWithTimezone(schedule.startDateTime) : ''
+              const end = schedule?.endDateTime ? formatDateTimeWithTimezone(schedule.endDateTime) : ''
               return `${start} - ${end} at ${pool?.name} with ${instructor?.name}`
             }
             const typeLabel =

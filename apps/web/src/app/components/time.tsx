@@ -1,16 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-
-export function formatDateTime(dateTime: string) {
-  const date = new Date(dateTime)
-  const options: Intl.DateTimeFormatOptions = {
-    month: 'long', // 'January'
-    day: 'numeric', // '27'
-    hour: 'numeric', // '12 PM'
-    minute: 'numeric', // '30'
-  }
-  return date.toLocaleString('en-US', options)
-}
+import { formatDateTime } from '@/app/utils/dates'
 
 export default function Time({ dateTime }: { dateTime: string }) {
   const [timeString, setTimeString] = useState<string | null>(null)
@@ -30,8 +20,7 @@ export default function Time({ dateTime }: { dateTime: string }) {
       options.timeZoneName = 'short'
     }
 
-    const date = new Date(dateTime)
-    setTimeString(date.toLocaleString('en-US', options))
+    setTimeString(formatDateTime(dateTime))
   }, [dateTime])
 
   return <time dateTime={dateTime}>{timeString}</time>

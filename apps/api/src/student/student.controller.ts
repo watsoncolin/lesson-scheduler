@@ -12,7 +12,6 @@ export class StudentController {
     return this.studentService.create(createStudentDto)
   }
 
-  // TODO add pagination
   @Get()
   findAll() {
     return this.studentService.findAll()

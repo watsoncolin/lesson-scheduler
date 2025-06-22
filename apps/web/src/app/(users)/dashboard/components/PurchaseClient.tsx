@@ -16,7 +16,7 @@ import { Button } from '@/app/components/button'
 import { useRouter } from 'next/navigation'
 import { ProductResponseDto, ParentTotScheduleResponseDto, StudentResponseDto, PoolDto } from '@/api'
 import Header from './Header'
-import { formatDateTime } from '@/app/components/time'
+import { formatDateTime } from '@/app/utils/dates'
 
 interface PurchaseClientProps {
   products: ProductResponseDto[]

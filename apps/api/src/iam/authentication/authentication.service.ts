@@ -90,12 +90,20 @@ export class AuthenticationService {
 
   async generateTokens(
     user: User,
+    impersonatorId?: string,
   ): Promise<{ accessToken: string; refreshToken: string; id: string; role: Role; name: string }> {
     try {
+      const accessTokenPayload: Partial<ActiveUserData> = {
+        email: user.email,
+        role: user.role,
+      }
+      if (impersonatorId) {
+        accessTokenPayload.impersonatorId = impersonatorId
+      }
       const [accessToken, refreshToken] = await Promise.all([
         this.signToken<Partial<ActiveUserData>>(
           user.id,
-          { email: user.email, role: user.role },
+          accessTokenPayload,
           '14d', // Changed from 15m to 7d
         ),
         this.signToken(user.id, {}, '14d'), // Longer-lived refresh token
@@ -166,6 +174,30 @@ export class AuthenticationService {
       this.logger.error(`Failed to reset password: ${err.message}`, err.stack)
       throw new UnauthorizedException('Invalid or expired reset token')
     }
+  }
+
+  async impersonate(
+    userId: string,
+    adminUser: ActiveUserData,
+  ): Promise<{ accessToken: string; refreshToken: string; id: string; role: Role; name: string }> {
+    const userToImpersonate = await this.userService.findOne(userId)
+    if (!userToImpersonate) {
+      throw new NotFoundException('User not found')
+    }
+    return this.generateTokens(userToImpersonate, adminUser.sub)
+  }
+
+  async exitImpersonation(activeUser: ActiveUserData) {
+    if (!activeUser.impersonatorId) {
+      throw new BadRequestException('Not impersonating a user')
+    }
+
+    const adminUser = await this.userService.findOne(activeUser.impersonatorId)
+    if (!adminUser) {
+      throw new NotFoundException('Admin user not found')
+    }
+
+    return this.generateTokens(adminUser)
   }
 
   private async signToken<T>(userId: string, payload?: T, expiresIn?: string) {

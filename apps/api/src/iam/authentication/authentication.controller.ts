@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res } from '@nestjs/
 import { AuthenticationService } from './authentication.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
-import { Response } from 'express'
+import { response, Response } from 'express'
 import { Auth } from './decorators/auth.decorator'
 import { AuthType } from './enums/auth-type.enum'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
@@ -10,6 +10,11 @@ import { ConfigService } from '@nestjs/config'
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger'
 import { ForgotPasswordDto } from './dto/forgot-password.dto'
 import { ResetPasswordDto } from './dto/reset-password.dto'
+import { Roles } from './decorators/roles.decorator'
+import { Role } from '@lesson-scheduler/shared'
+import { ImpersonateDto } from './dto/impersonate.dto'
+import { ActiveUser } from './decorators/active-user.decorator'
+import { ActiveUserData } from './interfaces/active-user-data.interface'
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -78,6 +83,43 @@ export class AuthenticationController {
     // Clear the auth cookie
     response.clearCookie('authToken')
     return { message: 'Logged out successfully' }
+  }
+
+  @Post('impersonate')
+  @Auth(AuthType.Bearer)
+  @Roles(Role.Admin)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Impersonate a user (Admins only)' })
+  async impersonate(
+    @Res({ passthrough: true }) response: Response,
+    @Body() impersonateDto: ImpersonateDto,
+    @ActiveUser() adminUser: ActiveUserData,
+  ) {
+    const result = await this.authService.impersonate(impersonateDto.userId, adminUser)
+    response.cookie('authToken', result.accessToken, {
+      secure: this.configService.get('NODE_ENV') === 'production',
+      httpOnly: true,
+      sameSite: 'lax',
+      domain: process.env.NODE_ENV === 'production' ? '.stansburyswim.com' : 'localhost',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in ms
+    })
+    return result
+  }
+
+  @Post('exit-impersonation')
+  @Auth(AuthType.Bearer)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Exit user impersonation' })
+  async exitImpersonation(@Res({ passthrough: true }) response: Response, @ActiveUser() activeUser: ActiveUserData) {
+    const result = await this.authService.exitImpersonation(activeUser)
+    response.cookie('authToken', result.accessToken, {
+      secure: this.configService.get('NODE_ENV') === 'production',
+      httpOnly: true,
+      sameSite: 'lax',
+      domain: process.env.NODE_ENV === 'production' ? '.stansburyswim.com' : 'localhost',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in ms
+    })
+    return result
   }
 
   @Post('forgot-password')

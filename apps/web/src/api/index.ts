@@ -22,6 +22,7 @@ export { CreditBalanceDto } from './models/CreditBalanceDto';
 export type { CreditBalanceResponseDto } from './models/CreditBalanceResponseDto';
 export type { ForgotPasswordDto } from './models/ForgotPasswordDto';
 export type { GoogleTokenDto } from './models/GoogleTokenDto';
+export type { ImpersonateDto } from './models/ImpersonateDto';
 export type { InstructorResponseDto } from './models/InstructorResponseDto';
 export type { PaginatedResponseDto } from './models/PaginatedResponseDto';
 export { ParentTotScheduleResponseDto } from './models/ParentTotScheduleResponseDto';

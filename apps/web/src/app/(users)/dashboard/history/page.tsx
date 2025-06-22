@@ -10,7 +10,7 @@ import { TransactionResponseDto } from '@/api'
 import { PoolService } from '@/services/api/shared/poolService'
 import { InstructorService } from '@/services/api/shared/instructorService'
 import Header from '../components/Header'
-import { formatDateTime } from '@/app/components/time'
+import { formatDateTime } from '@/app/utils/dates'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')

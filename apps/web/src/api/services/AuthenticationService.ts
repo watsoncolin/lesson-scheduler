@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ForgotPasswordDto } from '../models/ForgotPasswordDto';
+import type { ImpersonateDto } from '../models/ImpersonateDto';
 import type { RefreshTokenDto } from '../models/RefreshTokenDto';
 import type { ResetPasswordDto } from '../models/ResetPasswordDto';
 import type { SignInDto } from '../models/SignInDto';
@@ -68,6 +69,33 @@ export class AuthenticationService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/auth/logout',
+        });
+    }
+    /**
+     * Impersonate a user (Admins only)
+     * @param requestBody
+     * @returns any
+     * @throws ApiError
+     */
+    public static authenticationControllerImpersonate(
+        requestBody: ImpersonateDto,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/impersonate',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Exit user impersonation
+     * @returns any
+     * @throws ApiError
+     */
+    public static authenticationControllerExitImpersonation(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/exit-impersonation',
         });
     }
     /**

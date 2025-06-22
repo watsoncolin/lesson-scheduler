@@ -105,6 +105,46 @@
         ]
       }
     },
+    "/api/auth/impersonate": {
+      "post": {
+        "operationId": "AuthenticationController_impersonate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImpersonateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Impersonate a user (Admins only)",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/auth/exit-impersonation": {
+      "post": {
+        "operationId": "AuthenticationController_exitImpersonation",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Exit user impersonation",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
     "/api/auth/forgot-password": {
       "post": {
         "operationId": "AuthenticationController_forgotPassword",
@@ -2342,6 +2382,10 @@
         "required": [
           "refreshToken"
         ]
+      },
+      "ImpersonateDto": {
+        "type": "object",
+        "properties": {}
       },
       "ForgotPasswordDto": {
         "type": "object",

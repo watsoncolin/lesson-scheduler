@@ -109,14 +109,20 @@ export class EmailService {
     const key = this.configService.get(ConfigEnum.SendGridApiKey)
     sgMail.setApiKey(key)
 
+    const mailData = {
+      ...options,
+      bcc: 'info@stansburyswim.com',
+    }
+
     sgMail
-      .send(options)
+      .send(mailData)
       .then(response => {
-        console.log(response[0].statusCode)
-        console.log(response[0].headers)
+        this.logger.log(`Email sent to ${options.to}`, {
+          statusCode: response[0].statusCode,
+        })
       })
       .catch(error => {
-        console.error(error)
+        this.logger.error(`Failed to send email to ${options.to}`, error.stack)
       })
   }
 

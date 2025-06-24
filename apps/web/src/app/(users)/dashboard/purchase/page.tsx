@@ -26,7 +26,7 @@ export default async function PurchasePage() {
       students={students}
       waitlistEnabled={config.waitlistEnabled}
       onWaitlist={!!waitlist}
-      purchaseEnabled={waitlist?.allowed ?? false}
+      purchaseEnabled={waitlist && waitlist?.allowed ? waitlist?.allowed : true}
       pools={pools}
     />
   )

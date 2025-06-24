@@ -217,7 +217,7 @@ export default function PurchaseClient({
                       type="radio"
                       style={{ border: '1px solid #D1D5DB' }}
                       className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
-                      disabled={isMissingContactInfo || isPaying}
+                      disabled={isMissingContactInfo || isPaying || !purchaseEnabled}
                     />
                     <div className="flex flex-col flex-1">
                       <span className="ml-3 flex flex-col">
@@ -238,7 +238,7 @@ export default function PurchaseClient({
                             name="quantity"
                             className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                             onChange={e => setQuantity(parseInt(e.target.value))}
-                            disabled={isMissingContactInfo || isPaying}
+                            disabled={isMissingContactInfo || isPaying || !purchaseEnabled}
                           >
                             <option>1</option>
                             <option>2</option>
@@ -270,7 +270,7 @@ export default function PurchaseClient({
                       type="radio"
                       style={{ border: '1px solid #D1D5DB' }}
                       className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border-[3px] border-gray-400 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100"
-                      disabled={isMissingContactInfo || isPaying}
+                      disabled={isMissingContactInfo || isPaying || !purchaseEnabled}
                     />
                     <div className="flex flex-col sm:flex-row w-full gap-2">
                       <div className="flex flex-col flex-1 w-full sm:w-auto ml-3">
@@ -292,7 +292,7 @@ export default function PurchaseClient({
                             name="quantity"
                             className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                             onChange={e => setSelectedScheduleId(e.target.value)}
-                            disabled={isMissingContactInfo || isPaying}
+                            disabled={isMissingContactInfo || isPaying || !purchaseEnabled}
                           >
                             <option>select a parent and tot session</option>
                             {schedules
@@ -319,7 +319,7 @@ export default function PurchaseClient({
                             name="quantity"
                             className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                             onChange={e => setSelectedStudentId(e.target.value)}
-                            disabled={isMissingContactInfo || isPaying}
+                            disabled={isMissingContactInfo || isPaying || !purchaseEnabled}
                           >
                             <option>select a student</option>
                             {students.map(student => (
@@ -416,6 +416,7 @@ export default function PurchaseClient({
                       selectedProductId == '' ||
                       isMissingContactInfo ||
                       isPaying ||
+                      !purchaseEnabled ||
                       (() => {
                         const product = products.find(p => p.id === selectedProductId)
                         if (product?.lessonType === 'group') {
@@ -430,7 +431,7 @@ export default function PurchaseClient({
                   <button
                     type="submit"
                     style={{ backgroundColor: 'black', maxHeight: '50px' }}
-                    disabled={selectedProductId == '' || isMissingContactInfo || isPaying}
+                    disabled={selectedProductId == '' || isMissingContactInfo || isPaying || !purchaseEnabled}
                     onClick={handlePayWithApplePay}
                     className="mt-4 w-full"
                   >

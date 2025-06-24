@@ -97,6 +97,6 @@ export class TransactionService {
 
   async countCredits(query: { transactionType: TransactionTypesEnum; creditType: CreditTypesEnum }): Promise<number> {
     const transactions = await this.model.find(query)
-    return transactions.reduce((acc, transaction) => acc + transaction.credits, 0)
+    return transactions.reduce((acc, transaction) => acc + Math.abs(transaction.credits), 0)
   }
 }

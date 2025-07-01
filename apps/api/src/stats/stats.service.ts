@@ -29,6 +29,10 @@ export class StatsService {
       creditType: CreditTypesEnum.PRIVATE,
     })
 
+    const unusedCredits = await this.transactionService.aggregateUserCreditBalances()
+    // sum the values
+    const totalUnusedCredits = Object.values(unusedCredits).reduce((acc, value) => acc + value, 0)
+
     const scheduledGroupLessons = await this.transactionService.countCredits({
       transactionType: TransactionTypesEnum.Register,
       creditType: CreditTypesEnum.GROUP,
@@ -45,7 +49,7 @@ export class StatsService {
       lessonCounts: {
         available: availablePrivateLessons + availableGroupLessons,
         scheduled: scheduledPrivateLessons + scheduledGroupLessons,
-        unscheduledPrivate: privateLessons - Math.abs(scheduledPrivateLessons),
+        unscheduledPrivate: totalUnusedCredits,
         unscheduledGroup: groupLessons - Math.abs(scheduledGroupLessons),
       },
       userCounts: {

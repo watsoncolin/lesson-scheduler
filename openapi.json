@@ -359,6 +359,19 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "name",
+                "email",
+                "unusedCredits"
+              ]
+            }
           }
         ],
         "responses": {
@@ -768,601 +781,6 @@
         "summary": "Get all students for a user",
         "tags": [
           "Student"
-        ]
-      }
-    },
-    "/api/schedules": {
-      "get": {
-        "description": "Returns all schedules, optionally filtered by scheduleIds.",
-        "operationId": "ScheduleController_findAll",
-        "parameters": [
-          {
-            "name": "scheduleIds",
-            "required": false,
-            "in": "query",
-            "description": "Comma-separated list of schedule IDs to filter by",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ScheduleResponseDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get all schedules",
-        "tags": [
-          "Schedule"
-        ]
-      },
-      "post": {
-        "operationId": "ScheduleController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateScheduleDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Schedule"
-        ]
-      }
-    },
-    "/api/schedules/parent-tot": {
-      "get": {
-        "operationId": "ScheduleController_findAllParentTot",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "List of parent-tot schedules",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ParentTotScheduleResponseDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get all parent-tot schedules",
-        "tags": [
-          "Schedule"
-        ]
-      }
-    },
-    "/api/schedules/me": {
-      "get": {
-        "description": "Returns all upcoming schedules for the current user.",
-        "operationId": "ScheduleController_findAllForLoggedInUser",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ScheduleResponseDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get all schedules for the logged-in user",
-        "tags": [
-          "Schedule"
-        ]
-      }
-    },
-    "/api/schedules/search": {
-      "get": {
-        "description": "Search for schedules by pools, instructors, days of week, date, timezone, and includeReserved.",
-        "operationId": "ScheduleController_search",
-        "parameters": [
-          {
-            "name": "pools",
-            "required": false,
-            "in": "query",
-            "description": "List of pool IDs",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "instructors",
-            "required": false,
-            "in": "query",
-            "description": "List of instructor IDs",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "daysOfWeek",
-            "required": false,
-            "in": "query",
-            "description": "List of days of the week",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "date",
-            "required": false,
-            "in": "query",
-            "description": "Date to search for (YYYY-MM-DD)",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "timezone",
-            "required": false,
-            "in": "query",
-            "description": "Timezone",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "includeReserved",
-            "required": false,
-            "in": "query",
-            "description": "Include reserved schedules",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SearchScheduleResponseDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Search schedules",
-        "tags": [
-          "Schedule"
-        ]
-      }
-    },
-    "/api/schedules/available-dates": {
-      "get": {
-        "operationId": "ScheduleController_findAvailableDates",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Schedule"
-        ]
-      }
-    },
-    "/api/schedules/{id}": {
-      "get": {
-        "operationId": "ScheduleController_findOne",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Schedule"
-        ]
-      },
-      "patch": {
-        "operationId": "ScheduleController_update",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateScheduleDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Schedule"
-        ]
-      },
-      "delete": {
-        "operationId": "ScheduleController_remove",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Schedule"
-        ]
-      }
-    },
-    "/api/schedules/send-pending-reminders": {
-      "post": {
-        "operationId": "ScheduleController_sendPendingReminders",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Schedule"
-        ]
-      }
-    },
-    "/api/schedules/{id}/registrations": {
-      "post": {
-        "operationId": "RegistrationController_create",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateRegistrationDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Registration"
-        ]
-      },
-      "get": {
-        "operationId": "RegistrationController_findOne",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Registration"
-        ]
-      }
-    },
-    "/api/schedules/{id}/registrations/{studentId}": {
-      "delete": {
-        "operationId": "RegistrationController_remove",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "studentId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Registration"
-        ]
-      }
-    },
-    "/api/payments": {
-      "get": {
-        "operationId": "PaymentController_findAll",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaymentResponseDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get all payments",
-        "tags": [
-          "payments"
-        ]
-      },
-      "post": {
-        "operationId": "PaymentController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePaymentDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaymentResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Create a payment",
-        "tags": [
-          "payments"
-        ]
-      }
-    },
-    "/api/payments/paypal-create-order": {
-      "post": {
-        "operationId": "PaymentController_createPaypalOrder",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePaypalOrderDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "summary": "Create a PayPal order",
-        "tags": [
-          "payments"
-        ]
-      }
-    },
-    "/api/payments/paypal-capture-order": {
-      "post": {
-        "operationId": "PaymentController_captureOrder",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "orderId": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "summary": "Capture a PayPal order",
-        "tags": [
-          "payments"
-        ]
-      }
-    },
-    "/api/payments/apple-validate-merchant": {
-      "post": {
-        "operationId": "PaymentController_appleValidateMerchant",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "validationUrl": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "summary": "Validate Apple Pay merchant",
-        "tags": [
-          "payments"
-        ]
-      }
-    },
-    "/api/payments/{id}": {
-      "get": {
-        "operationId": "PaymentController_findOne",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaymentResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get a payment by ID",
-        "tags": [
-          "payments"
-        ]
-      },
-      "patch": {
-        "operationId": "PaymentController_update",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePaymentDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaymentResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Update a payment",
-        "tags": [
-          "payments"
         ]
       }
     },
@@ -1860,6 +1278,393 @@
         ]
       }
     },
+    "/api/schedules": {
+      "get": {
+        "description": "Returns all schedules, optionally filtered by scheduleIds.",
+        "operationId": "ScheduleController_findAll",
+        "parameters": [
+          {
+            "name": "scheduleIds",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated list of schedule IDs to filter by",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all schedules",
+        "tags": [
+          "Schedule"
+        ]
+      },
+      "post": {
+        "operationId": "ScheduleController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateScheduleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Schedule"
+        ]
+      }
+    },
+    "/api/schedules/parent-tot": {
+      "get": {
+        "operationId": "ScheduleController_findAllParentTot",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of parent-tot schedules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParentTotScheduleResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all parent-tot schedules",
+        "tags": [
+          "Schedule"
+        ]
+      }
+    },
+    "/api/schedules/me": {
+      "get": {
+        "description": "Returns all upcoming schedules for the current user.",
+        "operationId": "ScheduleController_findAllForLoggedInUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all schedules for the logged-in user",
+        "tags": [
+          "Schedule"
+        ]
+      }
+    },
+    "/api/schedules/search": {
+      "get": {
+        "description": "Search for schedules by pools, instructors, days of week, date, timezone, and includeReserved.",
+        "operationId": "ScheduleController_search",
+        "parameters": [
+          {
+            "name": "pools",
+            "required": false,
+            "in": "query",
+            "description": "List of pool IDs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "instructors",
+            "required": false,
+            "in": "query",
+            "description": "List of instructor IDs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "daysOfWeek",
+            "required": false,
+            "in": "query",
+            "description": "List of days of the week",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Date to search for (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timezone",
+            "required": false,
+            "in": "query",
+            "description": "Timezone",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeReserved",
+            "required": false,
+            "in": "query",
+            "description": "Include reserved schedules",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SearchScheduleResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search schedules",
+        "tags": [
+          "Schedule"
+        ]
+      }
+    },
+    "/api/schedules/available-dates": {
+      "get": {
+        "operationId": "ScheduleController_findAvailableDates",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Schedule"
+        ]
+      }
+    },
+    "/api/schedules/{id}": {
+      "get": {
+        "operationId": "ScheduleController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Schedule"
+        ]
+      },
+      "patch": {
+        "operationId": "ScheduleController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateScheduleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Schedule"
+        ]
+      },
+      "delete": {
+        "operationId": "ScheduleController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Schedule"
+        ]
+      }
+    },
+    "/api/schedules/send-pending-reminders": {
+      "post": {
+        "operationId": "ScheduleController_sendPendingReminders",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Schedule"
+        ]
+      }
+    },
+    "/api/schedules/{id}/registrations": {
+      "post": {
+        "operationId": "RegistrationController_create",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRegistrationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Registration"
+        ]
+      },
+      "get": {
+        "operationId": "RegistrationController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Registration"
+        ]
+      }
+    },
+    "/api/schedules/{id}/registrations/{studentId}": {
+      "delete": {
+        "operationId": "RegistrationController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "studentId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Registration"
+        ]
+      }
+    },
     "/api/pools": {
       "get": {
         "operationId": "PoolController_findAll",
@@ -2295,6 +2100,214 @@
           "Stats"
         ]
       }
+    },
+    "/api/payments": {
+      "get": {
+        "operationId": "PaymentController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all payments",
+        "tags": [
+          "payments"
+        ]
+      },
+      "post": {
+        "operationId": "PaymentController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a payment",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/payments/paypal-create-order": {
+      "post": {
+        "operationId": "PaymentController_createPaypalOrder",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaypalOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create a PayPal order",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/payments/paypal-capture-order": {
+      "post": {
+        "operationId": "PaymentController_captureOrder",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "orderId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "summary": "Capture a PayPal order",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/payments/apple-validate-merchant": {
+      "post": {
+        "operationId": "PaymentController_appleValidateMerchant",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "validationUrl": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Validate Apple Pay merchant",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/payments/{id}": {
+      "get": {
+        "operationId": "PaymentController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a payment by ID",
+        "tags": [
+          "payments"
+        ]
+      },
+      "patch": {
+        "operationId": "PaymentController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update a payment",
+        "tags": [
+          "payments"
+        ]
+      }
     }
   },
   "info": {
@@ -2715,465 +2728,6 @@
           "id"
         ]
       },
-      "ScheduleStudentDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "birthDate": {
-            "type": "string"
-          },
-          "notes": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "birthDate",
-          "notes"
-        ]
-      },
-      "ScheduleUserDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "user",
-              "admin",
-              "instructor"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "firstName",
-          "lastName",
-          "email",
-          "role"
-        ]
-      },
-      "ScheduleRegistrationDto": {
-        "type": "object",
-        "properties": {
-          "studentId": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string"
-          },
-          "student": {
-            "$ref": "#/components/schemas/ScheduleStudentDto"
-          },
-          "user": {
-            "$ref": "#/components/schemas/ScheduleUserDto"
-          }
-        },
-        "required": [
-          "studentId",
-          "userId",
-          "createdAt",
-          "student",
-          "user"
-        ]
-      },
-      "ScheduleResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "poolId": {
-            "type": "string"
-          },
-          "instructorId": {
-            "type": "string"
-          },
-          "classSize": {
-            "type": "number"
-          },
-          "lessonType": {
-            "type": "string",
-            "enum": [
-              "private",
-              "group"
-            ]
-          },
-          "startDateTime": {
-            "type": "string"
-          },
-          "endDateTime": {
-            "type": "string"
-          },
-          "registrations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ScheduleRegistrationDto"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "poolId",
-          "instructorId",
-          "classSize",
-          "lessonType",
-          "startDateTime",
-          "endDateTime",
-          "registrations"
-        ]
-      },
-      "ParentTotScheduleResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "scheduleId123",
-            "description": "Schedule ID"
-          },
-          "poolId": {
-            "type": "string",
-            "example": "poolId123",
-            "description": "Pool ID"
-          },
-          "instructorId": {
-            "type": "string",
-            "example": "instructorId123",
-            "description": "Instructor ID"
-          },
-          "classSize": {
-            "type": "number",
-            "example": 10,
-            "description": "Class size"
-          },
-          "lessonType": {
-            "type": "string",
-            "enum": [
-              "private",
-              "group"
-            ],
-            "description": "Type of lesson"
-          },
-          "startDateTime": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2024-06-01T10:00:00.000Z",
-            "description": "Start date and time"
-          },
-          "endDateTime": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2024-06-01T11:00:00.000Z",
-            "description": "End date and time"
-          },
-          "spotsAvailable": {
-            "type": "number",
-            "example": 5,
-            "description": "Number of spots available"
-          }
-        },
-        "required": [
-          "id",
-          "poolId",
-          "instructorId",
-          "classSize",
-          "lessonType",
-          "startDateTime",
-          "endDateTime",
-          "spotsAvailable"
-        ]
-      },
-      "SearchScheduleStudentDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "birthDate": {
-            "type": "string"
-          },
-          "notes": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "birthDate",
-          "notes"
-        ]
-      },
-      "SearchScheduleUserDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "user",
-              "admin",
-              "instructor"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "firstName",
-          "lastName",
-          "email",
-          "role"
-        ]
-      },
-      "SearchScheduleRegistrationDto": {
-        "type": "object",
-        "properties": {
-          "studentId": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string"
-          },
-          "student": {
-            "$ref": "#/components/schemas/SearchScheduleStudentDto"
-          },
-          "user": {
-            "$ref": "#/components/schemas/SearchScheduleUserDto"
-          }
-        },
-        "required": [
-          "studentId",
-          "userId",
-          "createdAt",
-          "student",
-          "user"
-        ]
-      },
-      "SearchScheduleResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "poolId": {
-            "type": "string"
-          },
-          "instructorId": {
-            "type": "string"
-          },
-          "classSize": {
-            "type": "number"
-          },
-          "lessonType": {
-            "type": "string",
-            "enum": [
-              "private",
-              "group"
-            ]
-          },
-          "startDateTime": {
-            "type": "string"
-          },
-          "endDateTime": {
-            "type": "string"
-          },
-          "registrations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SearchScheduleRegistrationDto"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "poolId",
-          "instructorId",
-          "classSize",
-          "lessonType",
-          "startDateTime",
-          "endDateTime",
-          "registrations"
-        ]
-      },
-      "CreateScheduleDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "UpdateScheduleDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "CreateRegistrationDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "PaymentResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          },
-          "productId": {
-            "type": "string"
-          },
-          "paymentGateway": {
-            "type": "object"
-          },
-          "paymentGatewayId": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "number"
-          },
-          "quantity": {
-            "type": "number"
-          },
-          "status": {
-            "type": "object"
-          },
-          "scheduleId": {
-            "type": "string"
-          },
-          "studentId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "createdAt",
-          "updatedAt",
-          "userId",
-          "productId",
-          "paymentGateway",
-          "paymentGatewayId",
-          "amount",
-          "quantity",
-          "status"
-        ]
-      },
-      "CreatePaypalOrderDto": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string"
-          },
-          "productId": {
-            "type": "string"
-          },
-          "quantity": {
-            "type": "number"
-          },
-          "scheduleId": {
-            "type": "string"
-          },
-          "studentId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "userId",
-          "productId",
-          "quantity"
-        ]
-      },
-      "CreatePaymentDto": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string"
-          },
-          "productId": {
-            "type": "string"
-          },
-          "quantity": {
-            "type": "number"
-          },
-          "paymentGateway": {
-            "type": "string",
-            "enum": [
-              "PAYPAL",
-              "APPLE_PAY"
-            ]
-          },
-          "paymentGatewayId": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "SUCCESS",
-              "FAILED"
-            ],
-            "default": "PENDING"
-          },
-          "scheduleId": {
-            "type": "string"
-          },
-          "studentId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "userId",
-          "productId",
-          "quantity",
-          "paymentGateway",
-          "paymentGatewayId",
-          "status"
-        ]
-      },
-      "UpdatePaymentDto": {
-        "type": "object",
-        "properties": {}
-      },
       "CreditBalanceDto": {
         "type": "object",
         "properties": {
@@ -3561,6 +3115,334 @@
           "updatedAt"
         ]
       },
+      "ScheduleStudentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "birthDate",
+          "notes"
+        ]
+      },
+      "ScheduleUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "admin",
+              "instructor"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "role"
+        ]
+      },
+      "ScheduleRegistrationDto": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "student": {
+            "$ref": "#/components/schemas/ScheduleStudentDto"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ScheduleUserDto"
+          }
+        },
+        "required": [
+          "studentId",
+          "userId",
+          "createdAt",
+          "student",
+          "user"
+        ]
+      },
+      "ScheduleResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "poolId": {
+            "type": "string"
+          },
+          "instructorId": {
+            "type": "string"
+          },
+          "classSize": {
+            "type": "number"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ]
+          },
+          "startDateTime": {
+            "type": "string"
+          },
+          "endDateTime": {
+            "type": "string"
+          },
+          "registrations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduleRegistrationDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "poolId",
+          "instructorId",
+          "classSize",
+          "lessonType",
+          "startDateTime",
+          "endDateTime",
+          "registrations"
+        ]
+      },
+      "ParentTotScheduleResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "scheduleId123",
+            "description": "Schedule ID"
+          },
+          "poolId": {
+            "type": "string",
+            "example": "poolId123",
+            "description": "Pool ID"
+          },
+          "instructorId": {
+            "type": "string",
+            "example": "instructorId123",
+            "description": "Instructor ID"
+          },
+          "classSize": {
+            "type": "number",
+            "example": 10,
+            "description": "Class size"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ],
+            "description": "Type of lesson"
+          },
+          "startDateTime": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2024-06-01T10:00:00.000Z",
+            "description": "Start date and time"
+          },
+          "endDateTime": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2024-06-01T11:00:00.000Z",
+            "description": "End date and time"
+          },
+          "spotsAvailable": {
+            "type": "number",
+            "example": 5,
+            "description": "Number of spots available"
+          }
+        },
+        "required": [
+          "id",
+          "poolId",
+          "instructorId",
+          "classSize",
+          "lessonType",
+          "startDateTime",
+          "endDateTime",
+          "spotsAvailable"
+        ]
+      },
+      "SearchScheduleStudentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "birthDate",
+          "notes"
+        ]
+      },
+      "SearchScheduleUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "admin",
+              "instructor"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "role"
+        ]
+      },
+      "SearchScheduleRegistrationDto": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "student": {
+            "$ref": "#/components/schemas/SearchScheduleStudentDto"
+          },
+          "user": {
+            "$ref": "#/components/schemas/SearchScheduleUserDto"
+          }
+        },
+        "required": [
+          "studentId",
+          "userId",
+          "createdAt",
+          "student",
+          "user"
+        ]
+      },
+      "SearchScheduleResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "poolId": {
+            "type": "string"
+          },
+          "instructorId": {
+            "type": "string"
+          },
+          "classSize": {
+            "type": "number"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": [
+              "private",
+              "group"
+            ]
+          },
+          "startDateTime": {
+            "type": "string"
+          },
+          "endDateTime": {
+            "type": "string"
+          },
+          "registrations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchScheduleRegistrationDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "poolId",
+          "instructorId",
+          "classSize",
+          "lessonType",
+          "startDateTime",
+          "endDateTime",
+          "registrations"
+        ]
+      },
+      "CreateScheduleDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateScheduleDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateRegistrationDto": {
+        "type": "object",
+        "properties": {}
+      },
       "PoolDto": {
         "type": "object",
         "properties": {
@@ -3768,6 +3650,137 @@
           "unscheduledGroupLessons",
           "activeUsers"
         ]
+      },
+      "PaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "paymentGateway": {
+            "type": "object"
+          },
+          "paymentGatewayId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "status": {
+            "type": "object"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "userId",
+          "productId",
+          "paymentGateway",
+          "paymentGatewayId",
+          "amount",
+          "quantity",
+          "status"
+        ]
+      },
+      "CreatePaypalOrderDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "productId",
+          "quantity"
+        ]
+      },
+      "CreatePaymentDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "paymentGateway": {
+            "type": "string",
+            "enum": [
+              "PAYPAL",
+              "APPLE_PAY"
+            ]
+          },
+          "paymentGatewayId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "SUCCESS",
+              "FAILED"
+            ],
+            "default": "PENDING"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "productId",
+          "quantity",
+          "paymentGateway",
+          "paymentGatewayId",
+          "status"
+        ]
+      },
+      "UpdatePaymentDto": {
+        "type": "object",
+        "properties": {}
       }
     }
   }

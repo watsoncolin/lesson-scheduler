@@ -65,6 +65,15 @@ export default function PurchaseClient({
   const privateLessons = products.filter(p => p.lessonType == 'private')
   const groupLessons = products.filter(p => p.lessonType == 'group')
 
+  useEffect(() => {
+    if (selectedProductId) {
+      const product = products.find(p => p.id == selectedProductId)
+      if (product?.credits != 1) {
+        setQuantity(1)
+      }
+    }
+  }, [selectedProductId])
+
   const paypalCreateOrder = async (): Promise<any> => {
     setError('')
     setPaymentCompleted(false)
@@ -77,16 +86,22 @@ export default function PurchaseClient({
         return Promise.reject('No product selected')
       }
       const product = products.find(p => p.id == selectedProductId)
+
+      if (product == null) {
+        setError('Product not found')
+        return Promise.reject('Product not found')
+      }
+
       let selectedQuantity = quantity
-      if (product?.credits != 1) {
+      if (product.credits != 1) {
         setQuantity(1)
         selectedQuantity = 1
       }
-      if (product?.lessonType == 'group' && !selectedScheduleId) {
+      if (product.lessonType == 'group' && !selectedScheduleId) {
         setError('Please select a session')
         return Promise.reject('Please select a session')
       }
-      if (product?.lessonType == 'group' && !selectedStudentId) {
+      if (product.lessonType == 'group' && !selectedStudentId) {
         setError('Please select a student')
         return Promise.reject('Please select a student')
       }
@@ -238,7 +253,10 @@ export default function PurchaseClient({
                             name="quantity"
                             className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                             onChange={e => setQuantity(parseInt(e.target.value))}
-                            disabled={isMissingContactInfo || isPaying || !purchaseEnabled}
+                            disabled={
+                              isMissingContactInfo || isPaying || !purchaseEnabled || selectedProductId != product.id
+                            }
+                            value={quantity}
                           >
                             <option>1</option>
                             <option>2</option>
@@ -288,8 +306,8 @@ export default function PurchaseClient({
                         </label>
                         <div className="mt-2">
                           <select
-                            id="quantity"
-                            name="quantity"
+                            id="session"
+                            name="session"
                             className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                             onChange={e => setSelectedScheduleId(e.target.value)}
                             disabled={isMissingContactInfo || isPaying || !purchaseEnabled}
@@ -315,8 +333,8 @@ export default function PurchaseClient({
                         </label>
                         <div className="mt-2">
                           <select
-                            id="quantity"
-                            name="quantity"
+                            id="student"
+                            name="student"
                             className="w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                             onChange={e => setSelectedStudentId(e.target.value)}
                             disabled={isMissingContactInfo || isPaying || !purchaseEnabled}
@@ -345,7 +363,8 @@ export default function PurchaseClient({
                       const student = isGroup ? students.find(s => s.id === selectedStudentId) : null
                       const pool = isGroup && schedule ? pools.find(pool => pool.id === schedule.poolId) : null
                       const formattedSession = schedule ? formatDateTime(schedule.startDateTime) : null
-                      const total = product ? product.amount * (product.credits === 1 ? quantity : 1) : 0
+                      const actualQuantity = isGroup ? 1 : quantity
+                      const total = product ? product.amount * actualQuantity : 0
                       return (
                         <ul className="text-sm text-gray-700 space-y-1">
                           <li>
@@ -356,7 +375,7 @@ export default function PurchaseClient({
                           </li>
                           {product?.credits === 1 && (
                             <li>
-                              <span className="font-medium">Quantity:</span> {quantity}
+                              <span className="font-medium">Quantity:</span> {actualQuantity}
                             </li>
                           )}
                           {isGroup && (

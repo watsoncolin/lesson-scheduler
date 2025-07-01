@@ -10,6 +10,7 @@ import { UserForAuth } from './user-for-auth'
 import { EventBus } from '@nestjs/cqrs'
 import { UserRegisterEvent } from './events/user-register.event'
 import { Role } from '@lesson-scheduler/shared'
+import { TransactionService } from 'payment/transaction.service'
 const mapper = (entity: UserEntity): User => {
   return {
     id: entity._id.toString(),
@@ -38,6 +39,7 @@ export class UserService {
     @InjectModel(UserEntity.name)
     private readonly model: Model<UserEntity>,
     private readonly eventBus: EventBus,
+    private readonly transactionService: TransactionService,
   ) {}
   async create(createUserDto: CreateUserDto): Promise<User> {
     const _id = new Types.ObjectId()
@@ -89,21 +91,81 @@ export class UserService {
     return user
   }
 
-  async findAll(page = 1, limit = 1000, search?: string, phone?: string): Promise<{ users: User[]; total: number }> {
+  async findAll(
+    page = 1,
+    limit = 1000,
+    search?: string,
+    phone?: string,
+    sortBy?: string,
+  ): Promise<{ users: User[]; total: number }> {
     const skip = (page - 1) * limit
-    const filter: any = {}
+    const match: any = {}
     if (search) {
-      filter.$or = [{ firstName: { $regex: search, $options: 'i' } }, { lastName: { $regex: search, $options: 'i' } }]
+      match.$or = [{ firstName: { $regex: search, $options: 'i' } }, { lastName: { $regex: search, $options: 'i' } }]
     }
     if (phone) {
-      filter.phone = { $regex: phone, $options: 'i' }
+      match.phone = { $regex: phone, $options: 'i' }
     }
-    const [users, total] = await Promise.all([
-      this.model.find(filter).skip(skip).limit(limit).exec(),
-      this.model.countDocuments(filter),
+
+    // Build the aggregation pipeline
+    const pipeline: any[] = [
+      { $match: match },
+      {
+        $lookup: {
+          from: 'transactions',
+          let: { userId: '$_id' },
+          pipeline: [
+            { $match: { $expr: { $and: [{ $eq: ['$userId', '$$userId'] }, { $eq: ['$creditType', 'private'] }] } } },
+            { $group: { _id: null, balance: { $sum: '$credits' } } },
+          ],
+          as: 'unusedCreditsAgg',
+        },
+      },
+      {
+        $addFields: {
+          unusedCredits: { $ifNull: [{ $arrayElemAt: ['$unusedCreditsAgg.balance', 0] }, 0] },
+        },
+      },
+      { $project: { unusedCreditsAgg: 0 } },
+    ]
+
+    // Sorting
+    if (sortBy === 'name') {
+      pipeline.push({ $addFields: { fullName: { $concat: ['$firstName', ' ', '$lastName'] } } })
+      pipeline.push({ $sort: { fullName: 1 } })
+    } else if (sortBy === 'email') {
+      pipeline.push({ $sort: { email: 1 } })
+    } else if (sortBy === 'unusedCredits') {
+      pipeline.push({ $sort: { unusedCredits: -1 } })
+    }
+
+    // Pagination
+    pipeline.push({ $skip: skip })
+    pipeline.push({ $limit: limit })
+
+    // Get total count (without pagination)
+    const countPipeline = [...pipeline]
+    countPipeline.splice(
+      countPipeline.findIndex(stage => Object.keys(stage)[0] === '$skip'),
+      2,
+    ) // remove $skip and $limit
+    countPipeline.push({ $count: 'total' })
+
+    // Run both pipelines
+    const [users, totalResult] = await Promise.all([
+      this.model.aggregate(pipeline),
+      this.model.aggregate(countPipeline),
     ])
+    const total = totalResult[0]?.total ?? 0
+
+    // Map to User type
+    const mappedUsers = users.map(user => ({
+      ...mapper(user),
+      unusedCredits: user.unusedCredits || 0,
+    }))
+
     return {
-      users: users.map(mapper),
+      users: mappedUsers,
       total,
     }
   }

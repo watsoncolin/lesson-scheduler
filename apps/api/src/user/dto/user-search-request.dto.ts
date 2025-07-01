@@ -24,4 +24,9 @@ export class UserSearchRequestDto {
   @IsOptional()
   @IsString()
   phone?: string
+
+  @ApiProperty({ required: false, enum: ['name', 'email', 'unusedCredits'] })
+  @IsOptional()
+  @IsString()
+  sortBy?: string
 }

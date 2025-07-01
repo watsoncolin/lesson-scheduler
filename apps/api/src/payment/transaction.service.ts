@@ -99,4 +99,26 @@ export class TransactionService {
     const transactions = await this.model.find(query)
     return transactions.reduce((acc, transaction) => acc + Math.abs(transaction.credits), 0)
   }
+
+  async aggregateUserCreditBalances(): Promise<Record<string, number>> {
+    // Aggregate unused credits for all users (PRIVATE creditType)
+    const results = await this.model.aggregate([
+      {
+        $match: {
+          creditType: 'private',
+        },
+      },
+      {
+        $group: {
+          _id: '$userId',
+          balance: { $sum: '$credits' },
+        },
+      },
+    ])
+    const balances: Record<string, number> = {}
+    for (const result of results) {
+      balances[result._id.toString()] = result.balance
+    }
+    return balances
+  }
 }

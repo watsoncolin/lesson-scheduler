@@ -52,6 +52,7 @@ export default function UsersPageClient() {
               <Select name="sort_by" value={sortBy} onChange={e => setSortBy(e.target.value)}>
                 <option value="name">Sort by name</option>
                 <option value="email">Sort by email</option>
+                <option value="unusedCredits">Sort by unused credits</option>
               </Select>
             </div>
             <Button onClick={handleSearch}>Search</Button>

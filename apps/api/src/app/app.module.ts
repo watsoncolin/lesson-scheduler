@@ -18,6 +18,7 @@ import { WaitlistModule } from 'waitlist/waitlist.module'
 import { FileModule } from '../file/file.module'
 import { AnnouncementModule } from 'announcement/announcement.module'
 import { StatsModule } from 'stats/stats.module'
+import { ControllersModule } from 'controllers/controllers.module'
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -45,6 +46,7 @@ import { StatsModule } from 'stats/stats.module'
     FileModule,
     AnnouncementModule,
     StatsModule,
+    ControllersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

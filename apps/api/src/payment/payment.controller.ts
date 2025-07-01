@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, NotFoundException, HttpCode } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  NotFoundException,
+  HttpCode,
+  BadRequestException,
+} from '@nestjs/common'
 import { PaymentService } from './payment.service'
 import { CreatePaymentDto } from './dto/create-payment.dto'
 import { UpdatePaymentDto } from './dto/update-payment.dto'
@@ -13,6 +23,8 @@ import { Roles } from 'iam/authentication/decorators/roles.decorator'
 import { Role } from '@lesson-scheduler/shared'
 import { ApiTags, ApiOperation, ApiOkResponse, ApiBody, ApiParam } from '@nestjs/swagger'
 import { PaymentResponseDto } from './dto/payment-response.dto'
+import { ScheduleService } from 'schedule/schedule.service'
+import { RegistrationService } from 'schedule/registration.service'
 
 @ApiTags('payments')
 @Controller('payments')
@@ -21,6 +33,8 @@ export class PaymentController {
     private readonly paymentService: PaymentService,
     private readonly paypalService: PaypalService,
     private readonly userService: UserService,
+    private readonly scheduleService: ScheduleService,
+    private readonly registrationService: RegistrationService,
   ) {}
 
   @Get('')
@@ -37,6 +51,18 @@ export class PaymentController {
   async createPaypalOrder(@Body() createPaypalOrder: CreatePaypalOrderDto, @ActiveUser() userdata: ActiveUserData) {
     const user = await this.userService.findOne(userdata.sub)
     const order = await this.paypalService.createOrder(createPaypalOrder.productId, createPaypalOrder.quantity, user)
+
+    if (createPaypalOrder.scheduleId) {
+      const schedule = await this.scheduleService.findOne(createPaypalOrder.scheduleId)
+      const registrations = await this.registrationService.findAll(createPaypalOrder.scheduleId)
+      const classSize = registrations.length + createPaypalOrder.quantity
+      if (schedule.classSize && classSize > schedule.classSize) {
+        throw new BadRequestException('Schedule is full')
+      }
+    }
+
+    // If group, check if the schedule is full
+    // If group, fail if the quantity is more than 1
     await this.paymentService.create({
       productId: createPaypalOrder.productId,
       quantity: createPaypalOrder.quantity,
@@ -57,16 +83,26 @@ export class PaymentController {
   @ApiBody({ schema: { properties: { orderId: { type: 'string' } } } })
   @HttpCode(204)
   async captureOrder(@Body() { orderId }, @ActiveUser() userdata: ActiveUserData) {
-    const order = await this.paypalService.captureOrder(orderId)
+    const payment = await this.paymentService.findByGatewayId(orderId)
 
-    const payment = await this.paymentService.findByGatewayId(order.id)
     if (!payment) {
       throw new NotFoundException()
+    }
+
+    if (payment.scheduleId) {
+      const schedule = await this.scheduleService.findOne(payment.scheduleId)
+      const registrations = await this.registrationService.findAll(payment.scheduleId)
+      const classSize = registrations.length + payment.quantity
+      if (schedule.classSize && classSize > schedule.classSize) {
+        throw new BadRequestException('Schedule is full')
+      }
     }
 
     if (payment.userId !== userdata.sub) {
       throw new NotFoundException()
     }
+
+    const order = await this.paypalService.captureOrder(orderId)
 
     if (order.status === 'COMPLETED') {
       await this.paymentService.update({

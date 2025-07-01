@@ -16,7 +16,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ActiveUser } from '../iam/authentication/decorators/active-user.decorator'
 import { ActiveUserData } from '../iam/authentication/interfaces/active-user-data.interface'
-import { Role } from '@lesson-scheduler/shared'
+import { CreditTypesEnum, Role, TransactionTypesEnum } from '@lesson-scheduler/shared'
 import { Roles } from 'iam/authentication/decorators/roles.decorator'
 import { StudentService } from 'student/student.service'
 import { UserSearchRequestDto } from './dto/user-search-request.dto'
@@ -24,6 +24,7 @@ import { UserSearchResponseDto } from './dto/user-search-response.dto'
 import { PaginatedResponseDto } from '../common/dto/paginated-response.dto'
 import { ApiTags, ApiResponse, ApiQuery } from '@nestjs/swagger'
 import { UserResponseDto } from './dto/user-response.dto'
+import { TransactionService } from 'payment/transaction.service'
 
 @ApiTags('Users')
 @Roles(Role.Admin)
@@ -32,6 +33,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly studentService: StudentService,
+    private readonly transactionService: TransactionService,
   ) {}
 
   @Post()
@@ -55,6 +57,7 @@ export class UserController {
       userSearchRequestDto.limit,
       userSearchRequestDto.name,
       userSearchRequestDto.phone,
+      userSearchRequestDto.sortBy,
     )
 
     const allStudents = await Promise.all(
@@ -76,6 +79,7 @@ export class UserController {
     }
 
     for (const user of users) {
+      const creditBalances = await this.transactionService.readCreditBalances(user.id)
       const students = allStudents
         .find(students => students.userId === user.id)
         ?.students.map(student => ({
@@ -92,7 +96,7 @@ export class UserController {
         firstName: user.firstName,
         lastName: user.lastName,
         phone: user.phone,
-        unusedCredits: 0,
+        unusedCredits: creditBalances.find(balance => balance.creditType === CreditTypesEnum.PRIVATE)?.balance ?? 0,
         totalCredits: 0,
         students:
           students?.map(student => ({

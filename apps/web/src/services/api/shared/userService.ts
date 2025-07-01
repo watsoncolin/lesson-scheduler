@@ -10,8 +10,14 @@ export class UserService extends BaseService {
     return UsersService.userControllerCreate(data)
   }
 
-  static async findAll(page = 1, limit = 50, name?: string, phone?: string): Promise<PaginatedResponseDto> {
-    return UsersService.userControllerFindAll(page, limit, name, phone)
+  static async findAll(
+    page = 1,
+    limit = 50,
+    name?: string,
+    phone?: string,
+    sortBy?: string,
+  ): Promise<PaginatedResponseDto> {
+    return UsersService.userControllerFindAll(page, limit, name, phone, sortBy)
   }
 
   static async findOne(id: string) {

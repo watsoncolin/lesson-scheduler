@@ -24,7 +24,7 @@ export default function UsersList({
   const [users, setUsers] = useState<IUser[]>([])
   const [total, setTotal] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
-  const [limit, setLimit] = useState(1000)
+  const [limit, setLimit] = useState(50)
   const router = useRouter()
 
   const totalPages = Math.ceil(total / limit)
@@ -36,7 +36,6 @@ export default function UsersList({
 
       // Call the impersonation endpoint
       const response = await AuthenticationService.authenticationControllerImpersonate({ userId })
-      console.log('impersonate response', response)
       if (response.accessToken) {
         localStorage.setItem('user', JSON.stringify(response))
         // Redirect to user's dashboard
@@ -50,20 +49,38 @@ export default function UsersList({
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await UserService.findAll(currentPage, limit, searchQuery, phone)
-      // The API returns data as any[][], but we expect IUser[]
-      // If the first element is an array, flatten it; otherwise, use as is
+      const response = await UserService.findAll(currentPage, limit, searchQuery, phone, sortBy)
       let users: IUser[] = []
       if (Array.isArray(response.data) && Array.isArray(response.data[0])) {
         users = response.data[0] as unknown as IUser[]
       } else if (Array.isArray(response.data)) {
         users = response.data as unknown as IUser[]
       }
+      // Add sorting by unused credits
+      if (sortBy === 'unusedCredits') {
+        users = users.slice().sort((a, b) => (b.unusedCredits ?? 0) - (a.unusedCredits ?? 0))
+      } else if (sortBy === 'name') {
+        users = users
+          .slice()
+          .sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`))
+      } else if (sortBy === 'email') {
+        users = users.slice().sort((a, b) => a.email.localeCompare(b.email))
+      }
       setUsers(users)
       setTotal(response.total)
     }
     fetchUsers()
   }, [currentPage, limit, searchQuery, sortBy, phone])
+
+  // Scroll to top when changing pages
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentPage])
+
+  // Calculate indices for current page
+  const startIndex = (currentPage - 1) * limit
+  const endIndex = startIndex + limit
+  const paginatedUsers = users.slice(0, limit) // fallback if API returns all users
 
   return (
     <>
@@ -110,8 +127,34 @@ export default function UsersList({
           </TableBody>
         </Table>
       </ul>
-      <div className="mt-8">
-        <Pagination />
+      <div className="mt-8 flex flex-col items-center gap-2">
+        <div className="text-sm text-gray-700">
+          Showing {startIndex + 1} to {Math.min(endIndex, total)} of {total} results
+        </div>
+        {totalPages > 1 && (
+          <Pagination>
+            <button className="px-2 py-1" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+              Previous
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                className={`px-2 py-1 rounded ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                onClick={() => setCurrentPage(i + 1)}
+                disabled={currentPage === i + 1}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              className="px-2 py-1"
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </Pagination>
+        )}
       </div>
     </>
   )

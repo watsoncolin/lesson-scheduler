@@ -65,6 +65,7 @@ export class TransactionsController {
   @Post('')
   @ApiResponse({ status: 201, type: TransactionResponseDto })
   async create(@Body() createTransactionDto: CreateTransactionDto): Promise<TransactionResponseDto> {
+    console.log('createTransactionDto', createTransactionDto)
     const transaction = await this.transactionService.create(createTransactionDto)
     return transaction
   }

@@ -65,6 +65,10 @@ export default function PurchaseClient({
   const privateLessons = products.filter(p => p.lessonType == 'private')
   const groupLessons = products.filter(p => p.lessonType == 'group')
 
+  console.log('onwaitlist', onWaitlist)
+  console.log('waitlistEnabled', waitlistEnabled)
+  console.log('purchaseEnabled', purchaseEnabled)
+
   useEffect(() => {
     if (selectedProductId) {
       const product = products.find(p => p.id == selectedProductId)

@@ -19,6 +19,15 @@ export default async function PurchasePage() {
     PoolService.findAll(),
   ])
 
+  let purchaseEnabled = !config.waitlistEnabled
+
+  if (waitlist && !waitlist.allowed) {
+    purchaseEnabled = false
+  }
+  if (config.waitlistEnabled && waitlist && waitlist.allowed) {
+    purchaseEnabled = true
+  }
+
   return (
     <PurchaseClient
       products={products}
@@ -26,7 +35,7 @@ export default async function PurchasePage() {
       students={students}
       waitlistEnabled={config.waitlistEnabled}
       onWaitlist={!!waitlist}
-      purchaseEnabled={waitlist && waitlist?.allowed ? waitlist?.allowed : true}
+      purchaseEnabled={purchaseEnabled}
       pools={pools}
     />
   )

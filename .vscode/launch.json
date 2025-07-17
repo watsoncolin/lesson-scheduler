@@ -19,6 +19,22 @@
         "/*": "${workspaceFolder}/*",
         "/./~/*": "${workspaceFolder}/node_modules/*"
       }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "port": 9230,
+      "name": "Attach Web",
+      "skipFiles": ["<node_internals>/**"],
+      "restart": true,
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:/*": "${workspaceFolder}/apps/web/*",
+        "/./*": "${workspaceFolder}/apps/web/*",
+        "/apps/web/*": "${workspaceFolder}/apps/web/*",
+        "/*": "${workspaceFolder}/*",
+        "/./~/*": "${workspaceFolder}/node_modules/*"
+      }
     }
   ]
 }

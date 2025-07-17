@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect, ReactNode, useCallback 
 import { UserResponseDto, ApiError, AuthenticationService } from '@/api'
 import { MeService } from '@/services/api/shared/meService'
 import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie'
+import { redirect } from 'next/navigation'
 
 interface Impersonator {
   id: string
@@ -61,7 +61,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       if (error instanceof ApiError && error.status === 401) {
         console.error('User is not authenticated')
         setUser(null)
-        // redirect('/sign-in')
+        redirect('/sign-in')
       } else {
         console.error('Error fetching user details:', error)
       }

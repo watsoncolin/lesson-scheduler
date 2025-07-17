@@ -58,6 +58,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setUser(null)
       }
     } catch (error) {
+      console.log(JSON.stringify(error))
       if (error instanceof ApiError && error.status === 401) {
         console.error('User is not authenticated')
         setUser(null)

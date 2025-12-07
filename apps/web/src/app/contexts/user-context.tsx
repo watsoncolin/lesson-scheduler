@@ -3,7 +3,9 @@ import { createContext, useContext, useState, useEffect, ReactNode, useCallback 
 import { UserResponseDto, ApiError, AuthenticationService } from '@/api'
 import { MeService } from '@/services/api/shared/meService'
 import { jwtDecode } from 'jwt-decode'
-import { redirect } from 'next/navigation'
+import { redirect, usePathname } from 'next/navigation'
+
+const PUBLIC_PATHS = ['/', '/sign-in', '/register', '/forgot-password', '/reset-password', '/privacy-policy']
 
 interface Impersonator {
   id: string
@@ -28,11 +30,20 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<UserResponseDto | null>(null)
   const [isImpersonating, setIsImpersonating] = useState(false)
   const [impersonator, setImpersonator] = useState<Impersonator | null>(null)
+  const pathname = usePathname()
+
+  const isPublicPath = PUBLIC_PATHS.includes(pathname)
 
   const fetchUserDetails = useCallback(async () => {
     try {
       const user = localStorage.getItem('user')
       const token = user ? JSON.parse(user).accessToken : null
+
+      // Don't fetch user details on public pages if no token
+      if (!token && isPublicPath) {
+        setUser(null)
+        return
+      }
 
       if (token) {
         const decodedToken: any = jwtDecode(token)
@@ -62,12 +73,15 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       if (error instanceof ApiError && error.status === 401) {
         console.error('User is not authenticated')
         setUser(null)
-        redirect('/sign-in')
+        // Only redirect to sign-in on protected pages
+        if (!isPublicPath) {
+          redirect('/sign-in')
+        }
       } else {
         console.error('Error fetching user details:', error)
       }
     }
-  }, [])
+  }, [isPublicPath])
 
   useEffect(() => {
     fetchUserDetails()

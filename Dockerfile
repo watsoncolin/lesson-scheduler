@@ -10,7 +10,7 @@ COPY package*.json ./
 
 ENV NX_SKIP_NATIVE_BUILD=true
 
-RUN npm ci --legacy-peer-deps
+RUN npm ci --legacy-peer-deps --ignore-scripts && node node_modules/nx/bin/post-install || true
 
 COPY . .
 

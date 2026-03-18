@@ -1,28 +1,6 @@
 steps:
-  - name: 'node:22'
-    entrypoint: npm
-    args: ['cache', 'clean', '--force']
-    env:
-      - NODE_OPTIONS=--max_old_space_size=8192
-
-  - name: 'node:22'
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        npm ci --legacy-peer-deps
-    env:
-      - NODE_OPTIONS=--max_old_space_size=8192
-      - NX_SKIP_NATIVE_BUILD=true
-    volumes:
-      - name: node-modules-cache
-        path: /workspace/node_modules
-
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/lesson-scheduler-api', '.']
-    volumes:
-      - name: node-modules-cache
-        path: /workspace/node_modules
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/lesson-scheduler-api']

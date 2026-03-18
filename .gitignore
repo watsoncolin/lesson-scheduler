@@ -60,5 +60,11 @@ google-credentials.json
 # Sentry Config File
 .env.sentry-build-plugin
 
+# Personal notes
+notes.yml
+todos.yml
+api-transition-notes.md
+API-CLIENT-TRANSITION.md
+
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md

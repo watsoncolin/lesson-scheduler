@@ -1,11 +1,11 @@
 steps:
-  - name: 'node:20'
+  - name: 'node:22'
     entrypoint: npm
     args: ['cache', 'clean', '--force']
     env:
       - NODE_OPTIONS=--max_old_space_size=8192
 
-  - name: 'node:20'
+  - name: 'node:22'
     entrypoint: bash
     args:
       - '-c'

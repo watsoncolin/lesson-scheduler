@@ -1,5 +1,5 @@
 # Builder stage
-FROM node:20 as builder
+FROM node:22 as builder
 
 ARG NODE_ENV
 ARG BUILD_FLAG
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build:api
 
 # --- Final runtime stage ---
-FROM node:20 as runner
+FROM node:22 as runner
 
 WORKDIR /app
 

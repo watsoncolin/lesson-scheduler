@@ -6,6 +6,8 @@ import { UpdatePoolDto } from './dto/update-pool.dto'
 import { PoolService } from './pool.service'
 import { Auth } from 'iam/authentication/decorators/auth.decorator'
 import { AuthType } from 'iam/authentication/enums/auth-type.enum'
+import { Roles } from 'iam/authentication/decorators/roles.decorator'
+import { Role } from '@lesson-scheduler/shared'
 import { PoolDto } from './dto/pool.dto'
 
 @ApiTags('Pools')
@@ -22,7 +24,7 @@ export class PoolController {
     return pools
   }
 
-  // TODO add role guard
+  @Roles(Role.Admin)
   @Post()
   @ApiOperation({ summary: 'Create a new pool' })
   @ApiBody({ type: CreatePoolDto })
@@ -44,7 +46,7 @@ export class PoolController {
     return pool
   }
 
-  // TODO add role guard
+  @Roles(Role.Admin)
   @Patch(':id')
   @ApiOperation({ summary: 'Update a pool by ID' })
   @ApiParam({ name: 'id', type: String })
@@ -62,7 +64,7 @@ export class PoolController {
     })
   }
 
-  // TODO add role guard
+  @Roles(Role.Admin)
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ summary: 'Delete a pool by ID' })

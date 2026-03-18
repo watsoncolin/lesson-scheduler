@@ -24,7 +24,6 @@ export class PoolEntity extends Document {
 
   @Prop({ required: true })
   instructions: string
-  // TODO finish implementing this and add it to the UI
 }
 
 export const PoolSchema = SchemaFactory.createForClass(PoolEntity)

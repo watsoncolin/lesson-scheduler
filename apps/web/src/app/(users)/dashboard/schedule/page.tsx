@@ -242,8 +242,6 @@ export default function Schedule() {
     }
   }
 
-  console.log('user?.signedWaiver', user?.signedWaiver)
-
   return (
     <div>
       <Header title="Schedule" />

@@ -1,6 +1,7 @@
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import '../global.css'
 import Footer from '../components/footer'
+import VersionBadge from '../components/version-badge'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { UserProvider } from '../contexts/user-context'
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <main className="flex-grow">{children}</main>
               <Footer />
             </div>
+            <VersionBadge />
           </body>
         </html>
       </UserProvider>

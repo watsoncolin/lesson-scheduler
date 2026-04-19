@@ -4,6 +4,7 @@ import AdminLayout from './admin-layout'
 import { ClientWrapper } from './client-wrapper'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
+import VersionBadge from '@/app/components/version-badge'
 
 export const metadata: Metadata = {
   title: {
@@ -32,6 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="min-h-full">
             <AdminLayout>{children}</AdminLayout>
           </div>
+          <VersionBadge />
         </ClientWrapper>
       </body>
     </html>

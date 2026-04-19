@@ -3,7 +3,20 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next')
 const path = require('path')
+const { execSync } = require('child_process')
 const { withSentryConfig } = require('@sentry/nextjs')
+
+function resolveGitSha() {
+  const vercelSha = process.env.VERCEL_GIT_COMMIT_SHA
+  if (vercelSha) return vercelSha.slice(0, 7)
+  try {
+    return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim()
+  } catch {
+    return 'unknown'
+  }
+}
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -16,6 +29,9 @@ const nextConfig = {
   },
   trailingSlash: true,
   images: { unoptimized: true },
+  env: {
+    NEXT_PUBLIC_GIT_SHA: resolveGitSha(),
+  },
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
